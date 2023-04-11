@@ -1,21 +1,23 @@
 set_languages("c++20")
 add_rules("mode.debug")
 set_toolchains("msvc")
+set_arch("x86")
 
 add_repositories("MrowrLib https://github.com/MrowrLib/Packages.git")
-
 add_requires("StringFormatting")
 
--- Bring your own GUI library
--- Uncomment the one that you want!
-add_requires("nana")
--- add_requires("wxwidgets")
+local vcpkg_triplet = "x86-windows-static"
+local vcpkg_root = os.getenv("VCPKG_ROOT")
+-- add_requires("vcpkg::libpng", {system = false, configs = {triplet = vcpkg_triplet}})
+add_requires("vcpkg::wxwidgets", {system = false, configs = {triplet = vcpkg_triplet}})
 
 target("UserInterface")
     set_kind("headeronly")
     add_headerfiles("include/(**.h)")
     add_includedirs("include", {public = true})
-    add_packages("nana")
+    -- add_packages("vcpkg::libpng")
+    add_packages("vcpkg::wxwidgets")
+    add_links("kernel32", "user32", "gdi32", "comdlg32", "winspool", "winmm", "shell32", "comctl32", "ole32", "oleaut32", "uuid", "rpcrt4", "advapi32", "wsock32", "wininet", "libpng16", "nanosvg", "nanosvgrast", "zlib")
 
 target("Example")
     set_kind("binary")
@@ -25,7 +27,9 @@ target("Example")
     add_files("Example.cpp")
     add_deps("UserInterface")
     add_packages("StringFormatting")
+    -- add_packages("vcpkg::libpng")
+    add_packages("vcpkg::wxwidgets")
+    add_includedirs(path.join(vcpkg_root, "installed", vcpkg_triplet, "include"))
+    add_linkdirs(path.join(vcpkg_root, "installed", vcpkg_triplet, "lib"))
+    add_links("kernel32", "user32", "gdi32", "comdlg32", "winspool", "winmm", "shell32", "comctl32", "ole32", "oleaut32", "uuid", "rpcrt4", "advapi32", "wsock32", "wininet", "libpng16", "nanosvg", "nanosvgrast", "zlib")
 
-    -- Swap out with the GUI library you want to use!
-    add_packages("nana")
-    -- add_packages("wxwidgets")

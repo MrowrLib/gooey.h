@@ -112,16 +112,18 @@ namespace UserInterface::wxWidgets {
         wxButton _wxButton;
 
     public:
-        Button(wxWindow* window, const std::string& text, std::function<void()> callback)
+        Button(wxWindow* window, const std::string& text, void (*callback)(UIButton*))
             : _wxButton(window, wxID_ANY, text) {
-            _wxButton.Bind(wxEVT_BUTTON, [callback](wxCommandEvent& event) { callback(); });
+            _wxButton.Bind(wxEVT_BUTTON, [&, callback](wxCommandEvent& event) {
+                callback(static_cast<UIButton*>(this));
+            });
         }
         wxButton& GetWxButton() { return _wxButton; }
-        void      SetText(const char* text) {
+        void      SetText(const char* text) override {
             _wxButton.SetLabel(text);
             _wxButton.Refresh();
         }
-        const char* GetText() { return _wxButton.GetLabel().c_str(); }
+        const char* GetText() override { return _wxButton.GetLabel().c_str(); }
     };
 
     class WidgetContainer : public UIWidgetContainer {
@@ -150,7 +152,7 @@ namespace UserInterface::wxWidgets {
             _widgets.push_back(std::move(textbox));
             return static_cast<UITextbox*>(_widgets.back().get());
         }
-        UIButton* AddButton(const char* text, void (*callback)()) override {
+        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
             if (!_sizer) return nullptr;
             auto button = std::make_unique<Button>(_sizer->GetContainingWindow(), text, callback);
             _sizer->Add(&button->GetWxButton(), 0, wxALL, 5);
@@ -180,7 +182,7 @@ namespace UserInterface::wxWidgets {
         UITextbox* AddTextbox(const char* text) override {
             return WidgetContainer::AddTextbox(text);
         }
-        UIButton* AddButton(const char* text, void (*callback)()) override {
+        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
             return WidgetContainer::AddButton(text, callback);
         }
     };
@@ -211,7 +213,6 @@ namespace UserInterface::wxWidgets {
                 _isVisible = false;
                 if (_onCloseCallback) _onCloseCallback();
             });
-            _wxWindow->ConfigureTabs();
         }
 
         std::unique_ptr<Impl::wxWindowImpl>& GetWxWindow() { return _wxWindow; }
@@ -275,7 +276,7 @@ namespace UserInterface::wxWidgets {
         UITextbox* AddTextbox(const char* text) override {
             return WidgetContainer::AddTextbox(text);
         }
-        UIButton* AddButton(const char* text, void (*callback)()) override {
+        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
             return WidgetContainer::AddButton(text, callback);
         }
     };
