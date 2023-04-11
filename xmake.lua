@@ -2,6 +2,10 @@ set_languages("c++20")
 add_rules("mode.debug")
 set_toolchains("msvc")
 
+add_repositories("MrowrLib https://github.com/MrowrLib/Packages.git")
+
+add_requires("StringFormatting")
+
 -- Bring your own GUI library
 -- Uncomment the one that you want!
 add_requires("nana")
@@ -20,6 +24,8 @@ target("Example")
     add_ldflags("/entry:WinMainCRTStartup")
     add_files("Example.cpp")
     add_deps("UserInterface")
+    add_packages("StringFormatting")
+
     -- Swap out with the GUI library you want to use!
     add_packages("nana")
     -- add_packages("wxwidgets")

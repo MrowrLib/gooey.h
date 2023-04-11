@@ -1,3 +1,4 @@
+#include <StringFormatting.h>
 #include <UserInterface.h>
 
 UserInterface::UITab*     tab1         = nullptr;
@@ -17,23 +18,26 @@ UI_Main {
 
     window->AddLabel("Hi, I am a label!");
     textbox = window->AddTextbox("Butts.");
-    window->AddButton("I am button! CLICK ME", []() {
+    window->AddButton("I am button! CLICK ME", [](auto*) {
         textbox->SetText("The button was pressed!");
     });
 
-    window->AddButton("Show second window", []() { window2->Show(); });
-    window->AddButton("Hide second window", []() { window2->Hide(); });
+    window->AddButton("Show second window", [](auto*) { window2->Show(); });
+    window->AddButton("Hide second window", [](auto*) { window2->Hide(); });
 
     tab1       = window->AddTab("Tab 1");
     auto* tab2 = window->AddTab("Tab 2");
 
     tab1->AddLabel("Tab 1 label!");
     tab1_textbox = tab1->AddTextbox("Tab 1 textbox.");
-    tab1->AddButton("Tab 1 button", []() { tab1_textbox->SetText("The button was pressed!"); });
+    tab1->AddButton("Tab 1 button", [](auto* button) {
+        tab1_textbox->SetText(string_format("The {} button was pressed!", button->GetText()).c_str()
+        );
+    });
 
     tab2->AddLabel("Butts!");
     tab2_textbox = tab2->AddTextbox("Butts.");
-    tab2->AddButton("I am BUTTS! CLICK ME", []() {
+    tab2->AddButton("I am BUTTS! CLICK ME", [](auto*) {
         tab2_textbox->SetText("The BUTTS was pressed!");
     });
 

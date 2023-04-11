@@ -41,15 +41,21 @@ namespace UserInterface::Nana {
     };
 
     class Button : public UIButton {
+        std::string  _text;
         nana::button _nanaButton;
 
     public:
-        Button(nana::panel<true>* nanaPanel, void (*callback)()) : _nanaButton(*nanaPanel) {
-            _nanaButton.events().click([callback]() { callback(); });
+        Button(nana::panel<true>* nanaPanel, void (*callback)(UIButton*))
+            : _nanaButton(*nanaPanel) {
+            _nanaButton.events().click([&, callback]() { callback(static_cast<UIButton*>(this)); });
         }
 
         nana::button* GetNanaButton() { return &_nanaButton; }
-        void          SetText(const char* text) { _nanaButton.caption(text); }
+        const char*   GetText() override {
+            _text = _nanaButton.caption();
+            return _text.c_str();
+        }
+        void SetText(const char* text) override { _nanaButton.caption(text); }
     };
 
     class WidgetContainer : public UIWidgetContainer {
@@ -85,7 +91,7 @@ namespace UserInterface::Nana {
             _widgets->push_back(std::unique_ptr<UIWidget>(textbox));
             return textbox;
         }
-        UIButton* AddButton(const char* text, void (*callback)()) override {
+        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
             auto* button = new Button(_nanaPanel, callback);
             button->SetText(text);
             _nanaPanelPlace->field(_fieldsPlaceString.c_str()) << *button->GetNanaButton();
@@ -130,7 +136,7 @@ namespace UserInterface::Nana {
             _windowPlace->collocate();
             return textbox;
         }
-        UIButton* AddButton(const char* text, void (*callback)()) override {
+        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
             auto* button = WidgetContainer::AddButton(text, callback);
             _nanaPlace.collocate();
             _windowPlace->collocate();
@@ -236,7 +242,7 @@ namespace UserInterface::Nana {
             _nanaWindowWidgetsPlace.collocate();
             return textbox;
         }
-        UIButton* AddButton(const char* text, void (*callback)()) override {
+        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
             auto* button = WidgetContainer::AddButton(text, callback);
             _nanaWindowWidgetsPlace.collocate();
             return button;

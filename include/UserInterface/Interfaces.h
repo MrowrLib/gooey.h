@@ -8,7 +8,10 @@ namespace UserInterface {
         virtual ~UIWidget() = default;
     };
 
-    struct UIButton : public UIWidget {};
+    struct UIButton : public UIWidget {
+        virtual const char* GetText()                 = 0;
+        virtual void        SetText(const char* text) = 0;
+    };
 
     struct UILabel : public UIWidget {
         virtual const char* GetText()                 = 0;
@@ -21,9 +24,9 @@ namespace UserInterface {
     };
 
     struct UIWidgetContainer {
-        virtual UILabel*   AddLabel(const char* text)                      = 0;
-        virtual UITextbox* AddTextbox(const char* text)                    = 0;
-        virtual UIButton*  AddButton(const char* text, void (*callback)()) = 0;
+        virtual UILabel*   AddLabel(const char* text)                               = 0;
+        virtual UITextbox* AddTextbox(const char* text)                             = 0;
+        virtual UIButton*  AddButton(const char* text, void (*callback)(UIButton*)) = 0;
     };
 
     struct UITab : public UIWidgetContainer {
