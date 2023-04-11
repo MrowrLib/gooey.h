@@ -1,7 +1,5 @@
 #include <StringFormatting.h>
-#include <UserInterface/Qt.h>
-
-// #include
+#include <UserInterface.h>
 
 UserInterface::UITab*     tab1         = nullptr;
 UserInterface::UIWindow*  window       = nullptr;
@@ -10,21 +8,7 @@ UserInterface::UITextbox* textbox      = nullptr;
 UserInterface::UITextbox* tab1_textbox = nullptr;
 UserInterface::UITextbox* tab2_textbox = nullptr;
 
-#include <QApplication>
-// #include <QDir>
-#include <iostream>
-// #include <QLibrary>
-
-// UI_Main {
-int main() {
-    auto QT_PLUGIN_PATH = std::getenv("QT_PLUGIN_PATH");
-    if (QT_PLUGIN_PATH) QCoreApplication::addLibraryPath(QT_PLUGIN_PATH);
-    std::cout << "Library paths:";
-    for (auto& path : QCoreApplication::libraryPaths()) {
-        std::cout << " | " << path.toStdString();
-    }
-    std::cout << " | ";
-
+UI_Main {
     auto* ui  = UserInterface::GetAPI();
     auto* app = ui->GetApplication();
     window    = app->NewWindow("Window 1");
