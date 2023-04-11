@@ -1,10 +1,7 @@
 set_languages("c++20")
 add_rules("mode.debug")
 set_toolchains("msvc")
-
 set_arch("x86")
-set_defaultplat("windows")
-set_defaultmode("x86")
 
 add_repositories("MrowrLib https://github.com/MrowrLib/Packages.git")
 add_requires("StringFormatting")
@@ -22,12 +19,10 @@ target("UserInterface")
 target("Example")
     set_kind("binary")
     add_ldflags("/subsystem:windows")
-    set_policy("check.auto_ignore_flags", false)
-    add_ldflags("/entry:WinMainCRTStartup")
+    add_ldflags("/entry:WinMainCRTStartup", {force = true})
     add_files("Example.cpp")
     add_deps("UserInterface")
     add_packages("StringFormatting")
-    add_packages("vcpkg::qtbase")
 
     -- [wxWidgets]
     add_packages("vcpkg::wxwidgets")
