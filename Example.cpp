@@ -43,4 +43,5 @@ UI_Main {
 
     window->Show();
     app->Run();
+    return 0;
 }
