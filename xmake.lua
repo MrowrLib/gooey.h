@@ -4,7 +4,7 @@ set_toolchains("msvc")
 set_arch("x86")
 
 add_repositories("MrowrLib https://github.com/MrowrLib/Packages.git")
-add_requires("StringFormatting")
+add_requires("string_format")
 
 -- [wxWidgets]
 local vcpkg_triplet = "x86-windows-static"
@@ -22,7 +22,7 @@ target("Example")
     add_ldflags("/entry:WinMainCRTStartup", {force = true})
     add_files("Example.cpp")
     add_deps("UserInterface")
-    add_packages("StringFormatting")
+    add_packages("string_format")
 
     -- [wxWidgets]
     add_packages("vcpkg::wxwidgets")

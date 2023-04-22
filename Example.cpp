@@ -1,5 +1,6 @@
-#include <StringFormatting.h>
 #include <UserInterface.h>
+
+#include <string_format>
 
 UserInterface::UITab*     tab1         = nullptr;
 UserInterface::UIWindow*  window       = nullptr;
@@ -16,14 +17,14 @@ UI_Main {
     window->SetHeight(800);
     window->SetWidth(800);
 
-    window->AddLabel("Hi, I am a label!");
-    textbox = window->AddTextbox("Butts.");
-    window->AddButton("I am button! CLICK ME", [](auto*) {
-        textbox->SetText("The button was pressed!");
-    });
+    // window->AddLabel("Hi, I am a label!");
+    // textbox = window->AddTextbox("Butts.");
+    // window->AddButton("I am button! CLICK ME", [](auto*) {
+    //     textbox->SetText("The button was pressed!");
+    // });
 
-    window->AddButton("Show second window", [](auto*) { window2->Show(); });
-    window->AddButton("Hide second window", [](auto*) { window2->Hide(); });
+    // window->AddButton("Show second window", [](auto*) { window2->Show(); });
+    // window->AddButton("Hide second window", [](auto*) { window2->Hide(); });
 
     tab1       = window->AddTab("Tab 1");
     auto* tab2 = window->AddTab("Tab 2");
