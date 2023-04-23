@@ -1,6 +1,6 @@
 #pragma once
 
-namespace UserInterface {
+namespace MicroUI {
 
     struct UIApplication;
 

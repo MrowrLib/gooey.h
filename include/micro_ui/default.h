@@ -1,13 +1,14 @@
 #pragma once
 
-#include <UserInterface/Interfaces.h>
-
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <unordered_map>
 
-namespace UserInterface {
+#include "../micro_ui.h"
+
+
+namespace MicroUI {
 
     namespace Impl {
         class ToolkitRegistryImpl : public UIToolkitRegistry {
@@ -79,4 +80,4 @@ namespace UserInterface {
     }
 }
 
-#define UserInterface_GetAPI() UserInterface::GetAPI()
+#define MicroUI_GetAPI() MicroUI::GetAPI()
