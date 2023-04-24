@@ -1,0 +1,127 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_INSTALL_OPTIONS": "--x-buildtrees-root=$env{VCPKG_BUILDTREES}"
+            },
+            "environment": {
+                "VERBOSE": "1"
+            }
+        },
+        {
+            "name": "x86",
+            "hidden": true,
+            "architecture": { "value": "x86", "strategy": "external" },
+            "cacheVariables": { "VCPKG_TARGET_TRIPLET": "x86-windows-static-md" }
+        },
+        {
+            "name": "x64",
+            "hidden": true,
+            "architecture": { "value": "x64", "strategy": "external" },
+            "cacheVariables": { "VCPKG_TARGET_TRIPLET": "x64-windows-static-md" }
+        },
+        {
+            "name": "nana",
+            "hidden": true,
+            "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "nana" }
+        },
+        {
+            "name": "fltk",
+            "hidden": true,
+            "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "fltk" }
+        },
+        {
+            "name": "gtkmm",
+            "hidden": true,
+            "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "gtkmm" }
+        },
+        {
+            "name": "wxwidgets",
+            "hidden": true,
+            "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "wxwidgets" }
+        },
+        {
+            "name": "qt",
+            "hidden": true,
+            "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "qt" }
+        },
+        {
+            "name": "imgui-glfw3-opengl",
+            "hidden": true,
+            "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "imgui-glfw3-opengl" }
+        },
+        {
+            "name": "imgui-sdl2-opengl",
+            "hidden": true,
+            "cacheVariables": { "VCPKG_MANIFEST_FEATURES": "imgui-sdl2-opengl" }
+        },
+        {
+            "name": "nana-x86",
+            "inherits": ["base", "x86", "nana"]
+        },
+        {
+            "name": "nana-x64",
+            "inherits": ["base", "x64", "nana"]
+        },
+        {
+            "name": "gtkmm-x64",
+            "inherits": ["base", "gtkmm"],
+            "architecture": { "value": "x64", "strategy": "external" },
+            "cacheVariables": { "VCPKG_TARGET_TRIPLET": "x64-dynamic-by-default" }
+        },
+        {
+            "name": "wxwidgets-x86",
+            "inherits": ["base", "x86", "wxwidgets"]
+        },
+        {
+            "name": "wxwidgets-x64",
+            "inherits": ["base", "x64", "wxwidgets"]
+        },
+        {
+            "name": "qt-x86",
+            "inherits": ["base", "x86", "qt"]
+        },
+        {
+            "name": "qt-x64",
+            "inherits": ["base", "x64", "qt"]
+        },
+        {
+            "name": "imgui-glfw3-opengl-x86",
+            "inherits": ["base", "x86", "imgui-glfw3-opengl"]
+        },
+        {
+            "name": "imgui-glfw3-opengl-x64",
+            "inherits": ["base", "x64", "imgui-glfw3-opengl"]
+        },
+        {
+            "name": "imgui-sdl2-opengl-x86",
+            "inherits": ["base", "x86", "imgui-sdl2-opengl"]
+        },
+        {
+            "name": "imgui-sdl2-opengl-x64",
+            "inherits": ["base", "x64", "imgui-sdl2-opengl"]
+        },
+        {
+            "name": "fltk-x86",
+            "inherits": ["base", "x86", "fltk"]
+        },
+        {
+            "name": "fltk-x64",
+            "inherits": ["base", "x64", "fltk"]
+        },
+        {
+            "name": "gtkmm-x86",
+            "inherits": ["base", "gtkmm"],
+            "architecture": { "value": "x86", "strategy": "external" },
+            "cacheVariables": { "VCPKG_TARGET_TRIPLET": "x86-dynamic-by-default" }
+        }
+    ]
+}

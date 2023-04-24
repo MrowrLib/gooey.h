@@ -14,9 +14,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../Interfaces.h"
+#include "../../micro_ui.h"
 
-namespace UserInterface::Nana {
+namespace MicroUI::Nana {
 
     class Label : public UILabel {
         nana::label _nanaLabel;

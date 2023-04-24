@@ -14,9 +14,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../Interfaces.h"
+#include "../../micro_ui.h"
 
-namespace UserInterface::Qt {
+namespace MicroUI::Qt {
 
     class Label : public UILabel {
         QLabel      _label;

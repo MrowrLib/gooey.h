@@ -10,9 +10,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../Interfaces.h"
+#include "../../micro_ui.h"
 
-namespace UserInterface::wxWidgets {
+namespace MicroUI::wxWidgets {
 
     namespace Impl {
         class wxWindowImpl : public wxFrame {
