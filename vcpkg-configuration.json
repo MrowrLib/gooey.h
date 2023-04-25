@@ -8,7 +8,7 @@
         {
             "kind": "git",
             "repository": "https://github.com/MrowrLib/Packages.git",
-            "baseline": "2091c425976da4956a0f61469d3679a4a876b809",
+            "baseline": "c55f8483cc619f2c603b416b9dcf80d7c3ec42a1",
             "packages": ["mrowr-string-format"]
         }
     ]

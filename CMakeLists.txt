@@ -59,18 +59,12 @@ install(FILES
 )
 
 if(BUILD_EXAMPLE)
-    # if(NOT STRING_FORMAT_FOUND)
-    # message(STATUS "FINDING STRING_FORMAT")
-    # find_package(string_format CONFIG REQUIRED)
-    # set(STRING_FORMAT_FOUND ON CACHE INTERNAL "string_format package found")
-    # endif()
-    find_package(string_format 0.1.0 CONFIG REQUIRED)
+    find_package(string_format CONFIG REQUIRED)
+
     add_executable(Example Example.cpp)
     target_compile_features(Example PRIVATE cxx_std_20)
     set_target_properties(Example PROPERTIES WIN32_EXECUTABLE TRUE)
-
-    # target_link_libraries(Example PRIVATE ${PROJECT_NAME} string_format::string_format)
-    target_link_libraries(Example PRIVATE ${PROJECT_NAME})
+    target_link_libraries(Example PRIVATE ${PROJECT_NAME} string_format::string_format)
 
     if(nana IN_LIST VCPKG_MANIFEST_FEATURES)
         find_package(unofficial-nana CONFIG REQUIRED)
@@ -81,9 +75,4 @@ if(BUILD_EXAMPLE)
         find_package(wxWidgets CONFIG REQUIRED)
         target_link_libraries(Example PRIVATE wx::core wx::base)
     endif()
-
-    # if(qt IN_LIST VCPKG_MANIFEST_FEATURES)
-    # find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
-    # target_link_libraries(Example PRIVATE Qt6::Core Qt6::Widgets)
-    # endif()
 endif()

@@ -72,56 +72,12 @@
             "inherits": ["base", "x64", "nana"]
         },
         {
-            "name": "gtkmm-x64",
-            "inherits": ["base", "gtkmm"],
-            "architecture": { "value": "x64", "strategy": "external" },
-            "cacheVariables": { "VCPKG_TARGET_TRIPLET": "x64-dynamic-by-default" }
-        },
-        {
             "name": "wxwidgets-x86",
             "inherits": ["base", "x86", "wxwidgets"]
         },
         {
             "name": "wxwidgets-x64",
             "inherits": ["base", "x64", "wxwidgets"]
-        },
-        {
-            "name": "qt-x86",
-            "inherits": ["base", "x86", "qt"]
-        },
-        {
-            "name": "qt-x64",
-            "inherits": ["base", "x64", "qt"]
-        },
-        {
-            "name": "imgui-glfw3-opengl-x86",
-            "inherits": ["base", "x86", "imgui-glfw3-opengl"]
-        },
-        {
-            "name": "imgui-glfw3-opengl-x64",
-            "inherits": ["base", "x64", "imgui-glfw3-opengl"]
-        },
-        {
-            "name": "imgui-sdl2-opengl-x86",
-            "inherits": ["base", "x86", "imgui-sdl2-opengl"]
-        },
-        {
-            "name": "imgui-sdl2-opengl-x64",
-            "inherits": ["base", "x64", "imgui-sdl2-opengl"]
-        },
-        {
-            "name": "fltk-x86",
-            "inherits": ["base", "x86", "fltk"]
-        },
-        {
-            "name": "fltk-x64",
-            "inherits": ["base", "x64", "fltk"]
-        },
-        {
-            "name": "gtkmm-x86",
-            "inherits": ["base", "gtkmm"],
-            "architecture": { "value": "x86", "strategy": "external" },
-            "cacheVariables": { "VCPKG_TARGET_TRIPLET": "x86-dynamic-by-default" }
         }
     ]
 }
