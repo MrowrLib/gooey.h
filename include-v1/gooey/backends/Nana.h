@@ -14,9 +14,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../micro_ui.h"
+#include "../../gooey.h"
 
-namespace MicroUI::Nana {
+namespace Gooey::Nana {
 
     class Label : public UILabel {
         nana::label _nanaLabel;

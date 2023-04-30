@@ -5,10 +5,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "../micro_ui.h"
+#include "../gooey.h"
 
-
-namespace MicroUI {
+namespace Gooey {
 
     namespace Impl {
         class ToolkitRegistryImpl : public UIToolkitRegistry {
@@ -80,4 +79,4 @@ namespace MicroUI {
     }
 }
 
-#define MicroUI_GetAPI() MicroUI::GetAPI()
+#define Gooey_GetAPI() Gooey::GetAPI()

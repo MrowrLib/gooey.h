@@ -1,6 +1,6 @@
 #pragma once
 
-// Include the default implementation first (has MicroUI_GetAPI macro)
+// Include the default implementation first (has Gooey_GetAPI macro)
 #include "default.h"
 
 // Auto-detect supported UI frameworks (with official built-in support)

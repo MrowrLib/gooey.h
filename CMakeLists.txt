@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(micro_ui VERSION 0.1.0 LANGUAGES CXX)
+project(gooey VERSION 0.1.0 LANGUAGES CXX)
 set(namespace MrowrLib)
 
 option(BUILD_EXAMPLE "Build the example target" ON)

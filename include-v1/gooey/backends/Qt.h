@@ -14,9 +14,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../micro_ui.h"
+#include "../../gooey.h"
 
-namespace MicroUI::Qt {
+namespace Gooey::Qt {
 
     class Label : public UILabel {
         QLabel      _label;

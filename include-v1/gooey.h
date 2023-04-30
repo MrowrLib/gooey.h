@@ -1,6 +1,6 @@
 #pragma once
 
-namespace MicroUI {
+namespace Gooey {
 
     struct UIApplication;
 

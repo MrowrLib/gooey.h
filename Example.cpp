@@ -1,8 +1,8 @@
-#include <micro_ui/app.h>
+#include <gooey/app.h>
 
 #include <string_format>
 
-using namespace MicroUI;
+using namespace Gooey;
 
 UITab*     tab1         = nullptr;
 UIWindow*  window       = nullptr;
@@ -12,7 +12,7 @@ UITextbox* tab1_textbox = nullptr;
 UITextbox* tab2_textbox = nullptr;
 
 UI_Main {
-    auto* ui  = MicroUI::GetAPI();
+    auto* ui  = Gooey::GetAPI();
     auto* app = ui->GetApplication();
     window    = app->NewWindow("Window 1");
     window2   = app->NewWindow("Window 2");

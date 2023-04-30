@@ -10,9 +10,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../../micro_ui.h"
+#include "../../gooey.h"
 
-namespace MicroUI::wxWidgets {
+namespace Gooey::wxWidgets {
 
     namespace Impl {
         class wxWindowImpl : public wxFrame {
