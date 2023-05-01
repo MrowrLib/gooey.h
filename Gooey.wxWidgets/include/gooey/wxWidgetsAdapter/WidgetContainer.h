@@ -19,6 +19,11 @@ namespace gooey::wxWidgetsAdapter {
         WidgetContainer() = default;
         explicit WidgetContainer(wxWindow* window) : implWindow(window) {}
 
+        UIWidget* AddWidget(std::unique_ptr<UIWidget> widget) {
+            widgets.push_back(std::move(widget));
+            return widgets.back().get();
+        }
+
         wxWindow* GetImplWindow() { return implWindow; }
         void      SetImplWindow(wxWindow* window) { implWindow = window; }
 

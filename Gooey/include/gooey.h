@@ -30,13 +30,14 @@ namespace gooey {
         virtual bool        Click() { return false; }
     };
 
-    struct UIRow;
-    struct UISpan;
+    struct UIPanel;
 
     struct UIWidgetContainer {
         virtual ~UIWidgetContainer() = default;
         virtual size_t    GetWidgetCount() { return 0; }
         virtual UIWidget* GetWidget(size_t index) { return nullptr; }
+        virtual UIPanel*  AddHorizontalPanel() { return nullptr; }
+        virtual UIPanel*  AddVerticalPanel() { return nullptr; }
         virtual UILabel*  AddLabel(const char* text) { return nullptr; }
         virtual UIButton* AddButton(const char* text, void (*callback)(UIButton*)) {
             return nullptr;
@@ -47,9 +48,9 @@ namespace gooey {
 
     struct UIGrid : public UIWidgetContainer {};
 
-    struct UIRow : public UIWidgetContainer {};
-
-    struct UISpan : public UIWidgetContainer {};
+    struct UIPanel : public UIWidget, public UIWidgetContainer {
+        virtual ~UIPanel() = default;
+    };
 
     struct UITab : public UIWidgetContainer {};
 

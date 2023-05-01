@@ -3,6 +3,7 @@
 #include <gooey.h>
 #include <wx/wx.h>
 
+#include "Panel.h"
 #include "WidgetContainer.h"
 
 namespace gooey::wxWidgetsAdapter {
@@ -36,6 +37,30 @@ namespace gooey::wxWidgetsAdapter {
         UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
             return WidgetContainer::AddButton(text, callback);
         }
+
+        UIPanel* AddHorizontalPanel() override {
+            auto panel = std::make_unique<Panel>(implFrame, true);
+            return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
+
+        UIPanel* AddVerticalPanel() override {
+            auto panel = std::make_unique<Panel>(implFrame, false);
+            return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
+
+        // UIPanel* AddHorizontalPanel() override {
+        //     if (!implWindow) return nullptr;
+        //     auto panel = std::make_unique<Panel>(implWindow, true);
+        //     widgets.push_back(std::move(panel));
+        //     return static_cast<UIPanel*>(widgets.back().get());
+        // }
+
+        // UIPanel* AddVerticalPanel() override {
+        //     if (!implWindow) return nullptr;
+        //     auto panel = std::make_unique<Panel>(implWindow, false);
+        //     widgets.push_back(std::move(panel));
+        //     return static_cast<UIPanel*>(widgets.back().get());
+        // }
 
         // bool SetBackgroundColor(unsigned int red, unsigned int green, unsigned int blue) override
         // {
