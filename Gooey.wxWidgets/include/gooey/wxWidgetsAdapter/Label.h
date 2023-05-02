@@ -19,6 +19,8 @@ namespace gooey::wxWidgetsAdapter {
             SetImplWidget(implLabel);
         }
 
+        GOOEY_WX_ADD_COMMON_EVENTS()
+
         bool SetText(const char* text) override {
             implLabel->SetLabelText(text);
             return true;
@@ -31,15 +33,6 @@ namespace gooey::wxWidgetsAdapter {
         // virtual bool OnClick(void (*callback)(UIWidget*)) { return false; }
         // virtual bool OnMouseEnter(void (*callback)(UIWidget*)) { return false; }
         // virtual bool OnMouseLeave(void (*callback)(UIWidget*)) { return false; }
-
-        bool OnMouseEnter(void (*callback)(UIWidget*)) override {
-            CommonEvents::OnMouseEnter(callback);
-            return true;
-        }
-        bool OnMouseLeave(void (*callback)(UIWidget*)) override {
-            CommonEvents::OnMouseLeave(callback);
-            return true;
-        }
 
         // bool SetFont(const char* fontName, unsigned int fontSize) override {
         //     wxFont font(fontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);

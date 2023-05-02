@@ -59,7 +59,7 @@ namespace gooey::wxWidgetsAdapter {
         // }
 
         // bool AddSpacer(unsigned int size) override {
-        //     implFrame->GetSizer()->AddSpacer(size);
+        //     implWindow->GetSizer()->AddSpacer(size);
         //     return true;
         // }
     };

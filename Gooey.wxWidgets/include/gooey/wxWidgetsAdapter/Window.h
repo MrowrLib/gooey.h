@@ -3,6 +3,7 @@
 #include <gooey.h>
 #include <wx/wx.h>
 
+#include "CommonEvents.h"
 #include "Panel.h"
 #include "WidgetContainer.h"
 
@@ -20,11 +21,16 @@ namespace gooey::wxWidgetsAdapter {
         };
     }
 
-    class Window : public UIWindow, WidgetContainer {
+    class Window : public UIWindow, WidgetContainer, CommonEvents {
         Impl::MyFrame* implFrame;
 
     public:
-        Window() : implFrame(new Impl::MyFrame()) { SetImplWindow(implFrame); }
+        Window() : implFrame(new Impl::MyFrame()) {
+            SetImplWindow(implFrame);
+            SetImplWidget(implFrame);
+        }
+
+        GOOEY_WX_ADD_COMMON_EVENTS()
 
         bool Show() override { return implFrame->Show(); }
 

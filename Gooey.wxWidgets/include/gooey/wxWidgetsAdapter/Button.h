@@ -6,28 +6,18 @@
 #include <functional>
 #include <string>
 
+#include "CommonEvents.h"
+
 namespace gooey::wxWidgetsAdapter {
 
-    class Button : public UIButton {
+    class Button : public UIButton, CommonEvents {
         std::string _text;
         wxButton*   implButton;
-        // std::vector<std::function<void(UIButton*)>> _callbacks;
-
-        // void RunClickCallbacks() {
-        //     for (auto& callback : _callbacks) callback(this);
-        // }
 
     public:
         Button(wxWindow* window) : implButton(new wxButton(window, wxID_ANY, "")) {
             window->GetSizer()->Add(implButton);
-            implButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-                // RunClickCallbacks();
-                event.Skip();
-            });
-            // implButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
-            //     RunClickCallbacks();
-            //     event.Skip();
-            // });
+            SetImplWidget(implButton);
         }
 
         bool SetText(const char* text) override {
@@ -59,5 +49,8 @@ namespace gooey::wxWidgetsAdapter {
         // {
         //     return implButton->SetForegroundColour(wxColour(red, green, blue, 0));
         // }
+
+        GOOEY_WX_ADD_COMMON_EVENTS()
+        GOOEY_WX_DEFINE_COMMON_EVENT_OVERRIDE(ButtonPress, wxEVT_BUTTON)
     };
 }

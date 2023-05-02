@@ -14,11 +14,29 @@ namespace gooey {
         }
     };
 
-    struct UIWidget {
-        virtual bool OnClick(void (*callback)(UIWidget*)) { return false; }
+    struct UIWidget;
+
+    struct UICommonEvents {
         virtual bool OnMouseEnter(void (*callback)(UIWidget*)) { return false; }
         virtual bool OnMouseLeave(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnLeftClick(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnRightClick(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnMiddleClick(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnLeftDoubleClick(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnRightDoubleClick(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnMiddleDoubleClick(void (*callback)(UIWidget*)) { return false; }
     };
+
+    struct UIWidget : public UICommonEvents {
+        virtual bool Show() { return false; }
+        virtual bool Hide() { return false; }
+    };
+
+    // struct UISpacer : public UIWidget {
+    //     virtual ~UISpacer() = default;
+    // };
+
+    struct UIImage : public UIWidget {};
 
     struct UILabel : public UIWidget {
         virtual ~UILabel() = default;
@@ -30,6 +48,7 @@ namespace gooey {
         virtual ~UIButton() = default;
         virtual bool        SetText(const char* text) { return false; }
         virtual const char* GetText() { return nullptr; }
+        virtual bool        OnButtonPress(void (*callback)(UIWidget*)) { return false; }
     };
 
     struct UIPanel;
@@ -42,11 +61,11 @@ namespace gooey {
         virtual UIPanel*  AddVerticalPanel() { return nullptr; }
         virtual UILabel*  AddLabel(const char* text) { return nullptr; }
         virtual UIButton* AddButton(const char* text) { return nullptr; }
-        // virtual bool      AddImage(const char* path) { return false; }
-        // virtual bool      AddSpacer(unsigned int size) { return false; }
+        // virtual UIImage*  AddImage(const char* path) { return nullptr; }
+        // virtual UISpacer* AddSpacer(unsigned int size) { return nullptr; }
     };
 
-    struct UIGrid : public UIWidgetContainer {};
+    struct UIGrid : public UIWidgetContainer, public UICommonEvents {};
 
     struct UIPanel : public UIWidget, public UIWidgetContainer {
         virtual ~UIPanel() = default;
@@ -54,7 +73,7 @@ namespace gooey {
 
     struct UITab : public UIWidgetContainer {};
 
-    struct UIWindow : public UIComponent, public UIWidgetContainer {
+    struct UIWindow : public UIComponent, public UIWidgetContainer, public UICommonEvents {
         virtual ~UIWindow() = default;
         // virtual bool OnClick(void (*callback)(UIWindow*)) { return false; }
         // virtual bool OnMouseEnter(void (*callback)(UIWindow*)) { return false; }

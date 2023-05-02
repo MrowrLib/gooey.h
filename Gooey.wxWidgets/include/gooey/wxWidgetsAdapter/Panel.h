@@ -3,11 +3,12 @@
 #include <gooey.h>
 #include <wx/wx.h>
 
+#include "CommonEvents.h"
 #include "WidgetContainer.h"
 
 namespace gooey::wxWidgetsAdapter {
 
-    class Panel : public UIPanel, WidgetContainer {
+    class Panel : public UIPanel, WidgetContainer, CommonEvents {
         wxPanel* implPanel;
 
     public:
@@ -19,7 +20,10 @@ namespace gooey::wxWidgetsAdapter {
             implPanel->SetSizer(sizer);
             window->GetSizer()->Add(implPanel);
             SetImplWindow(implPanel);
+            SetImplWidget(implPanel);
         }
+
+        GOOEY_WX_ADD_COMMON_EVENTS()
 
         UIPanel* AddHorizontalPanel() override {
             if (!GetImplWindow()) return nullptr;
@@ -34,6 +38,9 @@ namespace gooey::wxWidgetsAdapter {
         }
 
         UILabel* AddLabel(const char* text) override { return WidgetContainer::AddLabel(text); }
+
+        // UISpacer* AddSpacer(unsigned int size) override { return
+        // WidgetContainer::AddSpacer(size); }
 
         // bool SetBackgroundColor(unsigned int red, unsigned int green, unsigned int blue) override
         // {
