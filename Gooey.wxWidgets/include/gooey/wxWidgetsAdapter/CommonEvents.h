@@ -11,7 +11,7 @@ private:                                                                        
     std::vector<void (*)(UIWidget*)>  _on##eventName;                                             \
     std::unordered_set<wxEvtHandler*> _registeredFor##eventName;                                  \
                                                                                                   \
-    bool eventName() {                                                                            \
+    bool Invoke##eventName() {                                                                    \
         for (auto& callback : _on##eventName) callback(nullptr);                                  \
         return true;                                                                              \
     }                                                                                             \
@@ -23,7 +23,7 @@ public:                                                                         
         _on##eventName.push_back(callback);                                                       \
         if (_registeredFor##eventName.find(GetImplWidget()) == _registeredFor##eventName.end()) { \
             GetImplWidget()->Bind(eventType, [this](wxEvent& event) {                             \
-                eventName();                                                                      \
+                Invoke##eventName();                                                              \
                 event.Skip();                                                                     \
             });                                                                                   \
             _registeredFor##eventName.insert(GetImplWidget());                                    \
@@ -36,7 +36,7 @@ private:                                                                        
     std::vector<void (*)(UIWidget*)>  _on##eventName;                                             \
     std::unordered_set<wxEvtHandler*> _registeredFor##eventName;                                  \
                                                                                                   \
-    bool eventName() {                                                                            \
+    bool Invoke##eventName() {                                                                    \
         for (auto& callback : _on##eventName) callback(nullptr);                                  \
         return true;                                                                              \
     }                                                                                             \
@@ -48,7 +48,7 @@ public:                                                                         
         _on##eventName.push_back(callback);                                                       \
         if (_registeredFor##eventName.find(GetImplWidget()) == _registeredFor##eventName.end()) { \
             GetImplWidget()->Bind(eventType, [this](wxEvent& event) {                             \
-                eventName();                                                                      \
+                Invoke##eventName();                                                              \
                 event.Skip();                                                                     \
             });                                                                                   \
             _registeredFor##eventName.insert(GetImplWidget());                                    \

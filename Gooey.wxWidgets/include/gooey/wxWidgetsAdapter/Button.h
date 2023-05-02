@@ -16,10 +16,13 @@ namespace gooey::wxWidgetsAdapter {
         wxButton*   implButton;
 
     public:
-        Button(wxWindow* window) : implButton(new wxButton(window, wxID_ANY, "")) {
-            window->GetSizer()->Add(implButton, 0, wxEXPAND | wxALL);
+        Button(wxWindow* window, bool addToSizer = true)
+            : implButton(new wxButton(window, wxID_ANY, "")) {
+            if (addToSizer) window->GetSizer()->Add(implButton, 0, wxEXPAND | wxALL);
             SetImplWidget(implButton);
         }
+
+        wxButton* GetImplButton() { return implButton; }
 
         GOOEY_WX_COLOR_SETTERS(implButton)
 

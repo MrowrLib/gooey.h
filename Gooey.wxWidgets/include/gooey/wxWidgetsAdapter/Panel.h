@@ -19,9 +19,7 @@ namespace gooey::wxWidgetsAdapter {
             else sizer = new wxBoxSizer(wxVERTICAL);
             implPanel = new wxPanel(window, wxID_ANY);
             implPanel->SetSizer(sizer);
-            window->GetSizer()->Add(
-                implPanel, 1, wxEXPAND | wxALL, 5
-            );  // Adding a final param here for border results in a cool look
+            window->GetSizer()->Add(implPanel, 1, wxEXPAND | wxALL);
             SetImplWindow(implPanel);
             SetImplWidget(implPanel);
         }

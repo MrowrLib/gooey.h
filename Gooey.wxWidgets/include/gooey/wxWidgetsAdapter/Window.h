@@ -5,8 +5,10 @@
 
 #include "Colors.h"
 #include "CommonEvents.h"
+#include "Grid.h"
 #include "Panel.h"
 #include "WidgetContainer.h"
+
 
 namespace gooey::wxWidgetsAdapter {
 
@@ -45,6 +47,10 @@ namespace gooey::wxWidgetsAdapter {
         UIPanel* AddVerticalPanel() override {
             auto panel = std::make_unique<Panel>(implFrame, false);
             return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
+        UIGrid* AddGrid(unsigned int cols, unsigned int rows) override {
+            auto grid = std::make_unique<Grid>(implFrame, cols, rows);
+            return static_cast<UIGrid*>(AddWidget(std::move(grid)));
         }
 
         bool SetTitle(const char* title) override {

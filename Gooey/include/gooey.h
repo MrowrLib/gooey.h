@@ -52,6 +52,7 @@ namespace gooey {
     };
 
     struct UIPanel;
+    struct UIGrid;
 
     struct UIWidgetContainer {
         virtual ~UIWidgetContainer() = default;
@@ -59,13 +60,47 @@ namespace gooey {
         virtual UIWidget* GetWidget(size_t index) { return nullptr; }
         virtual UIPanel*  AddHorizontalPanel() { return nullptr; }
         virtual UIPanel*  AddVerticalPanel() { return nullptr; }
+        virtual UIGrid*   AddGrid(unsigned int cols, unsigned int rows) { return nullptr; }
         virtual UILabel*  AddLabel(const char* text) { return nullptr; }
         virtual UIButton* AddButton(const char* text) { return nullptr; }
         virtual UIImage*  AddImage(const char* path) { return nullptr; }
         // virtual UISpacer* AddSpacer(unsigned int size) { return nullptr; }
     };
 
-    struct UIGrid : public UIWidgetContainer, public UICommonEvents {};
+    struct UIGrid : public UIWidget, public UIWidgetContainer {
+        virtual UIWidget* GetWidget(unsigned int x, unsigned int y) { return nullptr; }
+        virtual UIPanel*  AddHorizontalPanel(
+             unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+         ) {
+            return nullptr;
+        }
+        virtual UIPanel* AddVerticalPanel(
+            unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+        ) {
+            return nullptr;
+        }
+        virtual UIGrid* AddGrid(
+            unsigned int cols, unsigned int rows, unsigned int x, unsigned int y,
+            unsigned int childCols, unsigned int childRows
+        ) {
+            return nullptr;
+        }
+        virtual UILabel* AddLabel(
+            const char* text, unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+        ) {
+            return nullptr;
+        }
+        virtual UIButton* AddButton(
+            const char* text, unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+        ) {
+            return nullptr;
+        }
+        virtual UIImage* AddImage(
+            const char* path, unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+        ) {
+            return nullptr;
+        }
+    };
 
     struct UIPanel : public UIWidget, public UIWidgetContainer {
         virtual ~UIPanel() = default;
@@ -96,6 +131,6 @@ namespace gooey {
         virtual ~UIApplication() = default;
         virtual bool      Start() { return false; }
         virtual bool      Shutdown() { return false; }
-        virtual UIWindow* CreateWindow() { return nullptr; }
+        virtual UIWindow* AddWindow() { return nullptr; }
     };
 }

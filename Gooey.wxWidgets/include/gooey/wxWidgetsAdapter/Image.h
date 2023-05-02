@@ -15,7 +15,7 @@ namespace gooey::wxWidgetsAdapter {
     public:
         Image(wxWindow* window, const char* path)
             : implImage(new wxStaticBitmap(window, wxID_ANY, wxBitmap(path, wxBITMAP_TYPE_ANY))) {
-            window->GetSizer()->Add(implImage, wxALIGN_CENTER);
+            window->GetSizer()->Add(implImage, 1, wxEXPAND | wxALL);
             SetImplWidget(implImage);
         }
 

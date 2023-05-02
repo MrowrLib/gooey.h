@@ -42,6 +42,6 @@ namespace gooey::wxWidgetsAdapter {
             return true;
         }
 
-        UIWindow* CreateWindow() override { return new Window(); }
+        UIWindow* AddWindow() override { return new Window(); }
     };
 }
