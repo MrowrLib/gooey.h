@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include "Colors.h"
 #include "CommonEvents.h"
 
 namespace gooey::wxWidgetsAdapter {
@@ -15,9 +16,11 @@ namespace gooey::wxWidgetsAdapter {
 
     public:
         Label(wxWindow* window) : implLabel(new wxStaticText(window, wxID_ANY, "")) {
-            window->GetSizer()->Add(implLabel);
+            window->GetSizer()->Add(implLabel, wxCENTER);
             SetImplWidget(implLabel);
         }
+
+        GOOEY_WX_COLOR_SETTERS(implLabel)
 
         GOOEY_WX_ADD_COMMON_EVENTS()
 
@@ -30,24 +33,10 @@ namespace gooey::wxWidgetsAdapter {
             return _text.c_str();
         }
 
-        // virtual bool OnClick(void (*callback)(UIWidget*)) { return false; }
-        // virtual bool OnMouseEnter(void (*callback)(UIWidget*)) { return false; }
-        // virtual bool OnMouseLeave(void (*callback)(UIWidget*)) { return false; }
-
         // bool SetFont(const char* fontName, unsigned int fontSize) override {
         //     wxFont font(fontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
         //     implLabel->SetFont(font);
         //     return true;
-        // }
-
-        // bool SetBackgroundColor(unsigned int red, unsigned int green, unsigned int blue) override
-        // {
-        //     return implLabel->SetBackgroundColour(wxColour(red, green, blue, 0));
-        // }
-
-        // bool SetForegroundColor(unsigned int red, unsigned int green, unsigned int blue) override
-        // {
-        //     return implLabel->SetForegroundColour(wxColour(red, green, blue, 0));
         // }
     };
 }

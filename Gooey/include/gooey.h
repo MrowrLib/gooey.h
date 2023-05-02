@@ -27,7 +27,7 @@ namespace gooey {
         virtual bool OnMiddleDoubleClick(void (*callback)(UIWidget*)) { return false; }
     };
 
-    struct UIWidget : public UICommonEvents {
+    struct UIWidget : public UIComponent, public UICommonEvents {
         virtual bool Show() { return false; }
         virtual bool Hide() { return false; }
     };
@@ -61,7 +61,7 @@ namespace gooey {
         virtual UIPanel*  AddVerticalPanel() { return nullptr; }
         virtual UILabel*  AddLabel(const char* text) { return nullptr; }
         virtual UIButton* AddButton(const char* text) { return nullptr; }
-        // virtual UIImage*  AddImage(const char* path) { return nullptr; }
+        virtual UIImage*  AddImage(const char* path) { return nullptr; }
         // virtual UISpacer* AddSpacer(unsigned int size) { return nullptr; }
     };
 

@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "Button.h"
+#include "Image.h"
 #include "Label.h"
 
 namespace gooey::wxWidgetsAdapter {
@@ -47,6 +48,13 @@ namespace gooey::wxWidgetsAdapter {
             button->SetText(text);
             widgets.push_back(std::move(button));
             return static_cast<UIButton*>(widgets.back().get());
+        }
+
+        UIImage* AddImage(const char* path) override {
+            if (!implWindow) return nullptr;
+            auto image = std::make_unique<Image>(implWindow, path);
+            widgets.push_back(std::move(image));
+            return static_cast<UIImage*>(widgets.back().get());
         }
 
         // bool AddImage(const char* path) override {
