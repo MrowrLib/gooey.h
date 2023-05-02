@@ -5,15 +5,18 @@
 
 #include <string>
 
+#include "CommonEvents.h"
+
 namespace gooey::wxWidgetsAdapter {
 
-    class Label : public UILabel {
+    class Label : public UILabel, CommonEvents {
         std::string   _text;
         wxStaticText* implLabel;
 
     public:
         Label(wxWindow* window) : implLabel(new wxStaticText(window, wxID_ANY, "")) {
             window->GetSizer()->Add(implLabel);
+            SetImplWidget(implLabel);
         }
 
         bool SetText(const char* text) override {
@@ -23,6 +26,19 @@ namespace gooey::wxWidgetsAdapter {
         const char* GetText() override {
             _text = implLabel->GetLabelText().ToStdString();
             return _text.c_str();
+        }
+
+        // virtual bool OnClick(void (*callback)(UIWidget*)) { return false; }
+        // virtual bool OnMouseEnter(void (*callback)(UIWidget*)) { return false; }
+        // virtual bool OnMouseLeave(void (*callback)(UIWidget*)) { return false; }
+
+        bool OnMouseEnter(void (*callback)(UIWidget*)) override {
+            CommonEvents::OnMouseEnter(callback);
+            return true;
+        }
+        bool OnMouseLeave(void (*callback)(UIWidget*)) override {
+            CommonEvents::OnMouseLeave(callback);
+            return true;
         }
 
         // bool SetFont(const char* fontName, unsigned int fontSize) override {

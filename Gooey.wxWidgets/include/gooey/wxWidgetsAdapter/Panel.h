@@ -7,7 +7,7 @@
 
 namespace gooey::wxWidgetsAdapter {
 
-    class Panel : public UIPanel, public WidgetContainer {
+    class Panel : public UIPanel, WidgetContainer {
         wxPanel* implPanel;
 
     public:

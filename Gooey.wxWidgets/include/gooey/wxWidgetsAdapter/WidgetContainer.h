@@ -41,11 +41,10 @@ namespace gooey::wxWidgetsAdapter {
             return static_cast<UILabel*>(widgets.back().get());
         }
 
-        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
+        UIButton* AddButton(const char* text) override {
             if (!implWindow) return nullptr;
             auto button = std::make_unique<Button>(implWindow);
             button->SetText(text);
-            button->OnClick(callback);
             widgets.push_back(std::move(button));
             return static_cast<UIButton*>(widgets.back().get());
         }

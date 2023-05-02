@@ -9,18 +9,25 @@
 namespace gooey::wxWidgetsAdapter {
 
     class Button : public UIButton {
-        std::string                                 _text;
-        wxButton*                                   implButton;
-        std::vector<std::function<void(UIButton*)>> _callbacks;
+        std::string _text;
+        wxButton*   implButton;
+        // std::vector<std::function<void(UIButton*)>> _callbacks;
 
-        void RunClickCallbacks(wxCommandEvent& event) {
-            for (auto& callback : _callbacks) callback(this);
-        }
+        // void RunClickCallbacks() {
+        //     for (auto& callback : _callbacks) callback(this);
+        // }
 
     public:
         Button(wxWindow* window) : implButton(new wxButton(window, wxID_ANY, "")) {
             window->GetSizer()->Add(implButton);
-            implButton->Bind(wxEVT_BUTTON, &Button::RunClickCallbacks, this);
+            implButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+                // RunClickCallbacks();
+                event.Skip();
+            });
+            // implButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+            //     RunClickCallbacks();
+            //     event.Skip();
+            // });
         }
 
         bool SetText(const char* text) override {
@@ -32,20 +39,10 @@ namespace gooey::wxWidgetsAdapter {
             return _text.c_str();
         }
 
-        bool OnClick(std::function<void(UIButton*)> callback) {
-            _callbacks.push_back(callback);
-            return true;
-        }
-        bool OnClick(void (*callback)(UIButton*)) override {
-            _callbacks.push_back(callback);
-            return true;
-        }
-
-        bool Click() override {
-            wxCommandEvent event(wxEVT_BUTTON, implButton->GetId());
-            RunClickCallbacks(event);
-            return true;
-        }
+        // bool OnClick(void (*callback)(UIButton*)) override {
+        //     _callbacks.push_back(callback);
+        //     return true;
+        // }
 
         // bool SetFont(const char* fontName, unsigned int fontSize) override {
         //     wxFont font(fontSize, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);

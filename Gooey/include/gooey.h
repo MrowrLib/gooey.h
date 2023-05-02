@@ -14,7 +14,11 @@ namespace gooey {
         }
     };
 
-    struct UIWidget {};
+    struct UIWidget {
+        virtual bool OnClick(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnMouseEnter(void (*callback)(UIWidget*)) { return false; }
+        virtual bool OnMouseLeave(void (*callback)(UIWidget*)) { return false; }
+    };
 
     struct UILabel : public UIWidget {
         virtual ~UILabel() = default;
@@ -26,8 +30,6 @@ namespace gooey {
         virtual ~UIButton() = default;
         virtual bool        SetText(const char* text) { return false; }
         virtual const char* GetText() { return nullptr; }
-        virtual bool        OnClick(void (*callback)(UIButton*)) { return false; }
-        virtual bool        Click() { return false; }
     };
 
     struct UIPanel;
@@ -39,9 +41,7 @@ namespace gooey {
         virtual UIPanel*  AddHorizontalPanel() { return nullptr; }
         virtual UIPanel*  AddVerticalPanel() { return nullptr; }
         virtual UILabel*  AddLabel(const char* text) { return nullptr; }
-        virtual UIButton* AddButton(const char* text, void (*callback)(UIButton*)) {
-            return nullptr;
-        }
+        virtual UIButton* AddButton(const char* text) { return nullptr; }
         // virtual bool      AddImage(const char* path) { return false; }
         // virtual bool      AddSpacer(unsigned int size) { return false; }
     };
@@ -56,6 +56,12 @@ namespace gooey {
 
     struct UIWindow : public UIComponent, public UIWidgetContainer {
         virtual ~UIWindow() = default;
+        // virtual bool OnClick(void (*callback)(UIWindow*)) { return false; }
+        // virtual bool OnMouseEnter(void (*callback)(UIWindow*)) { return false; }
+        // virtual bool OnMouseLeave(void (*callback)(UIWindow*)) { return false; }
+        // virtual bool OnClose(void (*callback)(UIWindow*)) { return false; }
+        // virtual bool OnHide(void (*callback)(UIWindow*)) { return false; }
+        // virtual bool OnShow(void (*callback)(UIWindow*)) { return false; }
         virtual bool        IsVisible() { return false; }
         virtual bool        Show() { return false; }
         virtual bool        Hide() { return false; }

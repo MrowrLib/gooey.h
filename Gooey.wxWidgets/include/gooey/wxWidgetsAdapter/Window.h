@@ -20,7 +20,7 @@ namespace gooey::wxWidgetsAdapter {
         };
     }
 
-    class Window : public UIWindow, public WidgetContainer {
+    class Window : public UIWindow, WidgetContainer {
         Impl::MyFrame* implFrame;
 
     public:
@@ -34,9 +34,7 @@ namespace gooey::wxWidgetsAdapter {
         }
 
         UILabel*  AddLabel(const char* text) override { return WidgetContainer::AddLabel(text); }
-        UIButton* AddButton(const char* text, void (*callback)(UIButton*)) override {
-            return WidgetContainer::AddButton(text, callback);
-        }
+        UIButton* AddButton(const char* text) override { return WidgetContainer::AddButton(text); }
 
         UIPanel* AddHorizontalPanel() override {
             auto panel = std::make_unique<Panel>(implFrame, true);
