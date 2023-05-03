@@ -96,15 +96,15 @@ namespace gooey::FLTKAdapter {
             : _implGroup(new Fl_Group(0, 0, DefaultSizes::PanelWidth, DefaultSizes::PanelHeight)) {
             _implGroup->box(FL_UP_BOX);
 
-            _implBackgroundImageBox = new Impl::BackgroundImageBox(
-                0, 0, DefaultSizes::PanelWidth, DefaultSizes::PanelHeight
-            );
-            _implBackgroundImageBox->SetBackgroundImage("Logo.png");
-            _implGroup->add(_implBackgroundImageBox);
+            // _implBackgroundImageBox = new Impl::BackgroundImageBox(
+            //     0, 0, DefaultSizes::PanelWidth, DefaultSizes::PanelHeight
+            // );
+            // _implBackgroundImageBox->SetBackgroundImage("Logo.png");
+            // _implGroup->add(_implBackgroundImageBox);
 
             _implPack = new Fl_Pack(0, 0, DefaultSizes::PanelWidth, DefaultSizes::PanelHeight);
             _implPack->type(horizontal ? Fl_Pack::HORIZONTAL : Fl_Pack::VERTICAL);
-            _implPack->spacing(10);  // Remove me
+            // _implPack->spacing(10);  // Remove me
 
             // _implPack->end();
             _implGroup->end();
