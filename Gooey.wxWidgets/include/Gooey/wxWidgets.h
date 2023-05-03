@@ -1,4 +1,3 @@
 #pragma once
 
-#include "wxWidgetsAdapter/CreateApplication.h"
-#include "wxWidgetsAdapter/wxWidgets.h"
+#include "wxWidgetsAdapter/GetUIApplication.h"

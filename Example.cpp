@@ -1,4 +1,4 @@
 #include <gooey.h>
-#include <gooey/wx.h>
+#include <gooey/FLTK.h>
 
 int main() {}
