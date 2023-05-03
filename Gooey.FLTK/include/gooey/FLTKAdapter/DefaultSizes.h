@@ -7,7 +7,7 @@ namespace gooey::FLTKAdapter::DefaultSizes {
     unsigned int LabelHeight  = 20;
     unsigned int ImageWidth   = 100;
     unsigned int ImageHeight  = 100;
-    unsigned int PanelWidth   = 100;
+    unsigned int PanelWidth   = 300;
     unsigned int PanelHeight  = 100;
     unsigned int WindowWidth  = 400;
     unsigned int WindowHeight = 300;

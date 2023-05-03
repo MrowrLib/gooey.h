@@ -20,6 +20,7 @@
 // #include "CommonEvents.h"
 // #include "Grid.h"
 // #include "Panel.h"
+#include "Panel.h"
 #include "WidgetContainer.h"
 
 namespace gooey::FLTKAdapter {
@@ -34,7 +35,7 @@ namespace gooey::FLTKAdapter {
                 _pack.type(Fl_Pack::VERTICAL);
                 _pack.spacing(10);  // Remove me
                 // _pack.end();
-                end();
+                // end();
             }
 
             Fl_Pack* GetFlPack() { return &_pack; }
@@ -80,6 +81,15 @@ namespace gooey::FLTKAdapter {
 
         UILabel*  AddLabel(const char* text) override { return WidgetContainer::AddLabel(text); }
         UIButton* AddButton(const char* text) override { return WidgetContainer::AddButton(text); }
+
+        UIPanel* AddHorizontalPanel() override {
+            auto panel = std::make_unique<Panel>(_implWindow.get()->GetFlPack(), true);
+            return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
+        UIPanel* AddVerticalPanel() override {
+            auto panel = std::make_unique<Panel>(_implWindow.get()->GetFlPack(), false);
+            return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
 
         bool SetTitle(const char* title) override {
             _implWindow->label(title);
