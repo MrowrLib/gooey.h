@@ -24,6 +24,7 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     auto* app    = GetUIApplication();
     auto* window = app->AddWindow();
     window->SetTitle("OGRE");
+    window->SetBackgroundColor(0, 0, 0);
 
     auto* board = window->AddGrid(8, 4);
     // board->AddButton("0,0 2,2", 0, 0, 2, 2);

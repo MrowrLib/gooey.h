@@ -29,6 +29,7 @@ namespace gooey::FLTKAdapter {
 
     namespace Impl {
         class FLTKWindow : public Fl_Window {
+            float                     _aspectRatio;
             Fl_Pack                   _pack;
             std::unique_ptr<Fl_Image> _backgroundImage;
             UIBackgroundImageStyle    _BackgroundImageStyle = UIBackgroundImageStyle::Default;
@@ -44,8 +45,24 @@ namespace gooey::FLTKAdapter {
                 }
             }
 
+            // static void resizeCallback(Fl_Widget* widget, void* data) {
+            //     FLTKWindow* win   = static_cast<FLTKWindow*>(data);
+            //     int         new_w = win->w();
+            //     int         new_h = win->h();
+
+            //     if (static_cast<float>(new_w) / new_h > win->_aspectRatio) {
+            //         new_w = static_cast<int>(new_h * win->_aspectRatio);
+            //     } else {
+            //         new_h = static_cast<int>(new_w / win->_aspectRatio);
+            //     }
+
+            //     win->size_range(new_w, new_h, new_w, new_h);
+            // }
+
         public:
-            FLTKWindow(int w, int h) : Fl_Window(w, h), _pack(0, 0, w, h) {
+            FLTKWindow(int w, int h)
+                : Fl_Window(w, h), _pack(0, 0, w, h), _aspectRatio(static_cast<float>(w) / h) {
+                // size_range(w / 2, h / 2, w * 2, h * 2);
                 resizable(this);
                 _pack.type(Fl_Pack::VERTICAL);
                 _pack.spacing(10);  // Remove me
@@ -100,13 +117,42 @@ namespace gooey::FLTKAdapter {
             //     }
             // }
 
-            void resize(int X, int Y, int W, int H) override {
-                Fl_Window::resize(X, Y, W, H);
+            void resize(int x, int y, int w, int h) override {
+                // Only maintain ratio for FLTK_Grids:
+                Fl_Window::resize(x, y, w, h);
                 for (int i = 0; i < children(); ++i) {
                     Fl_Widget* widget = child(i);
-                    resizeWidget(widget, W, H);
+                    resizeWidget(widget, w, h);
                 }
+
+                // Completely maintain aspect ratio (of the CONTENTS)
+                // if (static_cast<float>(w) / h > _aspectRatio) {
+                //     w = static_cast<int>(h * _aspectRatio);
+                // } else {
+                //     h = static_cast<int>(w / _aspectRatio);
+                // }
+                // Fl_Window::resize(x, y, w, h);
             }
+
+            // int handle(int event) override {
+            //     switch (event) {
+            //         case FL_DRAG: {
+            //             int new_w = Fl::event_x() - x();
+            //             int new_h = Fl::event_y() - y();
+
+            //             if (static_cast<float>(new_w) / new_h > _aspectRatio) {
+            //                 new_w = static_cast<int>(new_h * _aspectRatio);
+            //             } else {
+            //                 new_h = static_cast<int>(new_w / _aspectRatio);
+            //             }
+
+            //             size(new_w, new_h);
+            //             return 1;
+            //         }
+            //         default:
+            //             return Fl_Window::handle(event);
+            //     }
+            // }
         };
     }
 
