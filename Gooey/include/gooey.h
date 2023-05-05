@@ -3,10 +3,18 @@
 namespace gooey {
 
     extern "C" {
+        enum class UIBackgroundImageStyle { Default, Original, Fill, Repeat };
+
+        enum class UIVerticalAlignment { Default, Top, Center, Bottom };
+
+        enum class UIHorizontalAlignment { Default, Left, Center, Right };
+
         struct UIComponent {
+            // TODO
             // virtual bool IsDetached()                        = 0;
             // virtual void Detach()                                  = 0;
             // virtual void OnDetatch(void (*callback)(UIComponent*)) = 0;
+
             virtual bool SetBackgroundColor(
                 unsigned int red, unsigned int green, unsigned int blue
             ) {
@@ -17,6 +25,15 @@ namespace gooey {
             ) {
                 return false;
             }
+            virtual bool AddBackgroundImage(
+                const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+                UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+                UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+                unsigned int height = 0
+            ) {
+                return false;
+            }
+            virtual bool RemoveBackgroundImage(const char* path) { return false; }
         };
 
         struct UIWidget;
@@ -73,10 +90,19 @@ namespace gooey {
         };
 
         struct UIGrid : public UIWidget, public UIWidgetContainer {
-            virtual UIWidget* GetWidget(unsigned int x, unsigned int y) { return nullptr; }
-            virtual UIPanel*  AddHorizontalPanel(
-                 unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
-             ) {
+            virtual ~UIGrid() = default;
+            virtual bool      HasElementAt(unsigned int x, unsigned int y) { return false; }
+            virtual bool      RemoveElementAt(unsigned int x, unsigned int y) { return false; }
+            virtual UIWidget* GetWidgetAt(unsigned int x, unsigned int y) { return nullptr; }
+            virtual bool      Clear() { return false; }
+            virtual bool      ClearRange(
+                     unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+                 ) {
+                return false;
+            }
+            virtual UIPanel* AddHorizontalPanel(
+                unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+            ) {
                 return nullptr;
             }
             virtual UIPanel* AddVerticalPanel(

@@ -1,0 +1,19 @@
+#pragma once
+
+#include <gooey.h>
+
+namespace gooey::FLTKAdapter::Defaults {
+    unsigned int           ButtonWidth                = 100;
+    unsigned int           ButtonHeight               = 20;
+    unsigned int           LabelWidth                 = 100;
+    unsigned int           LabelHeight                = 20;
+    unsigned int           ImageWidth                 = 100;
+    unsigned int           ImageHeight                = 100;
+    unsigned int           PanelWidth                 = 300;
+    unsigned int           PanelHeight                = 100;
+    unsigned int           WindowWidth                = 400;
+    unsigned int           WindowHeight               = 300;
+    UIBackgroundImageStyle BackgroundImageStyle       = UIBackgroundImageStyle::Fill;
+    UIHorizontalAlignment  DefaultHorizontalAlignment = UIHorizontalAlignment::Center;
+    UIVerticalAlignment    DefaultVerticalAlignment   = UIVerticalAlignment::Center;
+}

@@ -11,7 +11,7 @@
 #include <string>
 
 #include "Colors.h"
-#include "DefaultSizes.h"
+#include "Defaults.h"
 
 namespace gooey::FLTKAdapter {
 
@@ -20,7 +20,7 @@ namespace gooey::FLTKAdapter {
 
     public:
         Label(Fl_Pack* pack)
-            : _implLabel(new Fl_Box(0, 0, DefaultSizes::LabelWidth, DefaultSizes::LabelHeight)) {
+            : _implLabel(new Fl_Box(0, 0, Defaults::LabelWidth, Defaults::LabelHeight)) {
             _implLabel->box(FL_FLAT_BOX);
             pack->add(_implLabel);
         }

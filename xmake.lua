@@ -5,7 +5,7 @@ set_toolchains("msvc")
 
 includes("**/xmake.lua")
 
-target("ClangHappiness")
+target("Example")
     set_kind("binary")
     add_files("Example.cpp")
     add_deps("Gooey", "Gooey.FLTK")
