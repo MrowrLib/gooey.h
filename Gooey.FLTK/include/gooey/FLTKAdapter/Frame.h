@@ -21,8 +21,7 @@
 
 // #include "Colors.h"
 // #include "CommonEvents.h"
-// #include "Grid.h"
-// #include "Panel.h"
+#include "Grid.h"
 #include "Panel.h"
 #include "WidgetContainer.h"
 
@@ -33,6 +32,17 @@ namespace gooey::FLTKAdapter {
             Fl_Pack                   _pack;
             std::unique_ptr<Fl_Image> _backgroundImage;
             UIBackgroundImageStyle    _BackgroundImageStyle = UIBackgroundImageStyle::Default;
+
+            void resizeWidget(Fl_Widget* widget, int W, int H) {
+                if (FLTK_Grid* grid = dynamic_cast<FLTK_Grid*>(widget)) {
+                    grid->resize(0, 0, W, H);
+                } else if (Fl_Pack* pack = dynamic_cast<Fl_Pack*>(widget)) {
+                    for (int i = 0; i < pack->children(); ++i) {
+                        Fl_Widget* child_widget = pack->child(i);
+                        resizeWidget(child_widget, W, H);
+                    }
+                }
+            }
 
         public:
             FLTKWindow(int w, int h) : Fl_Window(w, h), _pack(0, 0, w, h) {
@@ -81,12 +91,20 @@ namespace gooey::FLTKAdapter {
                 }
             }
 
-            void resize(int x, int y, int w, int h) override {
-                Fl_Window::resize(x, y, w, h);
-                _pack.resize(0, 0, w, h);
-                if (_backgroundImage) {
-                    DrawBackgroundImage(x, y, w, h);
-                    // _backgroundImage->draw(0, 0, w, h);
+            // void resize(int x, int y, int w, int h) override {
+            //     Fl_Window::resize(x, y, w, h);
+            //     // _pack.resize(0, 0, w, h);
+            //     if (_backgroundImage) {
+            //         DrawBackgroundImage(x, y, w, h);
+            //         // _backgroundImage->draw(0, 0, w, h);
+            //     }
+            // }
+
+            void resize(int X, int Y, int W, int H) override {
+                Fl_Window::resize(X, Y, W, H);
+                for (int i = 0; i < children(); ++i) {
+                    Fl_Widget* widget = child(i);
+                    resizeWidget(widget, W, H);
                 }
             }
         };
@@ -132,6 +150,10 @@ namespace gooey::FLTKAdapter {
         UIPanel* AddVerticalPanel() override {
             auto panel = std::make_unique<Panel>(_implWindow.get()->GetFlPack(), false);
             return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
+        UIGrid* AddGrid(unsigned int cols, unsigned int rows) override {
+            auto grid = std::make_unique<Grid>(_implWindow.get()->GetFlPack(), cols, rows);
+            return static_cast<UIGrid*>(AddWidget(std::move(grid)));
         }
 
         bool SetTitle(const char* title) override {

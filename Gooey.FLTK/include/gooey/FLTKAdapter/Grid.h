@@ -48,25 +48,76 @@ namespace gooey::FLTKAdapter {
                 }
             }
 
-            // ButtonWithBackgroundImage* AddButton(
-            //     int x, int y, int cols, int rows, bool replace = true
-            // ) {
-            //     if (replace) {
-            //         ClearRange(x, y, cols, rows);
-            //     }
-            //     auto button = new ButtonWithBackgroundImage(
-            //         x * (_cellWidth + _padding), y * (_cellHeight + _padding),
-            //         cols * _cellWidth + (cols - 1) * _padding,
-            //         rows * _cellHeight + (rows - 1) * _padding
-            //     );
-            //     add(button);
-            //     for (int i = y; i < y + rows; ++i) {
-            //         for (int j = x; j < x + cols; ++j) {
-            //             _gridElements[i][j] = button;
-            //         }
-            //     }
-            //     return button;
-            // }
+            void draw() override {
+                // Draw the background color
+                fl_color(FL_RED);
+                fl_rectf(x(), y(), w(), h());
+
+                // Draw the background image if available
+                // if (_backgroundImage) {
+                //     _backgroundImage->draw(x(), y(), w(), h());
+                // }
+
+                // Draw the children (i.e., grid elements)
+                draw_children();
+            }
+
+            void resize(int X, int Y, int W, int H) override {
+                // Calculate the new dimensions while maintaining the aspect ratio
+                float aspectRatio = static_cast<float>(_numCols) / static_cast<float>(_numRows);
+                int   newWidth    = W;
+                int   newHeight   = static_cast<int>(newWidth / aspectRatio);
+
+                // Check if the new height is larger than the available height
+                if (newHeight > H) {
+                    newHeight = H;
+                    newWidth  = static_cast<int>(newHeight * aspectRatio);
+                }
+
+                // Center the grid within the available space
+                int newX = X + (W - newWidth) / 2;
+                int newY = Y + (H - newHeight) / 2;
+
+                // Call the base class resize() method with the calculated dimensions
+                Fl_Group::resize(newX, newY, newWidth, newHeight);
+
+                // Update the cell dimensions
+                _cellWidth  = newWidth / _numCols - _padding;
+                _cellHeight = newHeight / _numRows - _padding;
+
+                // Update the positions and sizes of the child widgets (grid elements)
+                for (int i = 0; i < _numRows; ++i) {
+                    for (int j = 0; j < _numCols; ++j) {
+                        Fl_Widget* widget = _gridElements[i][j];
+                        widget->resize(
+                            newX + j * (_cellWidth + _padding), newY + i * (_cellHeight + _padding),
+                            _cellWidth, _cellHeight
+                        );
+                        widget->redraw();
+                    }
+                }
+
+                redraw();
+            }
+
+            Fl_Button* AddButton(int x, int y, int cols, int rows, bool replace = true) {
+                if (replace) {
+                    ClearRange(x, y, cols, rows);
+                }
+                auto button = new Fl_Button(
+                    x * (_cellWidth + _padding), y * (_cellHeight + _padding),
+                    cols * _cellWidth + (cols - 1) * _padding,
+                    rows * _cellHeight + (rows - 1) * _padding
+                );
+                button->label("I AM BUTTON");
+                add(button);
+                for (int i = y; i < y + rows; ++i) {
+                    for (int j = x; j < x + cols; ++j) {
+                        _gridElements[i][j] = button;
+                    }
+                }
+                return button;
+            }
 
             // BoxWithBackgroundImage* AddLabel(
             //     int x, int y, int cols, int rows, bool replace = true
@@ -137,20 +188,23 @@ namespace gooey::FLTKAdapter {
     }
 
     class Grid : public UIGrid {
-        // public:
+        Impl::FLTK_Grid _implGrid;
 
-        // Label(Fl_Pack* pack, unsigned int col) {}
-        // : _implLabel(new Fl_Box(0, 0, Defaults::LabelWidth, Defaults::LabelHeight)) {
-        // _implLabel->box(FL_FLAT_BOX);
-        // pack->add(_implLabel);
-        // }
+    public:
+        Grid(Fl_Pack* pack, int numCols, int numRows)
+            : _implGrid(
+                  numCols, numRows, Defaults::GridCellWidth, Defaults::GridCellHeight,
+                  Defaults::GridPadding
+              ) {
+            _implGrid.color(FL_RED);
 
-        // GOOEY_FLTK_COLOR_SETTERS(_implLabel)
+            pack->add(_implGrid);
 
-        // bool SetText(const char* text) override {
-        //     _implLabel->label(text);
-        //     return true;
-        // }
-        // const char* GetText() override { return _implLabel->label(); }
+            _implGrid.AddButton(0, 0, 2, 2);
+            _implGrid.AddButton(3, 0, 1, 4);
+            _implGrid.AddButton(6, 3, 2, 1);
+        }
+
+        // Add Button
     };
 }

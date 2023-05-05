@@ -24,32 +24,9 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     auto* app    = GetUIApplication();
     auto* window = app->AddWindow();
     window->SetTitle("OGRE");
-    // window->SetBackgroundColor(0, 0, 0);
 
-    auto* panel = window->AddHorizontalPanel();
-    panel->AddButton("Hello, panel");
-
-    panel->AddBackgroundImage("Cleric.png", UIBackgroundImageStyle::Fill);
-
-    // ALIGN IMAGE TO TOP LEFT, TOP RIGHT, BOTTOM LEFT, BOTTOM RIGHT, CENTER, or STRETCH
-
-    // window->SetBackgroundImage("Logo.png");
-
-    // window->AddLabel("ONE (label)")->SetBackgroundColor(255, 0, 255);
-    // window->AddButton("TWO (button)")->SetBackgroundColor(0, 255, 255);
-
-    // auto* panel1 = window->AddHorizontalPanel();
-    // panel1->AddLabel("Label 1");
-    // panel1->AddLabel("Label 2");
-    // panel1->AddLabel("Label 3");
-
-    // auto* panel2 = window->AddVerticalPanel();
-    // panel2->AddButton("A");
-    // panel2->AddButton("B");
-    // panel2->AddButton("C");
-    // panel2->SetBackgroundColor(123, 20, 222);
-
-    // window->AddLabel("THREE (label)")->SetBackgroundColor(255, 255, 0);
+    auto* board = window->AddGrid(8, 4);
+    // board->AddButton("0,0 2,2", 0, 0, 2, 2);
 
     window->Show();
     app->Start();

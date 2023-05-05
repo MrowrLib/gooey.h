@@ -13,6 +13,9 @@ namespace gooey::FLTKAdapter::Defaults {
     unsigned int           PanelHeight                = 100;
     unsigned int           WindowWidth                = 400;
     unsigned int           WindowHeight               = 300;
+    unsigned int           GridCellWidth              = 20;
+    unsigned int           GridCellHeight             = 20;
+    unsigned int           GridPadding                = 5;
     UIBackgroundImageStyle BackgroundImageStyle       = UIBackgroundImageStyle::Fill;
     UIHorizontalAlignment  DefaultHorizontalAlignment = UIHorizontalAlignment::Center;
     UIVerticalAlignment    DefaultVerticalAlignment   = UIVerticalAlignment::Center;
