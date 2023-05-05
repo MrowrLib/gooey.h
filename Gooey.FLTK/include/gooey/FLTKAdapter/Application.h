@@ -15,6 +15,7 @@
 #include <gooey.h>
 
 #include "Frame.h"
+#include "Pack.h"
 
 namespace gooey::FLTKAdapter {
 

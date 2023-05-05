@@ -14,20 +14,20 @@
 
 #include "Button.h"
 #include "Label.h"
-
+#include "Pack.h"
 
 namespace gooey::FLTKAdapter {
 
     class WidgetContainer : public UIWidgetContainer {
-        Fl_Pack* _implPack;
+        Impl::PackWhichIncreasesSizeOfItsParent* _implPack;
 
         std::vector<std::unique_ptr<UIWidget>> _widgets;
 
     public:
         WidgetContainer() = default;
-        explicit WidgetContainer(Fl_Pack* pack) : _implPack(pack) {}
+        explicit WidgetContainer(Impl::PackWhichIncreasesSizeOfItsParent* pack) : _implPack(pack) {}
 
-        void SetImplFlPack(Fl_Pack* pack) { _implPack = pack; }
+        void SetImplFlPack(Impl::PackWhichIncreasesSizeOfItsParent* pack) { _implPack = pack; }
 
         UIWidget* AddWidget(std::unique_ptr<UIWidget> widget) {
             _widgets.push_back(std::move(widget));

@@ -15,19 +15,46 @@
 using namespace gooey;
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    FLTKAdapter::Defaults::ButtonHeight = 50;
-
-    /*
-        TODO: AddBackgroundImage() RemoveBackgroundImage()
-    */
+    FLTKAdapter::Defaults::ButtonHeight   = 30;
+    FLTKAdapter::Defaults::GridCellHeight = 50;
+    FLTKAdapter::Defaults::GridCellWidth  = 50;
+    FLTKAdapter::Defaults::GridPadding    = 5;
+    FLTKAdapter::Defaults::WindowWidth    = 1200;
+    FLTKAdapter::Defaults::WindowHeight   = 600;
 
     auto* app    = GetUIApplication();
     auto* window = app->AddWindow();
     window->SetTitle("OGRE");
     window->SetBackgroundColor(0, 0, 0);
 
-    auto* board = window->AddGrid(8, 4);
-    // board->AddButton("0,0 2,2", 0, 0, 2, 2);
+    auto* columns = window->AddHorizontalPanel();
+    columns->SetBackgroundColor(255, 0, 255);
+
+    columns->AddButton("LEFT");
+
+    auto* column1 = columns->AddVerticalPanel();
+    column1->SetBackgroundColor(255, 0, 0);
+    column1->AddButton("LEFT");
+
+    auto* column2 = columns->AddVerticalPanel();
+    column2->SetBackgroundColor(0, 255, 0);
+    column2->AddButton("TOP");
+
+    auto* grid = column2->AddGrid(8, 8);
+
+    column2->AddButton("BOTTOM");
+
+    auto* column3 = columns->AddVerticalPanel();
+    column3->SetBackgroundColor(0, 0, 255);
+    column3->AddButton("RIGHT");
+
+    columns->AddButton("RIGHT");
+
+    auto* column4 = columns->AddVerticalPanel();
+    column4->SetBackgroundColor(255, 50, 255);
+    column4->AddButton("Again...");
+
+    auto* board2 = column4->AddGrid(3, 3);
 
     window->Show();
     app->Start();

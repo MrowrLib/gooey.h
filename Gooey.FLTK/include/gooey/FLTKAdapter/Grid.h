@@ -22,6 +22,8 @@
 #include <unordered_set>
 #include <vector>
 
+#include "Pack.h"
+
 namespace gooey::FLTKAdapter {
 
     namespace Impl {
@@ -31,6 +33,7 @@ namespace gooey::FLTKAdapter {
             int                                       _cellWidth, _cellHeight, _padding;
             std::vector<std::vector<Fl_Widget*>>      _gridElements;
             std::map<Fl_Widget*, std::pair<int, int>> _widgetSizes;
+            int                                       _initialWidth, _initialHeight;
 
         public:
             FLTK_Grid(int numCols, int numRows, int cellWidth, int cellHeight, int padding)
@@ -41,8 +44,13 @@ namespace gooey::FLTKAdapter {
                   _cellHeight(cellHeight),
                   _padding(padding) {
                 // color(FL_WHITE);
+                resizable(this);
+
+                _initialWidth  = w();
+                _initialHeight = h();
 
                 end();
+                box(FL_NO_BOX);
 
                 _gridElements.resize(_numRows, std::vector<Fl_Widget*>(_numCols, nullptr));
                 for (int i = 0; i < _numRows; ++i) {
@@ -57,6 +65,9 @@ namespace gooey::FLTKAdapter {
                     }
                 }
             }
+
+            int GetInitialWidth() const { return _initialWidth; }
+            int GetInitialHeight() const { return _initialHeight; }
 
             void draw() override {
                 // Draw the background color
@@ -239,21 +250,23 @@ namespace gooey::FLTKAdapter {
     }
 
     class Grid : public UIGrid {
-        Impl::FLTK_Grid _implGrid;
+        Impl::FLTK_Grid* _implGrid;
 
     public:
-        Grid(Fl_Pack* pack, int numCols, int numRows)
-            : _implGrid(
+        Grid(Impl::PackWhichIncreasesSizeOfItsParent* pack, int numCols, int numRows)
+            : _implGrid(new Impl::FLTK_Grid(
                   numCols, numRows, Defaults::GridCellWidth, Defaults::GridCellHeight,
                   Defaults::GridPadding
-              ) {
-            pack->add(_implGrid);
+              )) {
+            _implGrid->AddButton(0, 0, 2, 2);
+            _implGrid->AddButton(2, 2, 1, 3);
+            _implGrid->AddButton(3, 0, 1, 4);
+            _implGrid->AddButton(6, 3, 2, 1);
 
-            _implGrid.AddButton(0, 0, 2, 2);
-            _implGrid.AddButton(2, 2, 1, 3);
-            _implGrid.AddButton(3, 0, 1, 4);
-            _implGrid.AddButton(6, 3, 2, 1);
+            pack->add(_implGrid);
         }
+
+        Impl::FLTK_Grid* GetImplGrid() { return _implGrid; }
 
         // Add Button
     };

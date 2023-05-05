@@ -17,11 +17,46 @@
 #include <memory>
 
 #include "Colors.h"
+#include "Grid.h"
+#include "Pack.h"
 #include "WidgetContainer.h"
+
 
 namespace gooey::FLTKAdapter {
 
     namespace Impl {
+
+        // class PackWhichIncreasesSizeOfItsParent : public Fl_Pack {
+        // public:
+        //     PackWhichIncreasesSizeOfItsParent(
+        //         int x, int y, int w, int h, const char* label = nullptr
+        //     )
+        //         : Fl_Pack(x, y, w, h, label) {}
+
+        //     void add(Fl_Widget* widget) {
+        //         Fl_Pack::add(widget);
+        //         update_parent_size();
+        //     }
+
+        //     void update_parent_size() {
+        //         if (!parent()) return;
+
+        //         int max_x = 0;
+        //         int max_y = 0;
+
+        //         for (int i = 0; i < children(); ++i) {
+        //             Fl_Widget* widget       = child(i);
+        //             int        widget_max_x = widget->x() + widget->w();
+        //             int        widget_max_y = widget->y() + widget->h();
+
+        //             if (widget_max_x > max_x) max_x = widget_max_x;
+        //             if (widget_max_y > max_y) max_y = widget_max_y;
+        //         }
+
+        //         parent()->size(max_x, max_y);
+        //     }
+        // };
+
         class BackgroundImage {
             std::string               _path;
             std::unique_ptr<Fl_Image> _image;
@@ -120,20 +155,31 @@ namespace gooey::FLTKAdapter {
     }
 
     class Panel : public UIPanel, WidgetContainer {
-        Fl_Group*                 _implGroup;
-        Fl_Pack*                  _implPack;
-        Impl::BackgroundImageBox* _implBackgroundImageBox;
+        Fl_Group*                                _implGroup;
+        Impl::PackWhichIncreasesSizeOfItsParent* _implPack;
+        // Impl::BackgroundImageBox*                       _implBackgroundImageBox;
+        std::map<Impl::FLTK_Grid*, std::pair<int, int>> _initialGridDimensions;
+
+        void storeInitialGridDimensions(Impl::FLTK_Grid* grid) {
+            _initialGridDimensions[grid] = std::make_pair(grid->w(), grid->h());
+        }
 
     public:
         Panel(Fl_Pack* pack, bool horizontal)
             : _implGroup(new Fl_Group(0, 0, Defaults::PanelWidth, Defaults::PanelHeight)) {
+            _implGroup->resizable(_implGroup);
             _implGroup->box(FL_UP_BOX);
-            _implBackgroundImageBox =
-                new Impl::BackgroundImageBox(0, 0, Defaults::PanelWidth, Defaults::PanelHeight);
-            _implGroup->add(_implBackgroundImageBox);
-            _implPack = new Fl_Pack(0, 0, Defaults::PanelWidth, Defaults::PanelHeight);
+            // _implBackgroundImageBox =
+            //     new Impl::BackgroundImageBox(0, 0, Defaults::PanelWidth, Defaults::PanelHeight);
+            // _implGroup->add(_implBackgroundImageBox);
+            _implPack = new Impl::PackWhichIncreasesSizeOfItsParent(
+                0, 0, Defaults::PanelWidth, Defaults::PanelHeight
+            );
+            _implPack->spacing(10);
             _implPack->type(horizontal ? Fl_Pack::HORIZONTAL : Fl_Pack::VERTICAL);
+            _implGroup->add(_implPack);  // Add the inner Fl_Pack to the outer Fl_Group.
             _implGroup->end();
+            pack->add(_implGroup);  // Add the outer Fl_Group to the passed Fl_Pack.
             SetImplFlPack(_implPack);
         }
 
@@ -142,20 +188,34 @@ namespace gooey::FLTKAdapter {
         UILabel*  AddLabel(const char* text) override { return WidgetContainer::AddLabel(text); }
         UIButton* AddButton(const char* text) override { return WidgetContainer::AddButton(text); }
 
+        UIPanel* AddHorizontalPanel() override {
+            auto panel = std::make_unique<Panel>(_implPack, true);
+            return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
+        UIPanel* AddVerticalPanel() override {
+            auto panel = std::make_unique<Panel>(_implPack, false);
+            return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        }
+        UIGrid* AddGrid(unsigned int cols, unsigned int rows) override {
+            auto grid = std::make_unique<Grid>(_implPack, cols, rows);
+            storeInitialGridDimensions(grid.get()->GetImplGrid());
+            return static_cast<UIGrid*>(AddWidget(std::move(grid)));
+        }
+
         bool AddBackgroundImage(
             const char* path, UIBackgroundImageStyle style = UIBackgroundImageStyle::Default,
             UIHorizontalAlignment horizontalAlignment = UIHorizontalAlignment::Left,
             UIVerticalAlignment   verticalAlignment   = UIVerticalAlignment::Top,
             unsigned int width = 0, unsigned int height = 0
         ) override {
-            _implBackgroundImageBox->AddBackgroundImage(
-                path, style, horizontalAlignment, verticalAlignment, width, height
-            );
+            // _implBackgroundImageBox->AddBackgroundImage(
+            //     path, style, horizontalAlignment, verticalAlignment, width, height
+            // );
             return true;
         }
 
         bool RemoveBackgroundImage(const char* path) override {
-            _implBackgroundImageBox->RemoveBackgroundImage(path);
+            // _implBackgroundImageBox->RemoveBackgroundImage(path);
             return true;
         }
     };

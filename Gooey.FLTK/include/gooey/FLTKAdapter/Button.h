@@ -12,6 +12,8 @@
 
 #include "Colors.h"
 #include "Defaults.h"
+#include "Pack.h"
+
 
 namespace gooey::FLTKAdapter {
 
@@ -70,7 +72,7 @@ namespace gooey::FLTKAdapter {
         Impl::ButtonWithBetterBackgroundImage* _implButton;
 
     public:
-        Button(Fl_Pack* pack)
+        Button(Impl::PackWhichIncreasesSizeOfItsParent* pack)
             : _implButton(new Impl::ButtonWithBetterBackgroundImage(
                   0, 0, Defaults::ButtonWidth, Defaults::ButtonHeight
               )) {
