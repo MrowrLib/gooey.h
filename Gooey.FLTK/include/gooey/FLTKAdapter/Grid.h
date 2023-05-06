@@ -10,6 +10,7 @@
 #include <gooey.h>
 
 #include <format>
+#include <functional>
 #include <map>
 #include <memory>
 #include <string>
@@ -17,12 +18,15 @@
 #include <vector>
 
 #include "IGrid.h"
+#include "Impl/GridBox.h"
+#include "Impl/GridEvent.h"
 #include "Pack.h"
 #include "WidgetContainer.h"
 
 namespace gooey::FLTKAdapter {
 
     namespace Impl {
+
         class FLTK_Grid : public Fl_Group {
             std::unique_ptr<Fl_Color>                 _backgroundColor;
             int                                       _numCols, _numRows;
@@ -30,7 +34,8 @@ namespace gooey::FLTKAdapter {
             std::vector<std::vector<Fl_Widget*>>      _gridElements;
             std::map<Fl_Widget*, std::pair<int, int>> _widgetSizes;
             int                                       _initialWidth, _initialHeight;
-            Fl_Shared_Image*                          _backgroundImage;
+            Fl_Shared_Image*                          _backgroundImage = nullptr;
+            std::function<void(GridEvent, int, int)>  _eventsCallback;
 
         public:
             FLTK_Grid(int numCols, int numRows, int cellWidth, int cellHeight, int padding)
@@ -40,7 +45,6 @@ namespace gooey::FLTKAdapter {
                   _cellWidth(cellWidth),
                   _cellHeight(cellHeight),
                   _padding(padding) {
-                // color(FL_WHITE);
                 resizable(this);
 
                 _initialWidth  = w();
@@ -52,19 +56,9 @@ namespace gooey::FLTKAdapter {
                 _gridElements.resize(_numRows, std::vector<Fl_Widget*>(_numCols, nullptr));
                 for (int i = 0; i < _numRows; ++i) {
                     for (int j = 0; j < _numCols; ++j) {
-                        auto box = new Fl_Box(
-                            j * (_cellWidth + _padding), i * (_cellHeight + _padding), _cellWidth,
-                            _cellHeight
-                        );
-                        // box->color(FL_WHITE);
-                        add(box);
-                        _gridElements[i][j] = box;
+                        AddButton("", j, i, 1, 1, false);
                     }
                 }
-            }
-
-            ~FLTK_Grid() override {
-                // if (_backgroundImage) _backgroundImage->release();
             }
 
             int GetInitialWidth() const { return _initialWidth; }
@@ -74,38 +68,13 @@ namespace gooey::FLTKAdapter {
                 _backgroundColor = std::make_unique<Fl_Color>(color);
             }
 
-            void SetBackgroundImage(const char* imagePath) {
-                if (_backgroundImage) _backgroundImage->release();
-
-                _backgroundImage = Fl_Shared_Image::get(imagePath);
-                if (!_backgroundImage)
-                    throw std::runtime_error(std::format("Failed to load image: {}", imagePath));
-            }
-
-            // void AddBackgroundImage(const char* imagePath) {
-            //     if (_backgroundImage) _backgroundImage->release();
-
-            //     _backgroundImage = Fl_Shared_Image::get(imagePath);
-            //     if (!_backgroundImage)
-            //         throw std::runtime_error(std::format("Failed to load image: {}", imagePath));
-            //     // _backgroundImage->scale(w(), h(), 1, 1);
-            // }
+            void SetBackgroundImage(const char* imagePath) {}
 
             void draw() override {
                 // Draw the background color
                 if (_backgroundColor) {
                     fl_color(*_backgroundColor);
                     fl_rectf(x(), y(), w(), h());
-                }
-
-                // // Draw the background image if available
-                if (_backgroundImage) {
-                    // ...
-                    // _backgroundImage->draw(x(), y(), w(), h());
-                    fl_push_clip(x(), y(), w(), h());
-                    std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(w(), h()));
-                    scaledImage->draw(x(), y(), w(), h());
-                    fl_pop_clip();
                 }
 
                 // Draw the grid lines
@@ -202,10 +171,7 @@ namespace gooey::FLTKAdapter {
                     cols * _cellWidth + (cols - 1) * _padding,
                     rows * _cellHeight + (rows - 1) * _padding
                 );
-                // auto label = std::format("({},{}) [{},{}]", x, y, cols, rows);
-                // button->copy_label(label.c_str());
                 button->copy_label(label);
-                // button->color(fl_rgb_color(247, 17, 205));
                 add(button);
                 for (int i = y; i < y + rows; ++i) {
                     for (int j = x; j < x + cols; ++j) {
@@ -292,7 +258,8 @@ namespace gooey::FLTKAdapter {
     };
 
     class Grid : public UIGrid, public IGrid, WidgetContainer {
-        Impl::FLTK_Grid* _implGrid;
+        Impl::FLTK_Grid*                                             _implGrid;
+        std::vector<std::function<void(unsigned int, unsigned int)>> _cellLeftClickHandlers;
 
     public:
         Grid(Impl::PackWhichIncreasesSizeOfItsParent* pack, int numCols, int numRows)
@@ -300,11 +267,6 @@ namespace gooey::FLTKAdapter {
                   numCols, numRows, Defaults::GridCellWidth, Defaults::GridCellHeight,
                   Defaults::GridPadding
               )) {
-            // _implGrid->AddButton(0, 0, 2, 2);
-            // _implGrid->AddButton(2, 2, 1, 3);
-            // _implGrid->AddButton(3, 0, 1, 4);
-            // _implGrid->AddButton(6, 3, 2, 1);
-
             pack->add(_implGrid);
         }
 
@@ -318,6 +280,11 @@ namespace gooey::FLTKAdapter {
 
         bool SetForegroundColor(unsigned int red, unsigned int green, unsigned int blue) override {
             // widget->labelcolor(fl_rgb_color(red, green, blue));
+            return true;
+        }
+
+        bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) override {
+            _cellLeftClickHandlers.push_back(callback);
             return true;
         }
 
@@ -339,10 +306,67 @@ namespace gooey::FLTKAdapter {
             _implGrid->SetBackgroundImage(path);
             return true;
         }
-
-        // UIPanel* AddVerticalPanel() override {
-        //     auto panel = std::make_unique<Panel>(_implPack, false);
-        //     return static_cast<UIPanel*>(AddWidget(std::move(panel)));
-        // }
     };
 }
+
+// UIPanel* AddVerticalPanel() override {
+//     auto panel = std::make_unique<Panel>(_implPack, false);
+//     return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+// }
+
+// int handle(int event) override {
+//     if (event == FL_PUSH) {
+//         fl_message("PUSH!");
+//         if (Fl::event_button() == FL_LEFT_MOUSE) {
+//             fl_message("LEFT!");
+//             if (Fl::event_clicks()) {
+//                 fl_message("TWO?");
+//             } else {
+//                 fl_message("ONE!");
+//                 fl_message("Left click at (%d, %d)", Fl::event_x(), Fl::event_y());
+//                 // for (auto& callback : _callbacks[GridEventType::LeftClick]) {
+//                 //     callback(GridEvent{
+//                 //         GridEventType::LeftClick, _x, _y, _columnCount,
+//                 _rowCount});
+//                 // }
+//             }
+//         }
+//     }
+//     return Fl_Group::handle(event);
+// }
+
+// int handle(int event) override {
+//     switch (event) {
+//         case FL_PUSH:
+//             if (Fl::event_button() == FL_LEFT_MOUSE) {
+//                 if (Fl::event_clicks()) {
+//                     // printf("Left double click\n");
+//                 } else {
+//                     printf("Left click\n");
+//                     int x = Fl::event_x();
+//                     int y = Fl::event_y();
+//                 }
+//             }
+//             // } else if (Fl::event_button() == FL_RIGHT_MOUSE) {
+//             //     printf("Right click\n");
+//             // }
+//             return 1;
+//         // case FL_ENTER:
+//         //     printf("Mouse over\n");
+//         //     return 1;
+//         // case FL_LEAVE:
+//         //     printf("Mouse leave\n");
+//         //     return 1;
+//         default:
+//             return Fl_Group::handle(event);
+//     }
+// }
+
+// void AddBackgroundImage(const char* imagePath) {
+//     if (_backgroundImage) _backgroundImage->release();
+
+//     _backgroundImage = Fl_Shared_Image::get(imagePath);
+//     if (!_backgroundImage)
+//         throw std::runtime_error(std::format("Failed to load image: {}", imagePath));
+//     // _backgroundImage->scale(w(), h(), 1, 1);
+// }

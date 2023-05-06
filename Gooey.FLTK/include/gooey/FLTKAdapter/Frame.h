@@ -49,7 +49,7 @@ namespace gooey::FLTKAdapter {
             Impl::PackWhichIncreasesSizeOfItsParent* GetFlPack() { return _pack; }
 
             void SetBackgroundImage(const char* path, UIBackgroundImageStyle mode) {
-                if (_backgroundImage) delete _backgroundImage.release();
+                // if (_backgroundImage) delete _backgroundImage.release();
                 _backgroundImage      = std::make_unique<Fl_PNG_Image>(path);
                 _BackgroundImageStyle = mode;
                 if (_BackgroundImageStyle == UIBackgroundImageStyle::Default)

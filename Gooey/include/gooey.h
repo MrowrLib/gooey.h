@@ -102,6 +102,9 @@ namespace gooey {
                  ) {
                 return false;
             }
+            virtual bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) {
+                return false;
+            }
             virtual UIPanel* AddHorizontalPanel(
                 unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
             ) {

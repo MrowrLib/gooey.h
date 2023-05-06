@@ -22,10 +22,7 @@ namespace gooey::FLTKAdapter {
             std::unique_ptr<Fl_PNG_Image> _image;
 
         public:
-            ButtonWithBetterBackgroundImage(int x, int y, int w, int h) : Fl_Button(x, y, w, h) {
-                // box(FL_FLAT_BOX);
-                // end();
-            }
+            ButtonWithBetterBackgroundImage(int x, int y, int w, int h) : Fl_Button(x, y, w, h) {}
 
             void SetBackgroundImage(const char* path) {
                 _image = std::make_unique<Fl_PNG_Image>(path);
@@ -33,23 +30,9 @@ namespace gooey::FLTKAdapter {
 
         protected:
             void draw() {
-                // Draw button box
                 Fl_Color box_color = value() ? selection_color() : color();
                 draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(), box_color);
 
-                // Draw image if available
-
-                // ONCE
-                // if (_image) {
-                //     fl_push_clip(
-                //         x() + Fl::box_dx(box()), y() + Fl::box_dy(box()), w() -
-                //         Fl::box_dw(box()), h() - Fl::box_dh(box())
-                //     );
-                //     _image->draw(x() + Fl::box_dx(box()), y() + Fl::box_dy(box()));
-                //     fl_pop_clip();
-                // }
-
-                // STRETCH
                 if (_image) {
                     int img_x = x() + Fl::box_dx(box());
                     int img_y = y() + Fl::box_dy(box());
@@ -90,3 +73,17 @@ namespace gooey::FLTKAdapter {
         const char* GetText() override { return _implButton->label(); }
     };
 }
+
+// Draw image if available
+
+// ONCE
+// if (_image) {
+//     fl_push_clip(
+//         x() + Fl::box_dx(box()), y() + Fl::box_dy(box()), w() -
+//         Fl::box_dw(box()), h() - Fl::box_dh(box())
+//     );
+//     _image->draw(x() + Fl::box_dx(box()), y() + Fl::box_dy(box()));
+//     fl_pop_clip();
+// }
+
+// STRETCH
