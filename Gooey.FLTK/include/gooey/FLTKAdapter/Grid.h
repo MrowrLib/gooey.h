@@ -9,20 +9,15 @@
 #include <gooey.h>
 
 #include <format>
+#include <map>
 #include <memory>
 #include <string>
-#include <vector>
-
-#include "WidgetContainer.h"
-
-// #include "Colors.h"
-// #include "Defaults.h"
-
-#include <map>
 #include <unordered_set>
 #include <vector>
 
+#include "IGrid.h"
 #include "Pack.h"
+#include "WidgetContainer.h"
 
 namespace gooey::FLTKAdapter {
 
@@ -179,7 +174,9 @@ namespace gooey::FLTKAdapter {
                 // MonitorResizeEvents = true;
             }
 
-            Fl_Button* AddButton(int x, int y, int cols, int rows, bool replace = true) {
+            Fl_Button* AddButton(
+                const char* label, int x, int y, int cols, int rows, bool replace = true
+            ) {
                 if (!ValidPosition(x, y, cols, rows)) return nullptr;
                 if (replace) ClearRange(x, y, cols, rows);
                 auto button = new Fl_Button(
@@ -187,8 +184,9 @@ namespace gooey::FLTKAdapter {
                     cols * _cellWidth + (cols - 1) * _padding,
                     rows * _cellHeight + (rows - 1) * _padding
                 );
-                auto label = std::format("({},{}) [{},{}]", x, y, cols, rows);
-                button->copy_label(label.c_str());
+                // auto label = std::format("({},{}) [{},{}]", x, y, cols, rows);
+                // button->copy_label(label.c_str());
+                button->copy_label(label);
                 button->color(fl_rgb_color(247, 17, 205));
                 add(button);
                 for (int i = y; i < y + rows; ++i) {
@@ -269,7 +267,23 @@ namespace gooey::FLTKAdapter {
         };
     }
 
-    class Grid : public UIGrid {
+    class GridButton : public UIButton {
+        Fl_Button* _implButton;
+        IGrid*     _grid;
+
+    public:
+        GridButton(IGrid* grid, Fl_Button* implButton) : _grid(grid), _implButton(implButton) {}
+
+        GOOEY_FLTK_COLOR_SETTERS(_implButton)
+
+        bool SetText(const char* text) override {
+            _implButton->label(text);
+            return true;
+        }
+        const char* GetText() override { return _implButton->label(); }
+    };
+
+    class Grid : public UIGrid, public IGrid, WidgetContainer {
         Impl::FLTK_Grid* _implGrid;
 
     public:
@@ -278,10 +292,10 @@ namespace gooey::FLTKAdapter {
                   numCols, numRows, Defaults::GridCellWidth, Defaults::GridCellHeight,
                   Defaults::GridPadding
               )) {
-            _implGrid->AddButton(0, 0, 2, 2);
-            _implGrid->AddButton(2, 2, 1, 3);
-            _implGrid->AddButton(3, 0, 1, 4);
-            _implGrid->AddButton(6, 3, 2, 1);
+            // _implGrid->AddButton(0, 0, 2, 2);
+            // _implGrid->AddButton(2, 2, 1, 3);
+            // _implGrid->AddButton(3, 0, 1, 4);
+            // _implGrid->AddButton(6, 3, 2, 1);
 
             pack->add(_implGrid);
         }
@@ -289,5 +303,17 @@ namespace gooey::FLTKAdapter {
         Impl::FLTK_Grid* GetImplGrid() { return _implGrid; }
 
         // Add Button
+        UIButton* AddButton(
+            const char* text, unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+        ) {
+            auto implButton = _implGrid->AddButton(text, x, y, cols, rows);
+            auto button     = std::make_unique<GridButton>(this, implButton);
+            return static_cast<UIButton*>(AddWidget(std::move(button)));
+        }
+
+        // UIPanel* AddVerticalPanel() override {
+        //     auto panel = std::make_unique<Panel>(_implPack, false);
+        //     return static_cast<UIPanel*>(AddWidget(std::move(panel)));
+        // }
     };
 }

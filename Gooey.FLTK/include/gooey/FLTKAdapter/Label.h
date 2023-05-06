@@ -28,7 +28,7 @@ namespace gooey::FLTKAdapter {
         GOOEY_FLTK_COLOR_SETTERS(_implLabel)
 
         bool SetText(const char* text) override {
-            _implLabel->label(text);
+            _implLabel->copy_label(text);
             return true;
         }
         const char* GetText() override { return _implLabel->label(); }

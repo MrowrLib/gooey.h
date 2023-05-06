@@ -24,6 +24,7 @@ namespace gooey::FLTKAdapter {
 
     public:
         Application() { fl_register_images(); }
+        ~Application() override = default;
 
         bool Start() override {
             Fl::run();
