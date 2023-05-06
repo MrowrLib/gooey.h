@@ -2,6 +2,10 @@
 
 #include <gooey.h>
 
+namespace gooey::FLTKAdapter::Impl {
+    bool MonitorResizeEvents = true;
+}
+
 namespace gooey::FLTKAdapter::Defaults {
     unsigned int           ButtonWidth                = 100;
     unsigned int           ButtonHeight               = 20;

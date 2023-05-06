@@ -16,16 +16,19 @@ using namespace gooey;
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     FLTKAdapter::Defaults::ButtonHeight   = 30;
-    FLTKAdapter::Defaults::GridCellHeight = 50;
-    FLTKAdapter::Defaults::GridCellWidth  = 50;
+    FLTKAdapter::Defaults::GridCellHeight = 25;
+    FLTKAdapter::Defaults::GridCellWidth  = 25;
     FLTKAdapter::Defaults::GridPadding    = 5;
-    FLTKAdapter::Defaults::WindowWidth    = 1200;
+    FLTKAdapter::Defaults::WindowWidth    = 1800;
     FLTKAdapter::Defaults::WindowHeight   = 600;
+    FLTKAdapter::Defaults::PanelWidth     = 100;
 
     auto* app    = GetUIApplication();
     auto* window = app->AddWindow();
     window->SetTitle("OGRE");
     window->SetBackgroundColor(0, 0, 0);
+
+    // auto* topLevelGrid = window->AddGrid(4, 8);
 
     auto* columns = window->AddHorizontalPanel();
     columns->SetBackgroundColor(255, 0, 255);

@@ -106,6 +106,10 @@ namespace gooey::FLTKAdapter {
             }
 
             void resize(int X, int Y, int W, int H) override {
+                if (!MonitorResizeEvents) {
+                    return;
+                }
+
                 // Calculate the new dimensions while maintaining the aspect ratio
                 float aspectRatio = static_cast<float>(_numCols) / static_cast<float>(_numRows);
                 int   newWidth    = W;
@@ -157,6 +161,16 @@ namespace gooey::FLTKAdapter {
                 }
 
                 redraw();
+
+                // if (auto* pack = dynamic_cast<PackWhichIncreasesSizeOfItsParent*>(parent())) {
+                // fl_message("YES");
+                // pack->update_size();
+                // pack->update_parent_size();
+                // pack->set_parent_size(newWidth, newHeight);
+                // }
+
+                // MonitorResizeEvents = false;
+                // MonitorResizeEvents = true;
             }
 
             Fl_Button* AddButton(int x, int y, int cols, int rows, bool replace = true) {

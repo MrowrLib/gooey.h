@@ -29,14 +29,17 @@ namespace gooey::FLTKAdapter {
 
     namespace Impl {
         class FLTKWindow : public Fl_Window {
+            int                                      _initialWidth = 0, _initialHeight = 0;
             Impl::PackWhichIncreasesSizeOfItsParent* _pack;
             std::unique_ptr<Fl_Image>                _backgroundImage;
             UIBackgroundImageStyle _BackgroundImageStyle = UIBackgroundImageStyle::Default;
-            std::map<Fl_Widget*, std::pair<int, int>> _initialWidgetSizes;
 
         public:
             FLTKWindow(int w, int h)
-                : Fl_Window(w, h), _pack(new Impl::PackWhichIncreasesSizeOfItsParent(0, 0, w, h)) {
+                : Fl_Window(w, h),
+                  _pack(new Impl::PackWhichIncreasesSizeOfItsParent(0, 0, w, h)),
+                  _initialWidth(w),
+                  _initialHeight(h) {
                 resizable(this);
                 _pack->type(Fl_Pack::VERTICAL);
                 _pack->init_sizes();
@@ -73,6 +76,121 @@ namespace gooey::FLTKAdapter {
                 Fl_Window::show();
                 this->init_sizes();
                 this->redraw();
+            }
+
+            void resizeGridWidget(Fl_Widget* widget, int W, int H) {
+                if (!MonitorResizeEvents) return;
+                if (FLTK_Grid* grid = dynamic_cast<FLTK_Grid*>(widget)) {
+                    grid->resize(0, 0, W, H);
+                } else if (Fl_Pack* pack = dynamic_cast<Fl_Pack*>(widget)) {
+                    // pack->resize(0, 0, W, H);
+                    for (int i = 0; i < pack->children(); ++i) {
+                        Fl_Widget* child_widget = pack->child(i);
+                        resizeGridWidget(child_widget, W, H);
+                    }
+                    // if (Impl::PackWhichIncreasesSizeOfItsParent* ourPack =
+                    //         dynamic_cast<Impl::PackWhichIncreasesSizeOfItsParent*>(widget)) {
+                    //     ourPack->update_parent_size();
+                    // }
+                } else if (Fl_Group* group = dynamic_cast<Fl_Group*>(widget)) {
+                    // group->resize(0, 0, W, H);
+                    for (int i = 0; i < group->children(); ++i) {
+                        Fl_Widget* child_widget = group->child(i);
+                        resizeGridWidget(child_widget, W, H);
+                    }
+                }
+            }
+
+            void resizeOurPacks(Fl_Widget* widget, int W, int H) {
+                if (!MonitorResizeEvents) return;
+                if (PackWhichIncreasesSizeOfItsParent* pack =
+                        dynamic_cast<PackWhichIncreasesSizeOfItsParent*>(widget)) {
+                    // grid->resize(0, 0, W, H);
+                    pack->update_parent_size();
+                } else if (Fl_Pack* pack = dynamic_cast<Fl_Pack*>(widget)) {
+                    // pack->resize(0, 0, W, H);
+                    for (int i = 0; i < pack->children(); ++i) {
+                        Fl_Widget* child_widget = pack->child(i);
+                        resizeOurPacks(child_widget, W, H);
+                    }
+                    // if (Impl::PackWhichIncreasesSizeOfItsParent* ourPack =
+                    //         dynamic_cast<Impl::PackWhichIncreasesSizeOfItsParent*>(widget)) {
+                    //     ourPack->update_parent_size();
+                    // }
+                } else if (Fl_Group* group = dynamic_cast<Fl_Group*>(widget)) {
+                    // group->resize(0, 0, W, H);
+                    for (int i = 0; i < group->children(); ++i) {
+                        Fl_Widget* child_widget = group->child(i);
+                        resizeOurPacks(child_widget, W, H);
+                    }
+                }
+            }
+
+            // void resizeOtherCollectionWidget(Fl_Widget* widget, int W, int H) {
+            //     if (!MonitorResizeEvents) return;
+            //     if (FLTK_Grid* grid = dynamic_cast<FLTK_Grid*>(widget)) {
+            //         // grid->resize(0, 0, W, H);
+            //     } else if (Fl_Pack* pack = dynamic_cast<Fl_Pack*>(widget)) {
+            //         // pack->resize(0, 0, W, H);
+            //         for (int i = 0; i < pack->children(); ++i) {
+            //             Fl_Widget* child_widget = pack->child(i);
+            //             resizeOtherCollectionWidget(child_widget, W, H);
+            //         }
+            //         // if (Impl::PackWhichIncreasesSizeOfItsParent* ourPack =
+            //         //         dynamic_cast<Impl::PackWhichIncreasesSizeOfItsParent*>(widget)) {
+            //         //     ourPack->update_parent_size();
+            //         // }
+            //     } else if (Fl_Group* group = dynamic_cast<Fl_Group*>(widget)) {
+            //         // group->resize(0, 0, W, H);
+            //         for (int i = 0; i < group->children(); ++i) {
+            //             Fl_Widget* child_widget = group->child(i);
+            //             resizeOtherCollectionWidget(child_widget, W, H);
+            //         }
+            //     }
+            // }
+
+            void resize(int x, int y, int w, int h) override {
+                if (!MonitorResizeEvents) return;
+
+                for (int i = 0; i < children(); ++i) {
+                    Fl_Widget* widget = child(i);
+                    resizeGridWidget(widget, w, h);
+                }
+
+                Fl_Window::resize(x, y, w, h);
+
+                for (int i = 0; i < children(); ++i) {
+                    Fl_Widget* widget = child(i);
+                    resizeOurPacks(widget, w, h);
+                }
+
+                // Again?
+                for (int i = 0; i < children(); ++i) {
+                    Fl_Widget* widget = child(i);
+                    resizeOurPacks(widget, w, h);
+                }
+
+                _pack->update_parent_size();
+            }
+
+            // void resize(int X, int Y, int W, int H) override {
+            //     Fl_Window::resize(X, Y, W, H);
+            //     for (int i = 0; i < children(); ++i) {
+            //         Fl_Widget* widget = child(i);
+            //         process_widget(widget, W, H);
+            //     }
+            // }
+
+            void process_widget(Fl_Widget* widget, int W, int H) {
+                if (FLTK_Grid* grid = dynamic_cast<FLTK_Grid*>(widget)) {
+                    grid->resize(0, 0, W, H);
+                } else if (Fl_Pack* pack = dynamic_cast<Fl_Pack*>(widget)) {
+                    for (int i = 0; i < pack->children(); ++i) {
+                        Fl_Widget* child_widget = pack->child(i);
+                        process_widget(child_widget, W, H);
+                        pack->resize(0, 0, W, H);
+                    }
+                }
             }
         };
     }
