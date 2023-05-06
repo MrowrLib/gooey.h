@@ -57,12 +57,22 @@ namespace gooey::FLTKAdapter {
             }
 
             void DrawBackgroundImage(
-                int x, int y, int w, int h,
+                int X, int Y, int W, int H,
                 UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default
             ) {
-                fl_push_clip(x, y, w, h);
-                std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(w, h));
-                scaledImage->draw(x, y);
+                // int img_x = x() + Fl::box_dx(box());
+                // int img_y = y() + Fl::box_dy(box());
+                // int img_w = w() - Fl::box_dw(box());
+                // int img_h = h() - Fl::box_dh(box());
+
+                // fl_push_clip(img_x, img_y, img_w, img_h);
+                // std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(img_w, img_h));
+                // scaledImage->draw(img_x, img_y, img_w, img_h);
+                // fl_pop_clip();
+
+                fl_push_clip(X, Y, W, H);
+                std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(W, H));
+                scaledImage->draw(X, Y);
                 fl_pop_clip();
             }
 
@@ -205,6 +215,16 @@ namespace gooey::FLTKAdapter {
 
         GOOEY_FLTK_COLOR_SETTERS(_implWindow)
 
+        bool AddBackgroundImage(
+            const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+            UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+            UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+            unsigned int height = 0
+        ) override {
+            _implWindow->SetBackgroundImage(path, mode);
+            return true;
+        }
+
         UILabel*  AddLabel(const char* text) override { return WidgetContainer::AddLabel(text); }
         UIButton* AddButton(const char* text) override { return WidgetContainer::AddButton(text); }
 
@@ -228,11 +248,6 @@ namespace gooey::FLTKAdapter {
 
         bool Show() override {
             _implWindow->show();
-            // Fl::check();
-            // _implWindow->resize(
-            //     _implWindow->x(), _implWindow->y(), _implWindow->w(), _implWindow->h()
-            // );
-            // _implWindow->redraw();
             return true;
         }
     };

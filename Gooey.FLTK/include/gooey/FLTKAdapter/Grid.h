@@ -24,13 +24,13 @@ namespace gooey::FLTKAdapter {
 
     namespace Impl {
         class FLTK_Grid : public Fl_Group {
-        private:
+            std::unique_ptr<Fl_Color>                 _backgroundColor;
             int                                       _numCols, _numRows;
             int                                       _cellWidth, _cellHeight, _padding;
             std::vector<std::vector<Fl_Widget*>>      _gridElements;
             std::map<Fl_Widget*, std::pair<int, int>> _widgetSizes;
             int                                       _initialWidth, _initialHeight;
-            // Fl_Shared_Image*                          _backgroundImage = nullptr;
+            Fl_Shared_Image*                          _backgroundImage;
 
         public:
             FLTK_Grid(int numCols, int numRows, int cellWidth, int cellHeight, int padding)
@@ -70,6 +70,18 @@ namespace gooey::FLTKAdapter {
             int GetInitialWidth() const { return _initialWidth; }
             int GetInitialHeight() const { return _initialHeight; }
 
+            void SetBackgroundColor(Fl_Color color) {
+                _backgroundColor = std::make_unique<Fl_Color>(color);
+            }
+
+            void SetBackgroundImage(const char* imagePath) {
+                if (_backgroundImage) _backgroundImage->release();
+
+                _backgroundImage = Fl_Shared_Image::get(imagePath);
+                if (!_backgroundImage)
+                    throw std::runtime_error(std::format("Failed to load image: {}", imagePath));
+            }
+
             // void AddBackgroundImage(const char* imagePath) {
             //     if (_backgroundImage) _backgroundImage->release();
 
@@ -81,13 +93,20 @@ namespace gooey::FLTKAdapter {
 
             void draw() override {
                 // Draw the background color
-                // fl_color(FL_WHITE);
-                // fl_rectf(x(), y(), w(), h());
+                if (_backgroundColor) {
+                    fl_color(*_backgroundColor);
+                    fl_rectf(x(), y(), w(), h());
+                }
 
                 // // Draw the background image if available
-                // if (_backgroundImage) {
-                //     _backgroundImage->draw(x(), y(), w(), h());
-                // }
+                if (_backgroundImage) {
+                    // ...
+                    // _backgroundImage->draw(x(), y(), w(), h());
+                    fl_push_clip(x(), y(), w(), h());
+                    std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(w(), h()));
+                    scaledImage->draw(x(), y(), w(), h());
+                    fl_pop_clip();
+                }
 
                 // Draw the grid lines
                 fl_color(FL_WHITE);  // Choose the color of the grid lines
@@ -291,6 +310,17 @@ namespace gooey::FLTKAdapter {
 
         Impl::FLTK_Grid* GetImplGrid() { return _implGrid; }
 
+        bool SetBackgroundColor(unsigned int red, unsigned int green, unsigned int blue) override {
+            // widget->color(fl_rgb_color(red, green, blue));
+            _implGrid->SetBackgroundColor(fl_rgb_color(red, green, blue));
+            return true;
+        }
+
+        bool SetForegroundColor(unsigned int red, unsigned int green, unsigned int blue) override {
+            // widget->labelcolor(fl_rgb_color(red, green, blue));
+            return true;
+        }
+
         // Add Button
         UIButton* AddButton(
             const char* text, unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
@@ -300,15 +330,15 @@ namespace gooey::FLTKAdapter {
             return static_cast<UIButton*>(AddWidget(std::move(button)));
         }
 
-        // bool AddBackgroundImage(
-        //     const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
-        //     UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
-        //     UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
-        //     unsigned int height = 0
-        // ) override {
-        //     _implGrid->AddBackgroundImage(path);
-        //     return true;
-        // }
+        bool AddBackgroundImage(
+            const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+            UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+            UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+            unsigned int height = 0
+        ) override {
+            _implGrid->SetBackgroundImage(path);
+            return true;
+        }
 
         // UIPanel* AddVerticalPanel() override {
         //     auto panel = std::make_unique<Panel>(_implPack, false);

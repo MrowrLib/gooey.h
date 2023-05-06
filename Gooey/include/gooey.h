@@ -15,6 +15,8 @@ namespace gooey {
             // virtual void Detach()                                  = 0;
             // virtual void OnDetatch(void (*callback)(UIComponent*)) = 0;
 
+            UIComponent* GetParent() { return nullptr; }
+
             virtual bool SetBackgroundColor(
                 unsigned int red, unsigned int green, unsigned int blue
             ) {
