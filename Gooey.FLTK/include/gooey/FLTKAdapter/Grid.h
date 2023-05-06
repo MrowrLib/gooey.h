@@ -6,6 +6,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Pack.H>
+#include <FL/Fl_Shared_Image.H>
 #include <gooey.h>
 
 #include <format>
@@ -29,6 +30,7 @@ namespace gooey::FLTKAdapter {
             std::vector<std::vector<Fl_Widget*>>      _gridElements;
             std::map<Fl_Widget*, std::pair<int, int>> _widgetSizes;
             int                                       _initialWidth, _initialHeight;
+            // Fl_Shared_Image*                          _backgroundImage = nullptr;
 
         public:
             FLTK_Grid(int numCols, int numRows, int cellWidth, int cellHeight, int padding)
@@ -54,28 +56,41 @@ namespace gooey::FLTKAdapter {
                             j * (_cellWidth + _padding), i * (_cellHeight + _padding), _cellWidth,
                             _cellHeight
                         );
-                        box->color(FL_WHITE);
+                        // box->color(FL_WHITE);
                         add(box);
                         _gridElements[i][j] = box;
                     }
                 }
             }
 
+            ~FLTK_Grid() override {
+                // if (_backgroundImage) _backgroundImage->release();
+            }
+
             int GetInitialWidth() const { return _initialWidth; }
             int GetInitialHeight() const { return _initialHeight; }
 
+            // void AddBackgroundImage(const char* imagePath) {
+            //     if (_backgroundImage) _backgroundImage->release();
+
+            //     _backgroundImage = Fl_Shared_Image::get(imagePath);
+            //     if (!_backgroundImage)
+            //         throw std::runtime_error(std::format("Failed to load image: {}", imagePath));
+            //     // _backgroundImage->scale(w(), h(), 1, 1);
+            // }
+
             void draw() override {
                 // Draw the background color
-                fl_color(FL_WHITE);
-                fl_rectf(x(), y(), w(), h());
+                // fl_color(FL_WHITE);
+                // fl_rectf(x(), y(), w(), h());
 
-                // Draw the background image if available
+                // // Draw the background image if available
                 // if (_backgroundImage) {
                 //     _backgroundImage->draw(x(), y(), w(), h());
                 // }
 
                 // Draw the grid lines
-                fl_color(FL_BLACK);  // Choose the color of the grid lines
+                fl_color(FL_WHITE);  // Choose the color of the grid lines
                 int lineWidth = 1;   // Choose the width of the grid lines
                 fl_line_style(
                     FL_SOLID, lineWidth
@@ -123,12 +138,6 @@ namespace gooey::FLTKAdapter {
                 // Call the base class resize() method with the calculated dimensions
                 Fl_Group::resize(newX, newY, newWidth, newHeight);
 
-                // Full height, including the padding and centering
-                // int fullHeight = newY - Y + newHeight;
-                // int fullWidth  = newX - X + newWidth;
-
-                // Fl_Group::resize(x(), y(), fullWidth, fullHeight);
-
                 // Update the cell dimensions
                 _cellWidth  = newWidth / _numCols - _padding;
                 _cellHeight = newHeight / _numRows - _padding;
@@ -162,24 +171,14 @@ namespace gooey::FLTKAdapter {
                 }
 
                 redraw();
-
-                // if (auto* pack = dynamic_cast<PackWhichIncreasesSizeOfItsParent*>(parent())) {
-                // fl_message("YES");
-                // pack->update_size();
-                // pack->update_parent_size();
-                // pack->set_parent_size(newWidth, newHeight);
-                // }
-
-                // MonitorResizeEvents = false;
-                // MonitorResizeEvents = true;
             }
 
-            Fl_Button* AddButton(
+            Impl::ButtonWithBetterBackgroundImage* AddButton(
                 const char* label, int x, int y, int cols, int rows, bool replace = true
             ) {
                 if (!ValidPosition(x, y, cols, rows)) return nullptr;
                 if (replace) ClearRange(x, y, cols, rows);
-                auto button = new Fl_Button(
+                auto button = new Impl::ButtonWithBetterBackgroundImage(
                     x * (_cellWidth + _padding), y * (_cellHeight + _padding),
                     cols * _cellWidth + (cols - 1) * _padding,
                     rows * _cellHeight + (rows - 1) * _padding
@@ -187,7 +186,7 @@ namespace gooey::FLTKAdapter {
                 // auto label = std::format("({},{}) [{},{}]", x, y, cols, rows);
                 // button->copy_label(label.c_str());
                 button->copy_label(label);
-                button->color(fl_rgb_color(247, 17, 205));
+                // button->color(fl_rgb_color(247, 17, 205));
                 add(button);
                 for (int i = y; i < y + rows; ++i) {
                     for (int j = x; j < x + cols; ++j) {
@@ -197,27 +196,6 @@ namespace gooey::FLTKAdapter {
                 _widgetSizes[button] = std::make_pair(cols, rows);
                 return button;
             }
-
-            // BoxWithBackgroundImage* AddLabel(
-            //     int x, int y, int cols, int rows, bool replace = true
-            // ) {
-            //     if (replace) {
-            //         ClearRange(x, y, cols, rows);
-            //     }
-            //     auto label = new BoxWithBackgroundImage(
-            //         x * (_cellWidth + _padding), y * (_cellHeight + _padding),
-            //         cols * _cellWidth + (cols - 1) * _padding,
-            //         rows * _cellHeight + (rows - 1) * _padding
-            //     );
-            //     add(label);
-            //     for (int i = y; i < y + rows; ++i) {
-            //         for (int j = x; j < x + cols; ++j) {
-            //             _gridElements[i][j] = label;
-            //         }
-            //     }
-            // _widgetSizes[button] = std::make_pair(cols, rows);
-            //     return label;
-            // }
 
             bool HasElementAt(int x, int y) {
                 if (!ValidPosition(x, y)) {
@@ -268,11 +246,12 @@ namespace gooey::FLTKAdapter {
     }
 
     class GridButton : public UIButton {
-        Fl_Button* _implButton;
-        IGrid*     _grid;
+        Impl::ButtonWithBetterBackgroundImage* _implButton;
+        IGrid*                                 _grid;
 
     public:
-        GridButton(IGrid* grid, Fl_Button* implButton) : _grid(grid), _implButton(implButton) {}
+        GridButton(IGrid* grid, Impl::ButtonWithBetterBackgroundImage* implButton)
+            : _grid(grid), _implButton(implButton) {}
 
         GOOEY_FLTK_COLOR_SETTERS(_implButton)
 
@@ -281,6 +260,16 @@ namespace gooey::FLTKAdapter {
             return true;
         }
         const char* GetText() override { return _implButton->label(); }
+
+        bool AddBackgroundImage(
+            const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+            UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+            UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+            unsigned int height = 0
+        ) override {
+            _implButton->SetBackgroundImage(path);
+            return true;
+        }
     };
 
     class Grid : public UIGrid, public IGrid, WidgetContainer {
@@ -305,11 +294,21 @@ namespace gooey::FLTKAdapter {
         // Add Button
         UIButton* AddButton(
             const char* text, unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
-        ) {
+        ) override {
             auto implButton = _implGrid->AddButton(text, x, y, cols, rows);
             auto button     = std::make_unique<GridButton>(this, implButton);
             return static_cast<UIButton*>(AddWidget(std::move(button)));
         }
+
+        // bool AddBackgroundImage(
+        //     const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+        //     UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+        //     UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+        //     unsigned int height = 0
+        // ) override {
+        //     _implGrid->AddBackgroundImage(path);
+        //     return true;
+        // }
 
         // UIPanel* AddVerticalPanel() override {
         //     auto panel = std::make_unique<Panel>(_implPack, false);
