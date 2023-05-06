@@ -108,7 +108,7 @@ namespace gooey::FLTKAdapter {
                     // grid->resize(0, 0, W, H);
                     pack->update_parent_size();
                 } else if (Fl_Pack* pack = dynamic_cast<Fl_Pack*>(widget)) {
-                    // pack->resize(0, 0, W, H);
+                    pack->resize(0, 0, W, H);
                     for (int i = 0; i < pack->children(); ++i) {
                         Fl_Widget* child_widget = pack->child(i);
                         resizeOurPacks(child_widget, W, H);
@@ -118,7 +118,7 @@ namespace gooey::FLTKAdapter {
                     //     ourPack->update_parent_size();
                     // }
                 } else if (Fl_Group* group = dynamic_cast<Fl_Group*>(widget)) {
-                    // group->resize(0, 0, W, H);
+                    group->resize(0, 0, W, H);
                     for (int i = 0; i < group->children(); ++i) {
                         Fl_Widget* child_widget = group->child(i);
                         resizeOurPacks(child_widget, W, H);

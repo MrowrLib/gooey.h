@@ -128,6 +128,12 @@ namespace gooey::FLTKAdapter {
                 // Call the base class resize() method with the calculated dimensions
                 Fl_Group::resize(newX, newY, newWidth, newHeight);
 
+                // Full height, including the padding and centering
+                // int fullHeight = newY - Y + newHeight;
+                // int fullWidth  = newX - X + newWidth;
+
+                // Fl_Group::resize(x(), y(), fullWidth, fullHeight);
+
                 // Update the cell dimensions
                 _cellWidth  = newWidth / _numCols - _padding;
                 _cellHeight = newHeight / _numRows - _padding;

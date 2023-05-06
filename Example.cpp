@@ -28,36 +28,36 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int n
     window->SetTitle("OGRE");
     window->SetBackgroundColor(0, 0, 0);
 
-    // auto* topLevelGrid = window->AddGrid(4, 8);
+    auto* topLevelGrid = window->AddGrid(4, 8);
 
-    auto* columns = window->AddHorizontalPanel();
-    columns->SetBackgroundColor(255, 0, 255);
+    // auto* columns = window->AddHorizontalPanel();
+    // columns->SetBackgroundColor(255, 0, 255);
 
-    columns->AddButton("LEFT");
+    // columns->AddButton("LEFT");
 
-    auto* column1 = columns->AddVerticalPanel();
-    column1->SetBackgroundColor(255, 0, 0);
-    column1->AddButton("LEFT");
+    // auto* column1 = columns->AddVerticalPanel();
+    // column1->SetBackgroundColor(255, 0, 0);
+    // column1->AddButton("LEFT");
 
-    auto* column2 = columns->AddVerticalPanel();
-    column2->SetBackgroundColor(0, 255, 0);
-    column2->AddButton("TOP");
+    // auto* column2 = columns->AddVerticalPanel();
+    // column2->SetBackgroundColor(0, 255, 0);
+    // column2->AddButton("TOP");
 
-    auto* grid = column2->AddGrid(8, 8);
+    // auto* grid = column2->AddGrid(8, 8);
 
-    column2->AddButton("BOTTOM");
+    // column2->AddButton("BOTTOM");
 
-    auto* column3 = columns->AddVerticalPanel();
-    column3->SetBackgroundColor(0, 0, 255);
-    column3->AddButton("RIGHT");
+    // auto* column3 = columns->AddVerticalPanel();
+    // column3->SetBackgroundColor(0, 0, 255);
+    // column3->AddButton("RIGHT");
 
-    columns->AddButton("RIGHT");
+    // columns->AddButton("RIGHT");
 
-    auto* column4 = columns->AddVerticalPanel();
-    column4->SetBackgroundColor(255, 50, 255);
-    column4->AddButton("Again...");
+    // auto* column4 = columns->AddVerticalPanel();
+    // column4->SetBackgroundColor(255, 50, 255);
+    // column4->AddButton("Again...");
 
-    auto* board2 = column4->AddGrid(3, 3);
+    // auto* board2 = column4->AddGrid(3, 3);
 
     window->Show();
     app->Start();

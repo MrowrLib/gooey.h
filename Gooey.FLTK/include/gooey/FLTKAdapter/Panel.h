@@ -21,7 +21,6 @@
 #include "Pack.h"
 #include "WidgetContainer.h"
 
-
 namespace gooey::FLTKAdapter {
 
     namespace Impl {
@@ -178,7 +177,7 @@ namespace gooey::FLTKAdapter {
             _implPack->spacing(10);
             _implPack->type(horizontal ? Fl_Pack::HORIZONTAL : Fl_Pack::VERTICAL);
             _implGroup->add(_implPack);  // Add the inner Fl_Pack to the outer Fl_Group.
-            _implGroup->end();
+            // _implGroup->end();
             pack->add(_implGroup);  // Add the outer Fl_Group to the passed Fl_Pack.
             SetImplFlPack(_implPack);
         }
