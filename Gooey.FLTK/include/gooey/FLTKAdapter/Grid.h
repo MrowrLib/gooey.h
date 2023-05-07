@@ -30,7 +30,8 @@ namespace gooey::FLTKAdapter {
         class BetterGridButton : public ButtonWithBetterBackgroundImage {
             unsigned int                                       _row;
             unsigned int                                       _column;
-            std::unique_ptr<Fl_PNG_Image>                      _image;
+            Fl_Shared_Image*&                                  _backgroundImage;
+            std::unique_ptr<Fl_Color>&                         _backgroundColor;
             std::vector<void (*)(unsigned int, unsigned int)>& _mouseOverCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)>& _mouseLeaveCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)>& _mouseLeftClickCallbacks;
@@ -42,19 +43,22 @@ namespace gooey::FLTKAdapter {
                 std::vector<void (*)(unsigned int, unsigned int)>& mouseOverCallbacks,
                 std::vector<void (*)(unsigned int, unsigned int)>& mouseLeaveCallbacks,
                 std::vector<void (*)(unsigned int, unsigned int)>& mouseLeftClickCallbacks,
-                std::vector<void (*)(unsigned int, unsigned int)>& mouseRightClickCallbacks
+                std::vector<void (*)(unsigned int, unsigned int)>& mouseRightClickCallbacks,
+                std::unique_ptr<Fl_Color>& backgroundColor, Fl_Shared_Image*& backgroundImage
             )
                 : ButtonWithBetterBackgroundImage(x, y, w, h),
                   _mouseOverCallbacks(mouseOverCallbacks),
                   _mouseLeaveCallbacks(mouseLeaveCallbacks),
                   _mouseLeftClickCallbacks(mouseLeftClickCallbacks),
-                  _mouseRightClickCallbacks(mouseRightClickCallbacks) {}
+                  _mouseRightClickCallbacks(mouseRightClickCallbacks),
+                  _backgroundColor(backgroundColor),
+                  _backgroundImage(backgroundImage) {}
 
             void SetRow(unsigned int row) { _row = row; }
             void SetColumn(unsigned int column) { _column = column; }
 
             void SetBackgroundImage(const char* path) {
-                _image = std::make_unique<Fl_PNG_Image>(path);
+                _backgroundImage = Fl_Shared_Image::get(path);
             }
 
             void OnMouseOver(void (*callback)(unsigned int, unsigned int)) {
@@ -89,17 +93,24 @@ namespace gooey::FLTKAdapter {
             }
 
             void draw() override {
-                Fl_Color box_color = value() ? selection_color() : color();
-                draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(), box_color);
+                // Fl_Color box_color = value() ? selection_color() : color();
+                // draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(),
+                // box_color);
+                if (_backgroundColor) {
+                    fl_color(*_backgroundColor);
+                    fl_rectf(x(), y(), w(), h());
+                } else {
+                    // Fl_Button::draw(); // <--- TODO this is kinda required! draws the border!
+                }
 
-                if (_image) {
+                if (_backgroundImage) {
                     int img_x = x() + Fl::box_dx(box());
                     int img_y = y() + Fl::box_dy(box());
                     int img_w = w() - Fl::box_dw(box());
                     int img_h = h() - Fl::box_dh(box());
 
                     fl_push_clip(img_x, img_y, img_w, img_h);
-                    std::unique_ptr<Fl_Image> scaledImage(_image->copy(img_w, img_h));
+                    std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(img_w, img_h));
                     scaledImage->draw(img_x, img_y, img_w, img_h);
                     fl_pop_clip();
                 }
@@ -110,6 +121,8 @@ namespace gooey::FLTKAdapter {
         };
 
         class FLTK_Grid : public Fl_Group {
+            std::unique_ptr<Fl_Color>                         _defaultBackgroundColor;
+            std::unique_ptr<Fl_Color>                         _defaultCellBackgroundColor;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseOverCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseLeaveCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseLeftClickCallbacks;
@@ -120,7 +133,8 @@ namespace gooey::FLTKAdapter {
             std::vector<std::vector<Fl_Widget*>>              _gridElements;
             std::map<Fl_Widget*, std::pair<int, int>>         _widgetSizes;
             int                                               _initialWidth, _initialHeight;
-            Fl_Shared_Image*                                  _backgroundImage = nullptr;
+            Fl_Shared_Image*                                  _backgroundImage            = nullptr;
+            Fl_Shared_Image*                                  _defaultCellBackgroundImage = nullptr;
             std::function<void(GridEvent, int, int)>          _eventsCallback;
 
             void OnButtonMouseOver(unsigned int x, unsigned int y) {
@@ -189,13 +203,37 @@ namespace gooey::FLTKAdapter {
                 _backgroundColor = std::make_unique<Fl_Color>(color);
             }
 
-            void SetBackgroundImage(const char* imagePath) {}
+            void SetBackgroundImage(const char* imagePath) {
+                _backgroundImage = Fl_Shared_Image::get(imagePath);
+                if (_backgroundImage) {
+                    _backgroundImage->scale(w(), h(), 1, 1);
+                }
+            }
+
+            void SetDefaultCellBackgroundImage(const char* imagePath) {
+                _defaultCellBackgroundImage = Fl_Shared_Image::get(imagePath);
+                if (_defaultCellBackgroundImage) {
+                    _defaultCellBackgroundImage->scale(_cellWidth, _cellHeight, 1, 1);
+                }
+            }
+
+            void SetDefaultCellColor(unsigned char red, unsigned char green, unsigned char blue) {
+                _defaultCellBackgroundColor =
+                    std::make_unique<Fl_Color>(fl_rgb_color(red, green, blue));
+            }
 
             void draw() override {
                 // Draw the background color
                 if (_backgroundColor) {
                     fl_color(*_backgroundColor);
                     fl_rectf(x(), y(), w(), h());
+                }
+
+                if (_backgroundImage) {
+                    fl_push_clip(x(), y(), w(), h());
+                    std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(w(), h()));
+                    scaledImage->draw(x(), y(), w(), h());
+                    fl_pop_clip();
                 }
 
                 // Draw the grid lines
@@ -291,13 +329,18 @@ namespace gooey::FLTKAdapter {
                     x * (_cellWidth + _padding), y * (_cellHeight + _padding),
                     cols * _cellWidth + (cols - 1) * _padding,
                     rows * _cellHeight + (rows - 1) * _padding, _mouseOverCallbacks,
-                    _mouseLeaveCallbacks, _mouseLeftClickCallbacks, _mouseRightClickCallbacks
+                    _mouseLeaveCallbacks, _mouseLeftClickCallbacks, _mouseRightClickCallbacks,
+                    _defaultCellBackgroundColor, _defaultCellBackgroundImage
                 );
 
                 button->SetColumn(x);
                 button->SetRow(y);
 
                 button->copy_label(label);
+
+                if (_defaultCellBackgroundColor) {
+                    button->SetBackgroundColor(*_defaultCellBackgroundColor);
+                }
 
                 add(button);
                 for (int i = y; i < y + rows; ++i) {
@@ -429,6 +472,11 @@ namespace gooey::FLTKAdapter {
             return true;
         }
 
+        bool SetDefaultCellColor(unsigned int red, unsigned int green, unsigned int blue) override {
+            _implGrid->SetDefaultCellColor(red, green, blue);
+            return true;
+        }
+
         // bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) override {
         //     _cellLeftClickHandlers.push_back(callback);
         //     return true;
@@ -450,6 +498,16 @@ namespace gooey::FLTKAdapter {
             unsigned int height = 0
         ) override {
             _implGrid->SetBackgroundImage(path);
+            return true;
+        }
+
+        bool SetDefaultCellBackgroundImage(
+            const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+            UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+            UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+            unsigned int height = 0
+        ) override {
+            _implGrid->SetDefaultCellBackgroundImage(path);
             return true;
         }
     };

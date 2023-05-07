@@ -96,10 +96,23 @@ namespace gooey {
             virtual bool      HasElementAt(unsigned int x, unsigned int y) { return false; }
             virtual bool      RemoveElementAt(unsigned int x, unsigned int y) { return false; }
             virtual UIWidget* GetWidgetAt(unsigned int x, unsigned int y) { return nullptr; }
-            virtual bool      Clear() { return false; }
-            virtual bool      ClearRange(
-                     unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+            virtual bool      SetDefaultCellColor(
+                     unsigned int red, unsigned int green, unsigned int blue
                  ) {
+                return false;
+            }
+            virtual bool SetDefaultCellBackgroundImage(
+                const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+                UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+                UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+                unsigned int height = 0
+            ) {
+                return false;
+            }
+            virtual bool Clear() { return false; }
+            virtual bool ClearRange(
+                unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
+            ) {
                 return false;
             }
             virtual bool OnCellMouseOver(void (*callback)(unsigned int, unsigned int)) {

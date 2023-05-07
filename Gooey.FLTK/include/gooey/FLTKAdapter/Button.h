@@ -22,6 +22,7 @@ namespace gooey::FLTKAdapter {
     namespace Impl {
         class ButtonWithBetterBackgroundImage : public Fl_Button {
             std::unique_ptr<Fl_PNG_Image>                     _image;
+            std::unique_ptr<Fl_Color>                         _backgroundColor;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseOverCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseLeaveCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseLeftClickCallbacks;
@@ -32,6 +33,14 @@ namespace gooey::FLTKAdapter {
 
             void SetBackgroundImage(const char* path) {
                 _image = std::make_unique<Fl_PNG_Image>(path);
+            }
+
+            void SetBackgroundColor(unsigned int red, unsigned int green, unsigned int blue) {
+                _backgroundColor = std::make_unique<Fl_Color>(fl_rgb_color(red, green, blue));
+            }
+
+            void SetBackgroundColor(Fl_Color color) {
+                _backgroundColor = std::make_unique<Fl_Color>(color);
             }
 
             void OnMouseOver(void (*callback)(unsigned int, unsigned int)) {
@@ -66,8 +75,15 @@ namespace gooey::FLTKAdapter {
             }
 
             void draw() override {
-                Fl_Color box_color = value() ? selection_color() : color();
-                draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(), box_color);
+                // Fl_Color box_color = value() ? selection_color() : color();
+                // draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(),
+                // box_color);
+                if (_backgroundColor) {
+                    fl_color(*_backgroundColor);
+                    fl_rectf(x(), y(), w(), h());
+                } else {
+                    Fl_Button::draw();
+                }
 
                 if (_image) {
                     int img_x = x() + Fl::box_dx(box());
