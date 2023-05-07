@@ -4,11 +4,13 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Pack.H>
+#include <FL/fl_ask.H>
 #include <FL/fl_draw.H>
 #include <gooey.h>
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "Colors.h"
 #include "Defaults.h"
@@ -19,7 +21,11 @@ namespace gooey::FLTKAdapter {
 
     namespace Impl {
         class ButtonWithBetterBackgroundImage : public Fl_Button {
-            std::unique_ptr<Fl_PNG_Image> _image;
+            std::unique_ptr<Fl_PNG_Image>                     _image;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseOverCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseLeaveCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseLeftClickCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseRightClickCallbacks;
 
         public:
             ButtonWithBetterBackgroundImage(int x, int y, int w, int h) : Fl_Button(x, y, w, h) {}
@@ -28,8 +34,38 @@ namespace gooey::FLTKAdapter {
                 _image = std::make_unique<Fl_PNG_Image>(path);
             }
 
-        protected:
-            void draw() {
+            void OnMouseOver(void (*callback)(unsigned int, unsigned int)) {
+                _mouseOverCallbacks.push_back(callback);
+            }
+            void OnMouseLeave(void (*callback)(unsigned int, unsigned int)) {
+                _mouseLeaveCallbacks.push_back(callback);
+            }
+            void OnLeftClick(void (*callback)(unsigned int, unsigned int)) {
+                _mouseLeftClickCallbacks.push_back(callback);
+            }
+            void OnRightClick(void (*callback)(unsigned int, unsigned int)) {
+                _mouseRightClickCallbacks.push_back(callback);
+            }
+
+            int handle(int event) override {
+                int x = Fl::event_x();
+                int y = Fl::event_y();
+
+                if (event == FL_ENTER)
+                    for (auto& callback : _mouseOverCallbacks) callback(x, y);
+                else if (event == FL_LEAVE)
+                    for (auto& callback : _mouseLeaveCallbacks) callback(x, y);
+                else if (event == FL_PUSH) {
+                    if (Fl::event_button() == FL_LEFT_MOUSE) {
+                        for (auto& callback : _mouseLeftClickCallbacks) callback(x, y);
+                    } else if (Fl::event_button() == FL_RIGHT_MOUSE)
+                        for (auto& callback : _mouseRightClickCallbacks) callback(x, y);
+                }
+
+                return Fl_Button::handle(event);
+            }
+
+            void draw() override {
                 Fl_Color box_color = value() ? selection_color() : color();
                 draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(), box_color);
 

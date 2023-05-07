@@ -102,7 +102,16 @@ namespace gooey {
                  ) {
                 return false;
             }
+            virtual bool OnCellMouseOver(void (*callback)(unsigned int, unsigned int)) {
+                return false;
+            }
+            virtual bool OnCellMouseLeave(void (*callback)(unsigned int, unsigned int)) {
+                return false;
+            }
             virtual bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) {
+                return false;
+            }
+            virtual bool OnCellRightClick(void (*callback)(unsigned int, unsigned int)) {
                 return false;
             }
             virtual UIPanel* AddHorizontalPanel(

@@ -27,15 +27,122 @@ namespace gooey::FLTKAdapter {
 
     namespace Impl {
 
+        class BetterGridButton : public ButtonWithBetterBackgroundImage {
+            unsigned int                                       _row;
+            unsigned int                                       _column;
+            std::unique_ptr<Fl_PNG_Image>                      _image;
+            std::vector<void (*)(unsigned int, unsigned int)>& _mouseOverCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)>& _mouseLeaveCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)>& _mouseLeftClickCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)>& _mouseRightClickCallbacks;
+
+        public:
+            BetterGridButton(
+                int x, int y, int w, int h,
+                std::vector<void (*)(unsigned int, unsigned int)>& mouseOverCallbacks,
+                std::vector<void (*)(unsigned int, unsigned int)>& mouseLeaveCallbacks,
+                std::vector<void (*)(unsigned int, unsigned int)>& mouseLeftClickCallbacks,
+                std::vector<void (*)(unsigned int, unsigned int)>& mouseRightClickCallbacks
+            )
+                : ButtonWithBetterBackgroundImage(x, y, w, h),
+                  _mouseOverCallbacks(mouseOverCallbacks),
+                  _mouseLeaveCallbacks(mouseLeaveCallbacks),
+                  _mouseLeftClickCallbacks(mouseLeftClickCallbacks),
+                  _mouseRightClickCallbacks(mouseRightClickCallbacks) {}
+
+            void SetRow(unsigned int row) { _row = row; }
+            void SetColumn(unsigned int column) { _column = column; }
+
+            void SetBackgroundImage(const char* path) {
+                _image = std::make_unique<Fl_PNG_Image>(path);
+            }
+
+            void OnMouseOver(void (*callback)(unsigned int, unsigned int)) {
+                _mouseOverCallbacks.push_back(callback);
+            }
+            void OnMouseLeave(void (*callback)(unsigned int, unsigned int)) {
+                _mouseLeaveCallbacks.push_back(callback);
+            }
+            void OnLeftClick(void (*callback)(unsigned int, unsigned int)) {
+                _mouseLeftClickCallbacks.push_back(callback);
+            }
+            void OnRightClick(void (*callback)(unsigned int, unsigned int)) {
+                _mouseRightClickCallbacks.push_back(callback);
+            }
+
+            int handle(int event) override {
+                int x = _column;
+                int y = _row;
+
+                if (event == FL_ENTER)
+                    for (auto& callback : _mouseOverCallbacks) callback(x, y);
+                else if (event == FL_LEAVE)
+                    for (auto& callback : _mouseLeaveCallbacks) callback(x, y);
+                else if (event == FL_PUSH) {
+                    if (Fl::event_button() == FL_LEFT_MOUSE) {
+                        for (auto& callback : _mouseLeftClickCallbacks) callback(x, y);
+                    } else if (Fl::event_button() == FL_RIGHT_MOUSE)
+                        for (auto& callback : _mouseRightClickCallbacks) callback(x, y);
+                }
+
+                return Fl_Button::handle(event);
+            }
+
+            void draw() override {
+                Fl_Color box_color = value() ? selection_color() : color();
+                draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(), box_color);
+
+                if (_image) {
+                    int img_x = x() + Fl::box_dx(box());
+                    int img_y = y() + Fl::box_dy(box());
+                    int img_w = w() - Fl::box_dw(box());
+                    int img_h = h() - Fl::box_dh(box());
+
+                    fl_push_clip(img_x, img_y, img_w, img_h);
+                    std::unique_ptr<Fl_Image> scaledImage(_image->copy(img_w, img_h));
+                    scaledImage->draw(img_x, img_y, img_w, img_h);
+                    fl_pop_clip();
+                }
+
+                // Draw label
+                draw_label();
+            }
+        };
+
         class FLTK_Grid : public Fl_Group {
-            std::unique_ptr<Fl_Color>                 _backgroundColor;
-            int                                       _numCols, _numRows;
-            int                                       _cellWidth, _cellHeight, _padding;
-            std::vector<std::vector<Fl_Widget*>>      _gridElements;
-            std::map<Fl_Widget*, std::pair<int, int>> _widgetSizes;
-            int                                       _initialWidth, _initialHeight;
-            Fl_Shared_Image*                          _backgroundImage = nullptr;
-            std::function<void(GridEvent, int, int)>  _eventsCallback;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseOverCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseLeaveCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseLeftClickCallbacks;
+            std::vector<void (*)(unsigned int, unsigned int)> _mouseRightClickCallbacks;
+            std::unique_ptr<Fl_Color>                         _backgroundColor;
+            int                                               _numCols, _numRows;
+            int                                               _cellWidth, _cellHeight, _padding;
+            std::vector<std::vector<Fl_Widget*>>              _gridElements;
+            std::map<Fl_Widget*, std::pair<int, int>>         _widgetSizes;
+            int                                               _initialWidth, _initialHeight;
+            Fl_Shared_Image*                                  _backgroundImage = nullptr;
+            std::function<void(GridEvent, int, int)>          _eventsCallback;
+
+            void OnButtonMouseOver(unsigned int x, unsigned int y) {
+                int columnNumber = x / (_cellWidth + _padding);
+                int rowNumber    = y / (_cellHeight + _padding);
+                for (auto& callback : _mouseOverCallbacks) callback(columnNumber, rowNumber);
+            }
+            void OnButtonMouseLeave(unsigned int x, unsigned int y) {
+                int columnNumber = x / (_cellWidth + _padding);
+                int rowNumber    = y / (_cellHeight + _padding);
+                for (auto& callback : _mouseLeaveCallbacks) callback(columnNumber, rowNumber);
+            }
+            void OnButtonLeftClick(unsigned int x, unsigned int y) {
+                int columnNumber = x / (_cellWidth + _padding);
+                int rowNumber    = y / (_cellHeight + _padding);
+                for (auto& callback : _mouseLeftClickCallbacks) callback(columnNumber, rowNumber);
+            }
+            void OnButtonRightClick(unsigned int x, unsigned int y) {
+                int columnNumber = x / (_cellWidth + _padding);
+                int rowNumber    = y / (_cellHeight + _padding);
+                for (auto& callback : _mouseRightClickCallbacks) callback(columnNumber, rowNumber);
+            }
 
         public:
             FLTK_Grid(int numCols, int numRows, int cellWidth, int cellHeight, int padding)
@@ -45,6 +152,7 @@ namespace gooey::FLTKAdapter {
                   _cellWidth(cellWidth),
                   _cellHeight(cellHeight),
                   _padding(padding) {
+                activate();
                 resizable(this);
 
                 _initialWidth  = w();
@@ -59,6 +167,19 @@ namespace gooey::FLTKAdapter {
                         AddButton("", j, i, 1, 1, false);
                     }
                 }
+            }
+
+            void OnCellMouseOver(void (*callback)(unsigned int, unsigned int)) {
+                _mouseOverCallbacks.push_back(callback);
+            }
+            void OnCellMouseLeave(void (*callback)(unsigned int, unsigned int)) {
+                _mouseLeaveCallbacks.push_back(callback);
+            }
+            void OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) {
+                _mouseLeftClickCallbacks.push_back(callback);
+            }
+            void OnCellRightClick(void (*callback)(unsigned int, unsigned int)) {
+                _mouseRightClickCallbacks.push_back(callback);
             }
 
             int GetInitialWidth() const { return _initialWidth; }
@@ -161,17 +282,23 @@ namespace gooey::FLTKAdapter {
                 redraw();
             }
 
-            Impl::ButtonWithBetterBackgroundImage* AddButton(
+            Impl::BetterGridButton* AddButton(
                 const char* label, int x, int y, int cols, int rows, bool replace = true
             ) {
                 if (!ValidPosition(x, y, cols, rows)) return nullptr;
                 if (replace) ClearRange(x, y, cols, rows);
-                auto button = new Impl::ButtonWithBetterBackgroundImage(
+                auto button = new Impl::BetterGridButton(
                     x * (_cellWidth + _padding), y * (_cellHeight + _padding),
                     cols * _cellWidth + (cols - 1) * _padding,
-                    rows * _cellHeight + (rows - 1) * _padding
+                    rows * _cellHeight + (rows - 1) * _padding, _mouseOverCallbacks,
+                    _mouseLeaveCallbacks, _mouseLeftClickCallbacks, _mouseRightClickCallbacks
                 );
+
+                button->SetColumn(x);
+                button->SetRow(y);
+
                 button->copy_label(label);
+
                 add(button);
                 for (int i = y; i < y + rows; ++i) {
                     for (int j = x; j < x + cols; ++j) {
@@ -270,6 +397,25 @@ namespace gooey::FLTKAdapter {
             pack->add(_implGrid);
         }
 
+        // EVENTS
+        bool OnCellMouseOver(void (*callback)(unsigned int, unsigned int)) override {
+            _implGrid->OnCellMouseOver(callback);
+            return true;
+        }
+        bool OnCellMouseLeave(void (*callback)(unsigned int, unsigned int)) override {
+            _implGrid->OnCellMouseLeave(callback);
+            return true;
+        }
+        bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) override {
+            _implGrid->OnCellLeftClick(callback);
+            return true;
+        }
+        bool OnCellRightClick(void (*callback)(unsigned int, unsigned int)) override {
+            _implGrid->OnCellRightClick(callback);
+            return true;
+        }
+        // // // // //
+
         Impl::FLTK_Grid* GetImplGrid() { return _implGrid; }
 
         bool SetBackgroundColor(unsigned int red, unsigned int green, unsigned int blue) override {
@@ -283,10 +429,10 @@ namespace gooey::FLTKAdapter {
             return true;
         }
 
-        bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) override {
-            _cellLeftClickHandlers.push_back(callback);
-            return true;
-        }
+        // bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) override {
+        //     _cellLeftClickHandlers.push_back(callback);
+        //     return true;
+        // }
 
         // Add Button
         UIButton* AddButton(
