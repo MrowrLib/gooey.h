@@ -100,20 +100,22 @@ namespace gooey::FLTKAdapter {
                     fl_color(*_backgroundColor);
                     fl_rectf(x(), y(), w(), h());
                 } else {
-                    // Fl_Button::draw(); // <--- TODO this is kinda required! draws the border!
+                    Fl_Button::draw();  // <--- TODO this is kinda required! draws the border!
                 }
 
-                if (_backgroundImage) {
-                    int img_x = x() + Fl::box_dx(box());
-                    int img_y = y() + Fl::box_dy(box());
-                    int img_w = w() - Fl::box_dw(box());
-                    int img_h = h() - Fl::box_dh(box());
+                DrawBackgroundImage();
 
-                    fl_push_clip(img_x, img_y, img_w, img_h);
-                    std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(img_w, img_h));
-                    scaledImage->draw(img_x, img_y, img_w, img_h);
-                    fl_pop_clip();
-                }
+                // if (_backgroundImage) {
+                //     int img_x = x() + Fl::box_dx(box());
+                //     int img_y = y() + Fl::box_dy(box());
+                //     int img_w = w() - Fl::box_dw(box());
+                //     int img_h = h() - Fl::box_dh(box());
+
+                //     fl_push_clip(img_x, img_y, img_w, img_h);
+                //     std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(img_w, img_h));
+                //     scaledImage->draw(img_x, img_y, img_w, img_h);
+                //     fl_pop_clip();
+                // }
 
                 // Draw label
                 draw_label();
@@ -411,7 +413,7 @@ namespace gooey::FLTKAdapter {
         GOOEY_FLTK_COLOR_SETTERS(_implButton)
 
         bool SetText(const char* text) override {
-            _implButton->label(text);
+            _implButton->copy_label(text);
             return true;
         }
         const char* GetText() override { return _implButton->label(); }

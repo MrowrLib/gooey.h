@@ -74,6 +74,15 @@ namespace gooey::FLTKAdapter {
                 return Fl_Button::handle(event);
             }
 
+            void DrawBackgroundImage() {
+                if (_image) {
+                    fl_push_clip(x(), y(), w(), h());
+                    std::unique_ptr<Fl_Image> scaledImage(_image->copy(w(), h()));
+                    scaledImage->draw(x(), y(), w(), h());
+                    fl_pop_clip();
+                }
+            }
+
             void draw() override {
                 // Fl_Color box_color = value() ? selection_color() : color();
                 // draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(),
@@ -119,10 +128,20 @@ namespace gooey::FLTKAdapter {
         GOOEY_FLTK_COLOR_SETTERS(_implButton)
 
         bool SetText(const char* text) override {
-            _implButton->label(text);
+            _implButton->copy_label(text);
             return true;
         }
         const char* GetText() override { return _implButton->label(); }
+
+        virtual bool AddBackgroundImage(
+            const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
+            UIHorizontalAlignment hAlign = UIHorizontalAlignment::Default,
+            UIVerticalAlignment vAlign = UIVerticalAlignment::Default, unsigned int width = 0,
+            unsigned int height = 0
+        ) override {
+            _implButton->SetBackgroundImage(path);
+            return true;
+        }
     };
 }
 
