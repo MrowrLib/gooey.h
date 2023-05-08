@@ -459,7 +459,7 @@ namespace gooey::FLTKAdapter {
                 for (int i = 0; i < _numRows; ++i) {
                     for (int j = 0; j < _numCols; ++j) {
                         RemoveElementAt(j, i);
-                        AddButton("", j, i, 1, 1, false);
+                        AddButton("", j, i, 1, 1, false, Defaults::GridCellFlat);
                     }
                 }
             }
@@ -468,7 +468,7 @@ namespace gooey::FLTKAdapter {
                 for (int i = y; i < y + rows; ++i) {
                     for (int j = x; j < x + cols; ++j) {
                         RemoveElementAt(j, i);
-                        AddButton("", j, i, 1, 1, false);
+                        AddButton("", j, i, 1, 1, false, Defaults::GridCellFlat);
                     }
                 }
             }
