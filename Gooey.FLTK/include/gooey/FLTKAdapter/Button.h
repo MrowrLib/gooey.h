@@ -21,6 +21,7 @@ namespace gooey::FLTKAdapter {
 
     namespace Impl {
         class ButtonWithBetterBackgroundImage : public Fl_Button {
+            bool                                              _isFlat = false;
             std::unique_ptr<Fl_PNG_Image>                     _image;
             std::unique_ptr<Fl_Color>                         _backgroundColor;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseOverCallbacks;
@@ -30,6 +31,9 @@ namespace gooey::FLTKAdapter {
 
         public:
             ButtonWithBetterBackgroundImage(int x, int y, int w, int h) : Fl_Button(x, y, w, h) {}
+
+            void SetFlat() { _isFlat = true; }
+            bool IsFlat() const { return _isFlat; }
 
             void SetBackgroundImage(const char* path) {
                 _image = std::make_unique<Fl_PNG_Image>(path);
@@ -76,9 +80,18 @@ namespace gooey::FLTKAdapter {
 
             void DrawBackgroundImage() {
                 if (_image) {
-                    fl_push_clip(x(), y(), w(), h());
-                    std::unique_ptr<Fl_Image> scaledImage(_image->copy(w(), h()));
-                    scaledImage->draw(x(), y(), w(), h());
+                    // fl_push_clip(x(), y(), w(), h());
+                    // std::unique_ptr<Fl_Image> scaledImage(_image->copy(w(), h()));
+                    // scaledImage->draw(x(), y(), w(), h());
+                    // fl_pop_clip();
+                    int img_x = x() + Fl::box_dx(box());
+                    int img_y = y() + Fl::box_dy(box());
+                    int img_w = w() - Fl::box_dw(box());
+                    int img_h = h() - Fl::box_dh(box());
+
+                    fl_push_clip(img_x, img_y, img_w, img_h);
+                    std::unique_ptr<Fl_Image> scaledImage(_image->copy(img_w, img_h));
+                    scaledImage->draw(img_x, img_y, img_w, img_h);
                     fl_pop_clip();
                 }
             }

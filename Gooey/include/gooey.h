@@ -73,6 +73,7 @@ namespace gooey {
             virtual bool        SetText(const char* text) { return false; }
             virtual const char* GetText() { return nullptr; }
             virtual bool        OnButtonPress(void (*callback)(UIWidget*)) { return false; }
+            virtual bool        SetFlat() { return false; }
         };
 
         struct UIPanel;
@@ -96,9 +97,14 @@ namespace gooey {
             virtual bool      HasElementAt(unsigned int x, unsigned int y) { return false; }
             virtual bool      RemoveElementAt(unsigned int x, unsigned int y) { return false; }
             virtual UIWidget* GetWidgetAt(unsigned int x, unsigned int y) { return nullptr; }
-            virtual bool      SetDefaultCellColor(
-                     unsigned int red, unsigned int green, unsigned int blue
+            virtual bool      ConfigureGridLines(
+                     bool enabled, unsigned int red, unsigned int green, unsigned int blue
                  ) {
+                return false;
+            }
+            virtual bool SetDefaultCellColor(
+                unsigned int red, unsigned int green, unsigned int blue
+            ) {
                 return false;
             }
             virtual bool SetDefaultCellBackgroundImage(

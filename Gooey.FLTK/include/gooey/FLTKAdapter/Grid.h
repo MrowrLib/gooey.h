@@ -92,7 +92,38 @@ namespace gooey::FLTKAdapter {
                 return Fl_Button::handle(event);
             }
 
+            // void draw() override {
+            //     // Fl_Color box_color = value() ? selection_color() : color();
+            //     // draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(),
+            //     // box_color);
+            //     if (_backgroundColor) {
+            //         fl_color(*_backgroundColor);
+            //         fl_rectf(x(), y(), w(), h());
+            //     } else {
+            //         Fl_Button::draw();
+            //     }
+
+            //     DrawBackgroundImage();
+            //     // if (_image) {
+            //     //     int img_x = x() + Fl::box_dx(box());
+            //     //     int img_y = y() + Fl::box_dy(box());
+            //     //     int img_w = w() - Fl::box_dw(box());
+            //     //     int img_h = h() - Fl::box_dh(box());
+
+            //     //     fl_push_clip(img_x, img_y, img_w, img_h);
+            //     //     std::unique_ptr<Fl_Image> scaledImage(_image->copy(img_w, img_h));
+            //     //     scaledImage->draw(img_x, img_y, img_w, img_h);
+            //     //     fl_pop_clip();
+            //     // }
+
+            //     // Draw label
+            //     draw_label();
+            // }
+
             void draw() override {
+                if (IsFlat()) box(FL_FLAT_BOX);
+                // if (FLTKAdapter::Defaults::GridCellFlat) box(FL_FLAT_BOX);
+
                 // Fl_Color box_color = value() ? selection_color() : color();
                 // draw_box(value() ? (down_box() ? down_box() : fl_down(box())) : box(),
                 // box_color);
@@ -112,7 +143,8 @@ namespace gooey::FLTKAdapter {
                 //     int img_h = h() - Fl::box_dh(box());
 
                 //     fl_push_clip(img_x, img_y, img_w, img_h);
-                //     std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(img_w, img_h));
+                //     std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(img_w,
+                // img_h));
                 //     scaledImage->draw(img_x, img_y, img_w, img_h);
                 //     fl_pop_clip();
                 // }
@@ -125,6 +157,7 @@ namespace gooey::FLTKAdapter {
         class FLTK_Grid : public Fl_Group {
             std::unique_ptr<Fl_Color>                         _defaultBackgroundColor;
             std::unique_ptr<Fl_Color>                         _defaultCellBackgroundColor;
+            std::unique_ptr<Fl_Color>                         _gridLineColor;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseOverCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseLeaveCallbacks;
             std::vector<void (*)(unsigned int, unsigned int)> _mouseLeftClickCallbacks;
@@ -159,6 +192,9 @@ namespace gooey::FLTKAdapter {
                 int rowNumber    = y / (_cellHeight + _padding);
                 for (auto& callback : _mouseRightClickCallbacks) callback(columnNumber, rowNumber);
             }
+            bool ValidPosition(int x, int y, int cols = 1, int rows = 1) {
+                return x >= 0 && x + cols <= _numCols && y >= 0 && y + rows <= _numRows;
+            }
 
         public:
             FLTK_Grid(int numCols, int numRows, int cellWidth, int cellHeight, int padding)
@@ -180,7 +216,7 @@ namespace gooey::FLTKAdapter {
                 _gridElements.resize(_numRows, std::vector<Fl_Widget*>(_numCols, nullptr));
                 for (int i = 0; i < _numRows; ++i) {
                     for (int j = 0; j < _numCols; ++j) {
-                        AddButton("", j, i, 1, 1, false);
+                        AddButton("x", j, i, 1, 1, false, FLTKAdapter::Defaults::GridCellFlat);
                     }
                 }
             }
@@ -205,6 +241,14 @@ namespace gooey::FLTKAdapter {
                 _backgroundColor = std::make_unique<Fl_Color>(color);
             }
 
+            void ConfigureGridLines(
+                bool enabled, unsigned int red, unsigned int green, unsigned int blue
+            ) {
+                if (enabled)
+                    _gridLineColor = std::make_unique<Fl_Color>(fl_rgb_color(red, green, blue));
+                else _gridLineColor = nullptr;
+            }
+
             void SetBackgroundImage(const char* imagePath) {
                 _backgroundImage = Fl_Shared_Image::get(imagePath);
                 if (_backgroundImage) {
@@ -225,12 +269,33 @@ namespace gooey::FLTKAdapter {
             }
 
             void draw() override {
-                // Draw the background color
+                // Choose the background color
                 if (_backgroundColor) {
                     fl_color(*_backgroundColor);
-                    fl_rectf(x(), y(), w(), h());
+                } else {
+                    fl_color(color()
+                    );  // Use the Fl_Group's background color if no custom background color is set
                 }
 
+                // Draw the background color over the entire grid area
+                fl_rectf(x(), y(), w(), h());
+
+                // Clear the padding area
+                if (_defaultCellBackgroundColor) {
+                    fl_color(*_defaultCellBackgroundColor);
+                    // Draw vertical rectangles
+                    for (int j = 1; j < _numCols; ++j) {
+                        int xPos = x() + j * (_cellWidth + _padding) - _padding;
+                        fl_rectf(xPos, y(), _padding, h());
+                    }
+                    // Draw horizontal rectangles
+                    for (int i = 1; i <= _numRows; ++i) {
+                        int yPos = y() + i * (_cellHeight + _padding) - _padding;
+                        fl_rectf(x(), yPos, w(), _padding);
+                    }
+                }
+
+                // Draw the background image
                 if (_backgroundImage) {
                     fl_push_clip(x(), y(), w(), h());
                     std::unique_ptr<Fl_Image> scaledImage(_backgroundImage->copy(w(), h()));
@@ -239,11 +304,13 @@ namespace gooey::FLTKAdapter {
                 }
 
                 // Draw the grid lines
-                fl_color(FL_WHITE);  // Choose the color of the grid lines
-                int lineWidth = 1;   // Choose the width of the grid lines
-                fl_line_style(
-                    FL_SOLID, lineWidth
-                );  // Set line style and width (use FL_DASH or FL_DOT for dashed/dotted lines)
+                if (_gridLineColor) {
+                    fl_color(*_gridLineColor.get());  // Choose the color of the grid lines
+                    int lineWidth = 1;                // Choose the width of the grid lines
+                    fl_line_style(
+                        FL_SOLID, lineWidth
+                    );  // Set line style and width (use FL_DASH or FL_DOT for dashed/dotted lines)
+                }
 
                 // Draw vertical lines
                 for (int j = 1; j < _numCols; ++j) {
@@ -323,7 +390,8 @@ namespace gooey::FLTKAdapter {
             }
 
             Impl::BetterGridButton* AddButton(
-                const char* label, int x, int y, int cols, int rows, bool replace = true
+                const char* label, int x, int y, int cols, int rows, bool replace = true,
+                bool flat = false
             ) {
                 if (!ValidPosition(x, y, cols, rows)) return nullptr;
                 if (replace) ClearRange(x, y, cols, rows);
@@ -339,6 +407,8 @@ namespace gooey::FLTKAdapter {
                 button->SetRow(y);
 
                 button->copy_label(label);
+
+                if (flat) button->SetFlat();
 
                 if (_defaultCellBackgroundColor) {
                     button->SetBackgroundColor(*_defaultCellBackgroundColor);
@@ -367,6 +437,12 @@ namespace gooey::FLTKAdapter {
                 }
                 auto element = _gridElements[y][x];
                 if (element != nullptr) {
+                    // Clear the background color of the element
+                    if (_defaultCellBackgroundColor) {
+                        static_cast<Impl::BetterGridButton*>(element)->SetBackgroundColor(
+                            *_defaultCellBackgroundColor
+                        );
+                    }
                     remove(element);
                     for (int i = 0; i < _numRows; ++i) {
                         for (int j = 0; j < _numCols; ++j) {
@@ -383,6 +459,7 @@ namespace gooey::FLTKAdapter {
                 for (int i = 0; i < _numRows; ++i) {
                     for (int j = 0; j < _numCols; ++j) {
                         RemoveElementAt(j, i);
+                        AddButton("", j, i, 1, 1, false);
                     }
                 }
             }
@@ -391,13 +468,9 @@ namespace gooey::FLTKAdapter {
                 for (int i = y; i < y + rows; ++i) {
                     for (int j = x; j < x + cols; ++j) {
                         RemoveElementAt(j, i);
+                        AddButton("", j, i, 1, 1, false);
                     }
                 }
-            }
-
-        private:
-            bool ValidPosition(int x, int y, int cols = 1, int rows = 1) {
-                return x >= 0 && x + cols <= _numCols && y >= 0 && y + rows <= _numRows;
             }
         };
     }
@@ -417,6 +490,10 @@ namespace gooey::FLTKAdapter {
             return true;
         }
         const char* GetText() override { return _implButton->label(); }
+        bool        SetFlat() override {
+            _implButton->SetFlat();
+            return true;
+        }
 
         bool AddBackgroundImage(
             const char* path, UIBackgroundImageStyle mode = UIBackgroundImageStyle::Default,
@@ -479,16 +556,18 @@ namespace gooey::FLTKAdapter {
             return true;
         }
 
-        // bool OnCellLeftClick(void (*callback)(unsigned int, unsigned int)) override {
-        //     _cellLeftClickHandlers.push_back(callback);
-        //     return true;
-        // }
+        bool ConfigureGridLines(
+            bool enabled, unsigned int red, unsigned int green, unsigned int blue
+        ) override {
+            _implGrid->ConfigureGridLines(enabled, red, green, blue);
+            return true;
+        }
 
         // Add Button
         UIButton* AddButton(
             const char* text, unsigned int x, unsigned int y, unsigned int cols, unsigned int rows
         ) override {
-            auto implButton = _implGrid->AddButton(text, x, y, cols, rows);
+            auto implButton = _implGrid->AddButton(text, x, y, cols, rows, true);
             auto button     = std::make_unique<GridButton>(this, implButton);
             return static_cast<UIButton*>(AddWidget(std::move(button)));
         }
@@ -511,6 +590,28 @@ namespace gooey::FLTKAdapter {
         ) override {
             _implGrid->SetDefaultCellBackgroundImage(path);
             return true;
+        }
+
+        bool Clear() override {
+            _implGrid->Clear();
+            _implGrid->redraw();
+            return true;
+        }
+
+        bool ClearRange(unsigned int x, unsigned int y, unsigned int cols, unsigned int rows)
+            override {
+            _implGrid->ClearRange(x, y, cols, rows);
+            _implGrid->redraw();
+            return true;
+        }
+
+        bool RemoveElementAt(unsigned int x, unsigned int y) override {
+            _implGrid->RemoveElementAt(x, y);
+            return true;
+        }
+
+        bool HasElementAt(unsigned int x, unsigned int y) override {
+            return _implGrid->HasElementAt(x, y);
         }
     };
 }

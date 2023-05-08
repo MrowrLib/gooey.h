@@ -20,6 +20,7 @@ namespace gooey::FLTKAdapter::Defaults {
     unsigned int           GridCellWidth              = 20;
     unsigned int           GridCellHeight             = 20;
     unsigned int           GridPadding                = 0;
+    bool                   GridCellFlat               = false;
     UIBackgroundImageStyle BackgroundImageStyle       = UIBackgroundImageStyle::Fill;
     UIHorizontalAlignment  DefaultHorizontalAlignment = UIHorizontalAlignment::Center;
     UIVerticalAlignment    DefaultVerticalAlignment   = UIVerticalAlignment::Center;
