@@ -1,0 +1,5 @@
+androiddeployqt.exe --output android-build --input C:/Code/MrowrLib/gooey.h/android_deployment_settings.json --gradle --release
+keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-alias
+apksigner sign --ks my-release-key.jks --out signed-apk.apk build/outputs/apk/release/android-build-release-unsigned.apk
+adb install .\signed-apk.apk
+adb shell am start -n org.qtproject.example.HelloWorld/org.qtproject.qt.android.bindings.QtActivity
