@@ -216,7 +216,7 @@ namespace gooey::FLTKAdapter {
                 _gridElements.resize(_numRows, std::vector<Fl_Widget*>(_numCols, nullptr));
                 for (int i = 0; i < _numRows; ++i) {
                     for (int j = 0; j < _numCols; ++j) {
-                        AddButton("x", j, i, 1, 1, false, FLTKAdapter::Defaults::GridCellFlat);
+                        AddButton("", j, i, 1, 1, false, FLTKAdapter::Defaults::GridCellFlat);
                     }
                 }
             }
