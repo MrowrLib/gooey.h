@@ -121,7 +121,7 @@ namespace gooey::FLTKAdapter {
             // }
 
             void draw() override {
-                if (IsFlat()) box(FL_FLAT_BOX);
+                if (IsFlat()) box(FL_NO_BOX);
                 // if (FLTKAdapter::Defaults::GridCellFlat) box(FL_FLAT_BOX);
 
                 // Fl_Color box_color = value() ? selection_color() : color();
