@@ -14,7 +14,7 @@ end
 install_ui_library_global_dependency()
 
 function example_target(target_name)
-    target(target_name)
+    target("Example - " .. target_name)
         set_kind("binary")
         add_files("*.cpp")
         setup_target_for_ui_library()

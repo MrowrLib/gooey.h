@@ -1,1 +1,1 @@
-example_target("Example WindowColorAndImages")
+example_target("Window Background Images")
