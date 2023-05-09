@@ -20,16 +20,11 @@ class Cell : public QPushButton {
 public:
     explicit Cell(Grid* grid, QWidget* parent = nullptr) : QPushButton(parent), m_grid(grid) {
         setMouseTracking(true);
-
-        m_layout = new QVBoxLayout(this);
-        m_layout->setContentsMargins(0, 0, 0, 0);
-        setLayout(m_layout);
-
-        m_label = new QLabel(this);
-        m_layout->addWidget(m_label);
+        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        setAutoFillBackground(false);
     }
 
-    void setLabel(const QString& text) { m_label->setText(text); }
+    void setLabel(const QString& text) { setText(text); }
 
     void addBackgroundImage(const QString& imagePath) {
         QPixmap image(imagePath);
@@ -63,8 +58,7 @@ public:
     }
 
     void reset() {
-        m_label->clear();  //
-        setText("");       //
+        setText("");  //
 
         m_backgroundImages.clear();
         m_backgroundColor = QColor();
@@ -90,14 +84,13 @@ private:
         combinedBackground.fill(m_backgroundColor);
         QPainter painter(&combinedBackground);
 
-        for (const QPixmap& image : m_backgroundImages.values()) {
+        for (const QPixmap& image : m_backgroundImages) {
             painter.drawPixmap(0, 0, width(), height(), image);
         }
 
-        QPalette palette;
-        palette.setBrush(QPalette::Window, combinedBackground);
-        setAutoFillBackground(true);
-        setPalette(palette);
+        QIcon icon(combinedBackground);
+        setIcon(icon);
+        setIconSize(size());
     }
 
     void updateBorder() {
@@ -113,16 +106,19 @@ private:
 
     Grid*                  m_grid;
     QVBoxLayout*           m_layout;
-    QLabel*                m_label;
     QMap<QString, QPixmap> m_backgroundImages;
-    QColor                 m_backgroundColor;
+    QColor                 m_backgroundColor = Qt::transparent;
     CellBorder             m_borderType;
 };
 
 class Grid : public QWidget {
 public:
     Grid(int columnCount, int rowCount, int cellWidth, int cellHeight, QWidget* parent = nullptr)
-        : QWidget(parent), m_cellWidth(cellWidth), m_cellHeight(cellHeight) {
+        : QWidget(parent),
+          m_cellWidth(cellWidth),
+          m_cellHeight(cellHeight),
+          m_columnCount(columnCount),
+          m_rowCount(rowCount) {
         m_layout = new QGridLayout(this);
         m_layout->setSpacing(0);
         m_layout->setContentsMargins(0, 0, 0, 0);
@@ -170,20 +166,42 @@ public:
         // }
     }
 
+protected:
+    void resizeEvent(QResizeEvent* event) override {
+        Q_UNUSED(event)
+        resizeCells();
+    }
+
 private:
+    void resizeCells() {
+        qreal cellWidth  = static_cast<qreal>(width()) / m_columnCount;
+        qreal cellHeight = static_cast<qreal>(height()) / m_rowCount;
+
+        for (int y = 0; y < m_rowCount; ++y) {
+            for (int x = 0; x < m_columnCount; ++x) {
+                Cell* cell = cellAt(x, y);
+                if (cell) {
+                    cell->setFixedSize(static_cast<int>(cellWidth), static_cast<int>(cellHeight));
+                }
+            }
+        }
+    }
+
     void initializeCells(int columnCount, int rowCount) {
         for (int y = 0; y < rowCount; ++y) {
             for (int x = 0; x < columnCount; ++x) {
                 auto cell = new Cell(this);
-                cell->setFixedSize(m_cellWidth, m_cellHeight);
                 m_layout->addWidget(cell, y, x);
             }
         }
+        resizeCells();
     }
 
     QGridLayout* m_layout;
     int          m_cellWidth;
     int          m_cellHeight;
+    int          m_rowCount;
+    int          m_columnCount;
 };
 
 int main(int argc, char* argv[]) {
