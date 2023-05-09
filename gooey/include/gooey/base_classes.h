@@ -12,19 +12,25 @@ namespace gooey {
 
     // struct UIWidgetContainer {};
 
+    class UIComponentBase : public UIComponent {
+        bool set_background_color(int red, int green, int blue) { return false; }
+        bool unset_background_color() { return false; }
+        bool add_background_image(const char* imagePath) { return false; }
+        bool remove_background_image(const char* imagePath) { return false; }
+    };
+
     struct UIApplication;
-    class UIWindowBase : public UIWindow {
+    class UIWindowBase : public UIWindow, public UIComponentBase {
         UIApplication* _base_uiApplication;
 
     public:
         ~UIWindowBase() override = default;
         UIWindowBase(UIApplication* uiApplication) : _base_uiApplication(uiApplication) {}
         UIApplication* get_application() override { return _base_uiApplication; }
-        bool           apply() override { return false; }
-        UIWindow*      set_title(const char* title) override { return this; }
-        UIWindow*      set_size(int width, int height) override { return this; }
-        UIWindow*      set_position(int x, int y) override { return this; }
-        UIWindow*      show() override { return this; }
+        bool           set_title(const char* title) override { return false; }
+        bool           set_size(int width, int height) override { return false; }
+        bool           set_position(int x, int y) override { return false; }
+        bool           show() override { return false; }
     };
 
     class UIApplicationBase : public UIApplication {

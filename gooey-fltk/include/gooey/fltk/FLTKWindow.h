@@ -14,10 +14,6 @@ namespace gooey::fltk {
     class FLTKWindow : public UIWindowBase {
         std::unique_ptr<impl::FLTKWindowImpl> _impl_window;
 
-        // need to know if is attached...
-
-        int _setup_x, _setup_y, _setup_width, _setup_height;
-
     public:
         FLTKWindow(UIApplicationBase* parent) : UIWindowBase(parent) {
             auto* defaults = parent->get_defaults();
@@ -26,18 +22,43 @@ namespace gooey::fltk {
             );
         }
 
-        // bool apply() override {
-        //     _impl_window->label(_title.c_str());
-        //     _impl_window->size(_width, _height);
-        //     _impl_window->position(_x, _y);
-        //     return true;
-        // }
+        bool set_title(const char* title) override {
+            _impl_window->label(title);
+            return true;
+        }
 
-        bool apply() {
-            _impl_window->label("hi!");
-            _impl_window->size(100, 100);
-            _impl_window->position(100, 100);
+        bool set_size(int width, int height) override {
+            _impl_window->size(width, height);
+            return true;
+        }
+
+        bool set_position(int x, int y) override {
+            _impl_window->position(x, y);
+            return true;
+        }
+
+        bool show() override {
             _impl_window->show();
+            return true;
+        }
+
+        bool set_background_color(int red, int green, int blue) override {
+            _impl_window->color(fl_rgb_color(red, green, blue));
+            return true;
+        }
+
+        bool unset_background_color() override {
+            _impl_window->color(FL_BACKGROUND_COLOR);
+            return true;
+        }
+
+        bool add_background_image(const char* imagePath) override {
+            _impl_window->AddBackgroundImage(imagePath);
+            return true;
+        }
+
+        bool remove_background_image(const char* imagePath) override {
+            _impl_window->RemoveBackgroundImage(imagePath);
             return true;
         }
     };

@@ -1,1 +1,1 @@
-example_target("EmptyWindow")
+example_target("Example EmptyWindow")

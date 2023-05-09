@@ -14,6 +14,8 @@ namespace gooey::fltk {
         std::vector<std::unique_ptr<UIWindow>> _windows;
 
     public:
+        FLTKApplication() { fl_register_images(); }
+
         UIWindow* add_window() override {
             auto* window = new FLTKWindow(this);
             _windows.emplace_back(window);
