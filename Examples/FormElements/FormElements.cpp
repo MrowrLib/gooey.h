@@ -261,66 +261,198 @@
 //     Fl_Widget::resize(X, Y, W, H);
 // }/ toggle_button->callback(toggle_panel, panel);
 
+// #include <FL/Fl.H>
+// #include <FL/Fl_Box.H>
+// #include <FL/Fl_Group.H>
+// #include <FL/Fl_Pack.H>
+// #include <FL/Fl_Window.H>
+
+// class ResizingGroup : public Fl_Group {
+// public:
+//     ResizingGroup(int X, int Y, int W, int H, const char* L = 0) : Fl_Group(X, Y, W, H, L) {}
+
+//     void resize(int X, int Y, int W, int H) override {
+//         Fl_Group::resize(X, Y, W, H);
+//         Fl_Widget* row_b = child(0);
+//         Fl_Widget* row_c = child(1);
+
+//         int row_b_width = static_cast<int>(W * 0.6666);
+//         int row_c_width = W - row_b_width;
+
+//         row_b->size(row_b_width, H);
+//         row_c->resize(X + row_b_width, Y, row_c_width, H);
+//     }
+// };
+
+// int main(int argc, char** argv) {
+//     Fl_Window* window = new Fl_Window(400, 300, "FLTK Application");
+//     window->color(FL_GREEN);
+
+//     Fl_Pack* v_pack = new Fl_Pack(0, 0, window->w(), window->h());
+//     v_pack->type(Fl_Pack::VERTICAL);
+
+//     Fl_Box* row_a = new Fl_Box(0, 0, v_pack->w(), 20, "A");
+//     row_a->box(FL_FLAT_BOX);
+//     row_a->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+//     row_a->color(FL_YELLOW);
+
+//     ResizingGroup* row_b_and_c = new ResizingGroup(0, 0, v_pack->w(), v_pack->h() - 40);
+//     {
+//         Fl_Box* row_b =
+//             new Fl_Box(0, 0, static_cast<int>(row_b_and_c->w() * 0.6666), row_b_and_c->h(), "B");
+//         row_b->box(FL_FLAT_BOX);
+//         row_b->color(FL_BLUE);
+
+//         Fl_Box* row_c = new Fl_Box(
+//             row_b->w(), 0, static_cast<int>(row_b_and_c->w() * 0.3333), row_b_and_c->h(), "C"
+//         );
+//         row_c->box(FL_FLAT_BOX);
+//         row_c->color(FL_RED);
+
+//         row_b_and_c->end();
+//     }
+
+//     Fl_Box* row_d = new Fl_Box(0, 0, v_pack->w(), 20, "D");
+//     row_d->box(FL_FLAT_BOX);
+//     row_d->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+//     row_d->color(FL_CYAN);
+
+//     v_pack->resizable(row_b_and_c);
+//     v_pack->end();
+
+//     window->resizable(v_pack);
+//     window->end();
+//     window->show(argc, argv);
+
+//     return Fl::run();
+// }
+
 #include <FL/Fl.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Group.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Window.H>
 
-class ResizingGroup : public Fl_Group {
+#include <vector>
+
+class AspectRatioGroup : public Fl_Group {
+    double aspect_ratio;
+
 public:
-    ResizingGroup(int X, int Y, int W, int H, const char* L = 0) : Fl_Group(X, Y, W, H, L) {}
+    AspectRatioGroup(int X, int Y, int W, int H, const char* L = 0)
+        : Fl_Group(X, Y, W, H, L), aspect_ratio(static_cast<double>(W) / H) {}
+
+    void resize(int X, int Y, int W, int H) override {
+        double new_aspect_ratio = static_cast<double>(W) / H;
+        if (abs(new_aspect_ratio - aspect_ratio) > 0.01) {
+            if (H * aspect_ratio <= W) {
+                Fl_Group::resize(X, Y, static_cast<int>(H * aspect_ratio), H);
+            } else {
+                Fl_Group::resize(X, Y, W, static_cast<int>(W / aspect_ratio));
+            }
+        } else {
+            Fl_Group::resize(X, Y, W, H);
+        }
+    }
+};
+
+class ProportionalGroup : public Fl_Group {
+    std::vector<double> proportions;
+
+public:
+    ProportionalGroup(
+        int X, int Y, int W, int H, const std::vector<double>& proportions, const char* L = 0
+    )
+        : Fl_Group(X, Y, W, H, L), proportions(proportions) {}
 
     void resize(int X, int Y, int W, int H) override {
         Fl_Group::resize(X, Y, W, H);
-        Fl_Widget* row_b = child(0);
-        Fl_Widget* row_c = child(1);
+        int num_children = children();
 
-        int row_b_width = static_cast<int>(W * 0.6666);
-        int row_c_width = W - row_b_width;
+        int cur_x = X;
+        int cur_y = Y;
+        for (int i = 0; i < num_children; ++i) {
+            Fl_Widget* child_widget = child(i);
+            int        child_width  = static_cast<int>(W * proportions[i]);
 
-        row_b->size(row_b_width, H);
-        row_c->resize(X + row_b_width, Y, row_c_width, H);
+            child_widget->resize(cur_x, cur_y, child_width, H);
+
+            cur_x += child_width;
+        }
     }
 };
 
 int main(int argc, char** argv) {
-    Fl_Window* window = new Fl_Window(400, 300, "FLTK Application");
+    Fl_Window* window = new Fl_Window(800, 600, "FLTK Proportional Group Example");
     window->color(FL_GREEN);
 
+    AspectRatioGroup* ar_group = new AspectRatioGroup(0, 0, window->w(), window->h());
+    // Create vertical layout
     Fl_Pack* v_pack = new Fl_Pack(0, 0, window->w(), window->h());
     v_pack->type(Fl_Pack::VERTICAL);
+    //
+    ar_group->add(v_pack);
+    ar_group->resizable(v_pack);
+    ar_group->end();
 
-    Fl_Box* row_a = new Fl_Box(0, 0, v_pack->w(), 20, "A");
+    // First row
+    Fl_Box* row_a = new Fl_Box(0, 0, v_pack->w(), 100, "A");
     row_a->box(FL_FLAT_BOX);
     row_a->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
     row_a->color(FL_YELLOW);
 
-    ResizingGroup* row_b_and_c = new ResizingGroup(0, 0, v_pack->w(), v_pack->h() - 40);
-    {
-        Fl_Box* row_b =
-            new Fl_Box(0, 0, static_cast<int>(row_b_and_c->w() * 0.6666), row_b_and_c->h(), "B");
-        row_b->box(FL_FLAT_BOX);
-        row_b->color(FL_BLUE);
+    // Second row
+    std::vector<double> proportions = {0.4, 0.6};
+    ProportionalGroup*  row_b_and_c = new ProportionalGroup(0, 0, v_pack->w(), 400, proportions);
+    Fl_Box*             row_b       = new Fl_Box(
+        0, 0, static_cast<int>(row_b_and_c->w() * proportions[0]), row_b_and_c->h(), "B"
+    );
+    row_b->box(FL_FLAT_BOX);
+    row_b->color(FL_BLUE);
+    row_b_and_c->add(row_b);
 
+    std::vector<double> nested_proportions = {0.3, 0.7};
+    ProportionalGroup*  nested_group       = new ProportionalGroup(
+        0, 0, row_b_and_c->w() - row_b->w(), row_b_and_c->h(), nested_proportions
+    );
+    {
         Fl_Box* row_c = new Fl_Box(
-            row_b->w(), 0, static_cast<int>(row_b_and_c->w() * 0.3333), row_b_and_c->h(), "C"
+            0, 0, static_cast<int>(nested_group->w() * nested_proportions[0]), nested_group->h(),
+            "C"
         );
         row_c->box(FL_FLAT_BOX);
         row_c->color(FL_RED);
+        nested_group->add(row_c);
 
-        row_b_and_c->end();
+        Fl_Box* row_d = new Fl_Box(
+            0, 0, static_cast<int>(nested_group->w() * nested_proportions[1]), nested_group->h(),
+            "D"
+        );
+        row_d->box(FL_FLAT_BOX);
+        row_d->color(FL_CYAN);
+        nested_group->add(row_d);
     }
+    row_b_and_c->add(nested_group);
 
-    Fl_Box* row_d = new Fl_Box(0, 0, v_pack->w(), 20, "D");
-    row_d->box(FL_FLAT_BOX);
-    row_d->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-    row_d->color(FL_CYAN);
+    // Third row
+    Fl_Box* row_e = new Fl_Box(0, 0, v_pack->w(), 100, "E");
+    row_e->box(FL_FLAT_BOX);
+    row_e->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+    row_e->color(FL_MAGENTA);
 
+    // Add rows to vertical layout
+    v_pack->add(row_a);
+    v_pack->add(row_b_and_c);
+    v_pack->add(row_e);
+
+    // Set resizable elements
     v_pack->resizable(row_b_and_c);
-    v_pack->end();
+    row_b_and_c->resizable(nested_group);
 
-    window->resizable(v_pack);
+    // Finish and show the window
+    v_pack->end();
+    // window->resizable(v_pack);
+    window->resizable(ar_group);
     window->end();
     window->show(argc, argv);
 
