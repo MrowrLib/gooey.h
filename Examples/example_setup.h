@@ -15,9 +15,9 @@ namespace ExampleImagePaths {
     std::filesystem::path Monster2{Folder / "monster2.png"};
 }
 
-#include <Windows.h>
+// #include <Windows.h>
 
-#include "icon.h"
+// #include "icon.h"
 
 // void SetProgramIcon(HINSTANCE hInstance, HWND hwndMain) {
 //     // Load the icon from the resource file

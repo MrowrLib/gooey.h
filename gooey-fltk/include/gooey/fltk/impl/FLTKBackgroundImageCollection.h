@@ -58,14 +58,14 @@ namespace gooey::fltk::impl {
             return false;
         }
 
-        bool DrawSingle(const std::string& inagePath, int x, int y, int width, int height) {
-            if (auto currentImageSize = _currentImageSizes.find(inagePath);
+        bool DrawSingle(const std::string& imagePath, int x, int y, int width, int height) {
+            if (auto currentImageSize = _currentImageSizes.find(imagePath);
                 currentImageSize != _currentImageSizes.end()) {
                 if (currentImageSize->second.first != width ||
                     currentImageSize->second.second != height) {
-                    if (!ResizeImage(inagePath, width, height)) return false;
+                    if (!ResizeImage(imagePath, width, height)) return false;
                 }
-                _currentImages[inagePath]->draw(0, 0, width, height);
+                _currentImages[imagePath]->draw(0, 0, width, height, 0, 0);  // 2 extra on 1.3.8 ...
             }
             return false;
         }
