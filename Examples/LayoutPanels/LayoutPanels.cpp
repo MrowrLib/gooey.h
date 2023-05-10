@@ -123,11 +123,6 @@ public:
             total_height += child_widget->h();
         }
 
-        // ...
-        // total_height = parent()->h();
-
-        // total_width = parent()->w();
-
         int cur_x = X;
         int cur_y = Y;
         for (int i = 0; i < num_children; ++i) {
@@ -146,8 +141,7 @@ public:
             }
 
             if (manage_width && manage_height) {
-                // child_widget->resize(cur_x, Y, child_width, total_height);
-                child_widget->resize(X, cur_y, total_width, child_height);
+                child_widget->resize(X, cur_y, parent()->w(), child_height);
             } else {
                 child_widget->resize(cur_x, cur_y, child_width, child_height);
             }
@@ -224,6 +218,14 @@ int main(int argc, char** argv) {
     auto* subSubGroup = new AutoProportionalGroup(0, 0, 100, 100, false, true);
     subSubGroup->add(new Fl_Box(0, 0, 100, 50, "x"));
     subSubGroup->add(new Fl_Box(0, 0, 100, 50, "y"));
+    auto* subSubSubGroup = new AutoProportionalGroup(0, 0, 100, 50, true, false);
+    subSubSubGroup->add(new Fl_Box(0, 0, 50, 50, "z"));
+    subSubSubGroup->add(new Fl_Box(0, 0, 50, 50, "w"));
+    auto* subSubSubSubGroup = new AutoProportionalGroup(0, 0, 50, 50, false, true);
+    subSubSubSubGroup->add(new Fl_Box(0, 0, 50, 50, "1"));
+    subSubSubSubGroup->add(new Fl_Box(0, 0, 50, 50, "2"));
+    subSubSubGroup->add(subSubSubSubGroup);
+    subSubGroup->add(subSubSubGroup);
     subGroup->add(subSubGroup);
 
     subGroup->add(new Fl_Box(0, 0, 100, 100, "B"));
