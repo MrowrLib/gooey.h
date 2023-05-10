@@ -8,20 +8,20 @@
 #include <vector>
 
 #include "Interfaces.h"
-#include "impl/FLTKTextInputImpl.h"
+#include "impl/FLTKInputImpl.h"
 
 namespace gooey::fltk {
 
     class FLTKTextInput : public IFLTKTextInput {
-        std::unique_ptr<impl::FLTKTextInputImpl> _impl_textInput;
-        IFLTKWindow*                             _parentWindow;
+        std::unique_ptr<impl::FLTKInputImpl> _impl_textInput;
+        IFLTKWindow*                         _parentWindow;
 
     public:
         FLTKTextInput(IFLTKWindow* parentWindow) : _parentWindow(parentWindow) {
-            _impl_textInput = std::make_unique<impl::FLTKTextInputImpl>(100, 20);
+            _impl_textInput = std::make_unique<impl::FLTKInputImpl>(50, 20);
         }
 
         // IFLTKTextInput
-        impl::FLTKTextInputImpl* get_impl() override { return _impl_textInput.get(); }
+        impl::FLTKInputImpl* get_impl() override { return _impl_textInput.get(); }
     };
 }

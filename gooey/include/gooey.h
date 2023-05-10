@@ -35,6 +35,14 @@ namespace gooey {
 
         // struct UIWidget {};
 
+        struct UILabel : public UIComponent {
+            virtual ~UILabel()                                 = default;
+            virtual bool     set_size(uint width, uint height) = 0;
+            virtual bool     set_position(uint x, uint y)      = 0;
+            virtual bool     set_text(cstring text)            = 0;
+            virtual cstring* get_text()                        = 0;
+        };
+
         struct UITextInput : public UIComponent {
             virtual ~UITextInput()                             = default;
             virtual bool     set_size(uint width, uint height) = 0;
@@ -49,7 +57,8 @@ namespace gooey {
             virtual ~UIWidgetContainer() = default;
             // add children() (and make sure UIWidget has parent() - which will always be a
             // WidgetContainer))
-            virtual UITextInput* add_text_input() = 0;
+            virtual UILabel*     add_label(cstring text) = 0;
+            virtual UITextInput* add_text_input()        = 0;
         };
 
         struct UIApplication;

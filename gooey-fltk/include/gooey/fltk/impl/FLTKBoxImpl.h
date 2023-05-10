@@ -4,18 +4,18 @@
 //
 
 #include <FL/Fl.H>
-#include <FL/Fl_Input.H>
+#include <FL/Fl_Box.H>
 #include <gooey/base_classes.h>
 
 #include "FLTKBackgroundImageCollection.h"
 
 namespace gooey::fltk::impl {
 
-    class FLTKTextInputImpl : public Fl_Input {
+    class FLTKBoxImpl : public Fl_Box {
         // FLTKBackgroundImageCollection _backgroundImagesCollection;
 
     public:
-        FLTKTextInputImpl(int width, int height) : Fl_Input(0, 0, width, height) {}
+        FLTKBoxImpl(int width, int height) : Fl_Box(0, 0, width, height) {}
         // FLTKWindowImpl(int width, int height) : Fl_Window(width, height) { resizable(this); }
 
         // bool AddBackgroundImage(const std::string& imagePath) {

@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "FLTKLabel.h"
 #include "FLTKTextInput.h"
 #include "Interfaces.h"
 #include "impl/FLTKWindowImpl.h"
@@ -69,6 +70,12 @@ namespace gooey::fltk {
         }
 
         // UIWidgetContainer
+        UILabel* add_label(const char* text) override {
+            auto* label = new FLTKLabel(this);
+            label->set_text(text);
+            _impl_window->add_widget(label->get_impl());
+            return label;
+        }
         UITextInput* add_text_input() override {
             auto* textInput = new FLTKTextInput(this);
             _impl_window->add_widget(textInput->get_impl());

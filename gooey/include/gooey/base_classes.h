@@ -9,6 +9,24 @@
 
 namespace gooey {
 
+    struct UILabelBase : public UILabel {
+        virtual ~UILabelBase() = default;
+
+        // UITextInput
+        bool     set_text(cstring text) override { return false; }
+        cstring* get_text() override { return nullptr; }
+
+        // UIWidget
+        bool set_size(uint width, uint height) override { return false; }
+        bool set_position(uint x, uint y) override { return false; }
+
+        // UI Component
+        bool set_background_color(UIColor color) override { return false; }
+        bool unset_background_color() override { return false; }
+        bool add_background_image(cstring imagePath) override { return false; }
+        bool remove_background_image(cstring imagePath) override { return false; }
+    };
+
     struct UITextInputBase : public UITextInput {
         virtual ~UITextInputBase() = default;
 
@@ -50,6 +68,7 @@ namespace gooey {
         bool remove_background_image(cstring imagePath) override { return false; }
 
         // UIWidgetContainer
+        UILabel*     add_label(cstring text) override { return nullptr; }
         UITextInput* add_text_input() override { return nullptr; }
     };
 
