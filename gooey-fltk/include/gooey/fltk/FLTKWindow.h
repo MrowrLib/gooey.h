@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "FLTKLabel.h"
+#include "FLTKPanel.h"
 #include "FLTKTextInput.h"
 #include "Interfaces.h"
 #include "impl/FLTKWindowImpl.h"
@@ -73,13 +74,25 @@ namespace gooey::fltk {
         UILabel* add_label(const char* text) override {
             auto* label = new FLTKLabel(this);
             label->set_text(text);
-            _impl_window->add_widget(label->get_impl());
+            _impl_window->get_pack()->add(label->get_impl());
             return label;
         }
         UITextInput* add_text_input() override {
             auto* textInput = new FLTKTextInput(this);
-            _impl_window->add_widget(textInput->get_impl());
+            _impl_window->get_pack()->add(textInput->get_impl());
             return textInput;
+        }
+        UIPanel* add_horizontal_panel(bool absolute) override {
+            auto* panel = new FLTKPanel(this, true);
+            _impl_window->get_pack()->add(panel->get_impl());
+            // _impl_window->get_pack()->resizable(panel->get_impl());
+            return panel;
+        }
+        UIPanel* add_vertical_panel(bool absolute) override {
+            auto* panel = new FLTKPanel(this, false);
+            _impl_window->get_pack()->add(panel->get_impl());
+            // _impl_window->get_pack()->resizable(panel->get_impl());
+            return panel;
         }
     };
 }

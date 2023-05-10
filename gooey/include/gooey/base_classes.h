@@ -45,6 +45,20 @@ namespace gooey {
         bool remove_background_image(cstring imagePath) override { return false; }
     };
 
+    struct UIPanelBase : public UIPanel {
+        // UIWidgetContainer
+        UILabel*     add_label(cstring text) override { return nullptr; }
+        UITextInput* add_text_input() override { return nullptr; }
+        UIPanel*     add_vertical_panel(bool absolute) override { return nullptr; }
+        UIPanel*     add_horizontal_panel(bool absolute) override { return nullptr; }
+
+        // UI Component
+        bool set_background_color(UIColor color) override { return false; }
+        bool unset_background_color() override { return false; }
+        bool add_background_image(cstring imagePath) override { return false; }
+        bool remove_background_image(cstring imagePath) override { return false; }
+    };
+
     struct UIApplication;
     class UIWindowBase : public UIWindow {
         UIApplication* _base_uiApplication;
@@ -70,6 +84,8 @@ namespace gooey {
         // UIWidgetContainer
         UILabel*     add_label(cstring text) override { return nullptr; }
         UITextInput* add_text_input() override { return nullptr; }
+        UIPanel*     add_vertical_panel(bool absolute) override { return nullptr; }
+        UIPanel*     add_horizontal_panel(bool absolute) override { return nullptr; }
     };
 
     class UIApplicationBase : public UIApplication {

@@ -17,8 +17,10 @@ namespace gooey::fltk::impl {
         FLTKWindowImpl(int width, int height) : Fl_Window(width, height) {
             _pack = new Fl_Pack(0, 0, width, height);
             _pack->type(Fl_Pack::VERTICAL);
-            resizable(this);
+            resizable(_pack);
         }
+
+        Fl_Pack* get_pack() { return _pack; }
 
         bool AddBackgroundImage(const std::string& imagePath) {
             return _backgroundImagesCollection.AddImage(imagePath);
@@ -26,11 +28,6 @@ namespace gooey::fltk::impl {
 
         bool RemoveBackgroundImage(const std::string& imagePath) {
             return _backgroundImagesCollection.RemoveImage(imagePath);
-        }
-
-        bool add_widget(Fl_Widget* widget) {
-            _pack->add(widget);
-            return true;
         }
 
         void draw() override {

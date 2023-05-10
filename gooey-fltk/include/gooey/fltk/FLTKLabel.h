@@ -29,5 +29,10 @@ namespace gooey::fltk {
             _impl_box->copy_label(text);
             return true;
         }
+
+        bool set_background_color(UIColor color) override {
+            _impl_box->set_background_color(color);
+            return true;
+        }
     };
 }

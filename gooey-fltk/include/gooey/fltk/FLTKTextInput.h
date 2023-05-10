@@ -23,5 +23,16 @@ namespace gooey::fltk {
 
         // IFLTKTextInput
         impl::FLTKInputImpl* get_impl() override { return _impl_textInput.get(); }
+
+        // ...
+        bool set_text(const char* text) override {
+            _impl_textInput->copy_label(text);
+            return true;
+        }
+
+        bool set_background_color(UIColor color) override {
+            _impl_textInput->color(fl_rgb_color(color.red, color.green, color.blue));
+            return true;
+        }
     };
 }

@@ -53,12 +53,23 @@ namespace gooey {
 
         // struct Panel <-- todo next
 
+        struct UIPanel;
+
         struct UIWidgetContainer {
             virtual ~UIWidgetContainer() = default;
             // add children() (and make sure UIWidget has parent() - which will always be a
             // WidgetContainer))
             virtual UILabel*     add_label(cstring text) = 0;
             virtual UITextInput* add_text_input()        = 0;
+
+            //
+            virtual UIPanel* add_vertical_panel(bool absolute)   = 0;
+            virtual UIPanel* add_horizontal_panel(bool absolute) = 0;
+        };
+
+        struct UIPanel : public UIWidgetContainer, public UIComponent {
+            virtual ~UIPanel() = default;
+            //
         };
 
         struct UIApplication;
