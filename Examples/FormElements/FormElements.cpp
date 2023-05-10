@@ -382,7 +382,59 @@ public:
     }
 };
 
-int main(int argc, char** argv) {
+class AutoProportionalGroup : public Fl_Group {
+    bool manage_width;
+    bool manage_height;
+
+public:
+    AutoProportionalGroup(
+        int X, int Y, int W, int H, bool manage_width = true, bool manage_height = false,
+        const char* L = 0
+    )
+        : Fl_Group(X, Y, W, H, L), manage_width(manage_width), manage_height(manage_height) {}
+
+    void resize(int X, int Y, int W, int H) override {
+        Fl_Group::resize(X, Y, W, H);
+        int num_children = children();
+
+        int total_width  = 0;
+        int total_height = 0;
+        for (int i = 0; i < num_children; ++i) {
+            Fl_Widget* child_widget = child(i);
+            total_width += child_widget->w();
+            total_height += child_widget->h();
+        }
+
+        int cur_x = X;
+        int cur_y = Y;
+        for (int i = 0; i < num_children; ++i) {
+            Fl_Widget* child_widget = child(i);
+            int        child_width  = child_widget->w();
+            int        child_height = child_widget->h();
+
+            if (manage_width) {
+                child_width =
+                    static_cast<int>(W * (static_cast<double>(child_widget->w()) / total_width));
+            }
+
+            if (manage_height) {
+                child_height =
+                    static_cast<int>(H * (static_cast<double>(child_widget->h()) / total_height));
+            }
+
+            child_widget->resize(cur_x, cur_y, child_width, child_height);
+
+            if (manage_width) {
+                cur_x += child_width;
+            }
+            if (manage_height) {
+                cur_y += child_height;
+            }
+        }
+    }
+};
+
+int main__x(int argc, char** argv) {
     Fl_Window* window = new Fl_Window(800, 600, "FLTK Proportional Group Example");
     window->color(FL_GREEN);
 
@@ -453,6 +505,52 @@ int main(int argc, char** argv) {
     v_pack->end();
     // window->resizable(v_pack);
     window->resizable(ar_group);
+    window->end();
+    window->show(argc, argv);
+
+    return Fl::run();
+}
+
+int main(int argc, char** argv) {
+    Fl_Window* window = new Fl_Window(800, 600, "FLTK AutoProportionalGroup Example");
+    window->color(FL_GRAY);
+
+    Fl_Pack* v_pack = new Fl_Pack(0, 0, window->w(), window->h());
+    v_pack->type(Fl_Pack::VERTICAL);
+
+    // First row
+    AutoProportionalGroup* row1 = new AutoProportionalGroup(0, 0, v_pack->w(), 200, true, false);
+
+    Fl_Box* blue_box = new Fl_Box(0, 0, 100, row1->h(), "");
+    blue_box->box(FL_FLAT_BOX);
+    blue_box->color(FL_BLUE);
+    row1->add(blue_box);
+
+    AutoProportionalGroup* nested_v_group =
+        new AutoProportionalGroup(0, 0, 200, row1->h(), false, true);
+    Fl_Box* red_box = new Fl_Box(0, 0, nested_v_group->w(), 50, "");
+    red_box->box(FL_FLAT_BOX);
+    red_box->color(FL_RED);
+    nested_v_group->add(red_box);
+
+    Fl_Box* green_box = new Fl_Box(0, 0, nested_v_group->w(), 150, "");
+    green_box->box(FL_FLAT_BOX);
+    green_box->color(FL_GREEN);
+    nested_v_group->add(green_box);
+
+    row1->add(nested_v_group);
+
+    Fl_Box* magenta_box = new Fl_Box(0, 0, 100, row1->h(), "");
+    magenta_box->box(FL_FLAT_BOX);
+    magenta_box->color(FL_MAGENTA);
+    row1->add(magenta_box);
+
+    // Add row1 to vertical layout
+    v_pack->add(row1);
+    v_pack->resizable(row1);
+
+    v_pack->end();
+    window->resizable(v_pack);
     window->end();
     window->show(argc, argv);
 
