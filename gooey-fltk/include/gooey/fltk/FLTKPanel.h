@@ -43,11 +43,13 @@ namespace gooey::fltk {
         UIPanel* add_horizontal_panel(bool absolute) override {
             auto* panel = new FLTKPanel(_parentWindow, true);
             _impl_group->add(panel->get_impl());
+            _impl_group->resizable(panel->get_impl());
             return panel;
         }
         UIPanel* add_vertical_panel(bool absolute) override {
             auto* panel = new FLTKPanel(_parentWindow, false);
             _impl_group->add(panel->get_impl());
+            _impl_group->resizable(panel->get_impl());
             return panel;
         }
 

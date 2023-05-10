@@ -5,22 +5,34 @@
 #include <FL/Fl_Window.H>
 #include <gooey/base_classes.h>
 
+#include "FLTKAspectRatioGroup.h"
+#include "FLTKAutoProportionalGroupImpl.h"
 #include "FLTKBackgroundImageCollection.h"
 
 namespace gooey::fltk::impl {
 
     class FLTKWindowImpl : public Fl_Window {
-        FLTKBackgroundImageCollection _backgroundImagesCollection;
-        Fl_Pack*                      _pack;
+        FLTKBackgroundImageCollection        _backgroundImagesCollection;
+        impl::FLTKAutoProportionalGroupImpl* _topLevelHorizontalGroup;
+        impl::FLTKAutoProportionalGroupImpl* _secondLevelVerticalGroup;
 
     public:
         FLTKWindowImpl(int width, int height) : Fl_Window(width, height) {
-            _pack = new Fl_Pack(0, 0, width, height);
-            _pack->type(Fl_Pack::VERTICAL);
-            resizable(_pack);
+            resizable(this);
+
+            _topLevelHorizontalGroup =
+                new impl::FLTKAutoProportionalGroupImpl(0, 0, width, height, true, false);
+            _secondLevelVerticalGroup =
+                new impl::FLTKAutoProportionalGroupImpl(0, 0, width, height, false, true);
+
+            _topLevelHorizontalGroup->add(_secondLevelVerticalGroup);
+            _topLevelHorizontalGroup->end();
+
+            resizable(_topLevelHorizontalGroup);
+            end();
         }
 
-        Fl_Pack* get_pack() { return _pack; }
+        impl::FLTKAutoProportionalGroupImpl* get_group() { return _secondLevelVerticalGroup; }
 
         bool AddBackgroundImage(const std::string& imagePath) {
             return _backgroundImagesCollection.AddImage(imagePath);
@@ -30,9 +42,9 @@ namespace gooey::fltk::impl {
             return _backgroundImagesCollection.RemoveImage(imagePath);
         }
 
-        void draw() override {
-            Fl_Window::draw();
-            _backgroundImagesCollection.DrawAll(x(), y(), w(), h());
-        }
+        // void draw() override {
+        //     Fl_Window::draw();
+        //     _backgroundImagesCollection.DrawAll(x(), y(), w(), h());
+        // }
     };
 }
