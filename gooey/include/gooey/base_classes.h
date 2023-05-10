@@ -4,40 +4,59 @@
 
 #include "../gooey.h"
 
+#define uint unsigned int
+#define cstring const char*
+
 namespace gooey {
 
-    // struct UIObject {};
+    struct UITextInputBase : public UITextInput {
+        virtual ~UITextInputBase() = default;
 
-    // struct UIWidget {};
+        // UITextInput
+        bool     set_text(cstring text) override { return false; }
+        cstring* get_text() override { return nullptr; }
 
-    // struct UIWidgetContainer {};
+        // UIWidget
+        bool set_size(uint width, uint height) override { return false; }
+        bool set_position(uint x, uint y) override { return false; }
 
-    class UIComponentBase : public UIComponent {
-        bool set_background_color(int red, int green, int blue) { return false; }
-        bool unset_background_color() { return false; }
-        bool add_background_image(const char* imagePath) { return false; }
-        bool remove_background_image(const char* imagePath) { return false; }
+        // UI Component
+        bool set_background_color(UIColor color) override { return false; }
+        bool unset_background_color() override { return false; }
+        bool add_background_image(cstring imagePath) override { return false; }
+        bool remove_background_image(cstring imagePath) override { return false; }
     };
 
     struct UIApplication;
-    class UIWindowBase : public UIWindow, public UIComponentBase {
+    class UIWindowBase : public UIWindow {
         UIApplication* _base_uiApplication;
 
     public:
-        ~UIWindowBase() override = default;
         UIWindowBase(UIApplication* uiApplication) : _base_uiApplication(uiApplication) {}
+
+        // UIWindow
         UIApplication* get_application() override { return _base_uiApplication; }
-        bool           set_title(const char* title) override { return false; }
-        bool           set_size(int width, int height) override { return false; }
-        bool           set_position(int x, int y) override { return false; }
+        bool           set_title(cstring title) override { return false; }
         bool           show() override { return false; }
+
+        // Move these:
+        bool set_size(uint width, uint height) override { return false; }
+        bool set_position(uint x, uint y) override { return false; }
+
+        // UI Component
+        bool set_background_color(UIColor color) override { return false; }
+        bool unset_background_color() override { return false; }
+        bool add_background_image(cstring imagePath) override { return false; }
+        bool remove_background_image(cstring imagePath) override { return false; }
+
+        // UIWidgetContainer
+        UITextInput* add_text_input() override { return nullptr; }
     };
 
     class UIApplicationBase : public UIApplication {
         std::unique_ptr<UIDefaults> _base_uiDefaults;
 
     public:
-        ~UIApplicationBase() override = default;
         UIApplicationBase() : _base_uiDefaults(std::make_unique<UIDefaults>()) {}
         UIDefaults* get_defaults() override { return _base_uiDefaults.get(); }
         UIWindow*   add_window() override { return nullptr; }
@@ -46,3 +65,6 @@ namespace gooey {
         bool        destroy() override { return false; }
     };
 }
+
+#undef uint
+#undef cstring

@@ -7,32 +7,38 @@
 #include <memory>
 #include <vector>
 
+#include "FLTKTextInput.h"
+#include "Interfaces.h"
 #include "impl/FLTKWindowImpl.h"
 
 namespace gooey::fltk {
 
-    class FLTKWindow : public UIWindowBase {
+    class FLTKWindow : public IFLTKWindow {
         std::unique_ptr<impl::FLTKWindowImpl> _impl_window;
 
     public:
-        FLTKWindow(UIApplicationBase* parent) : UIWindowBase(parent) {
+        FLTKWindow(UIApplicationBase* parent) : gooey::UIWindowBase(parent) {
             auto* defaults = parent->get_defaults();
             _impl_window   = std::make_unique<impl::FLTKWindowImpl>(
                 defaults->window_width, defaults->window_height
             );
         }
 
+        // IFLTKWindow
+        impl::FLTKWindowImpl* get_impl() override { return _impl_window.get(); }
+
+        // ...
         bool set_title(const char* title) override {
             _impl_window->label(title);
             return true;
         }
 
-        bool set_size(int width, int height) override {
+        bool set_size(unsigned int width, unsigned int height) override {
             _impl_window->size(width, height);
             return true;
         }
 
-        bool set_position(int x, int y) override {
+        bool set_position(unsigned int x, unsigned int y) override {
             _impl_window->position(x, y);
             return true;
         }
@@ -42,8 +48,8 @@ namespace gooey::fltk {
             return true;
         }
 
-        bool set_background_color(int red, int green, int blue) override {
-            _impl_window->color(fl_rgb_color(red, green, blue));
+        bool set_background_color(UIColor color) override {
+            _impl_window->color(fl_rgb_color(color.red, color.green, color.blue));
             return true;
         }
 
@@ -60,6 +66,13 @@ namespace gooey::fltk {
         bool remove_background_image(const char* imagePath) override {
             _impl_window->RemoveBackgroundImage(imagePath);
             return true;
+        }
+
+        // UIWidgetContainer
+        UITextInput* add_text_input() override {
+            auto* textInput = new FLTKTextInput(this);
+            _impl_window->add_widget(textInput->get_impl());
+            return textInput;
         }
     };
 }
