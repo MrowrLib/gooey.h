@@ -21,21 +21,29 @@ namespace gooey::fltk::impl {
             : Fl_Window(width, height, title) {
             resizable(this);
 
-            aspect_ratio_group = new FLTKAspectRatioGroupImpl(0, 0, w(), h());
-            full_size_group    = new FLTKAutoProportionalGroupImpl(
-                   0, 0, aspect_ratio_group->w(), aspect_ratio_group->h(), false, true, true
-               );
+            // aspect_ratio_group = new FLTKAspectRatioGroupImpl(0, 0, w(), h());
+            // full_size_group    = new FLTKAutoProportionalGroupImpl(
+            //        0, 0, aspect_ratio_group->w(), aspect_ratio_group->h(), false, true, true
+            //    );
 
-            aspect_ratio_group->add(full_size_group);
-            aspect_ratio_group->end();
+            // aspect_ratio_group->add(full_size_group);
+            // aspect_ratio_group->end();
 
-            resizable(aspect_ratio_group);
+            // resizable(aspect_ratio_group);
             end();
         }
 
-        void add(Fl_Widget* widget) { full_size_group->add(widget); }
+        void add(Fl_Widget* widget) {
+            if (full_size_group) full_size_group->add(widget);
+            else Fl_Window::add(widget);
+        }
 
         void draw() override {
+            if (!full_size_group) {
+                Fl_Window::draw();
+                return;
+            }
+
             // Draw the background images.
             _backgroundImagesCollection.DrawAll(x(), y(), w(), h());
 
