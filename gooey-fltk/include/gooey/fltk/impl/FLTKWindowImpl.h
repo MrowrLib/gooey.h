@@ -21,15 +21,16 @@ namespace gooey::fltk::impl {
             : Fl_Window(width, height, title) {
             resizable(this);
 
-            // aspect_ratio_group = new FLTKAspectRatioGroupImpl(0, 0, w(), h());
-            // full_size_group    = new FLTKAutoProportionalGroupImpl(
-            //        0, 0, aspect_ratio_group->w(), aspect_ratio_group->h(), false, true, true
-            //    );
+            /////
+            aspect_ratio_group = new FLTKAspectRatioGroupImpl(0, 0, w(), h());
+            full_size_group    = new FLTKAutoProportionalGroupImpl(
+                   0, 0, aspect_ratio_group->w(), aspect_ratio_group->h(), false, true, true
+               );
+            aspect_ratio_group->add(full_size_group);
+            aspect_ratio_group->end();
+            resizable(aspect_ratio_group);
+            //////
 
-            // aspect_ratio_group->add(full_size_group);
-            // aspect_ratio_group->end();
-
-            // resizable(aspect_ratio_group);
             end();
         }
 

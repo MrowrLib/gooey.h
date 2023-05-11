@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "FLTKGrid.h"
 #include "FLTKLabel.h"
 #include "FLTKTextInput.h"
 #include "Interfaces.h"
@@ -51,6 +52,14 @@ namespace gooey::fltk {
             _impl_group->add(panel->get_impl());
             _impl_group->resizable(panel->get_impl());  // Do we need this?
             return panel;
+        }
+        UIGrid* add_grid(
+            unsigned int columnCount, unsigned int rowCount, unsigned int cellSize,
+            unsigned int padding
+        ) override {
+            auto* grid = new FLTKGrid();
+            _impl_group->add(grid->get_impl());
+            return grid;
         }
 
         // ...
