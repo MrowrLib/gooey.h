@@ -20,6 +20,7 @@ namespace gooey::fltk::impl {
             : Fl_Group(X, Y, W, H, L), manage_width(manage_width), manage_height(manage_height) {}
 
         void resize(int X, int Y, int W, int H) override {
+            Fl::lock();
             Fl_Group::resize(X, Y, W, H);
             int num_children = children();
 
@@ -50,15 +51,21 @@ namespace gooey::fltk::impl {
                     );
                 }
 
-                child_widget->resize(cur_x, cur_y, child_width, child_height);
+                if (manage_width && manage_height) {
+                    child_widget->resize(X, cur_y, parent()->w(), child_height);
+                } else {
+                    child_widget->resize(cur_x, cur_y, child_width, child_height);
+                }
 
-                if (manage_width) {
+                if (manage_width && !manage_height) {
                     cur_x += child_width;
                 }
                 if (manage_height) {
                     cur_y += child_height;
                 }
             }
+            Fl::unlock();
+            Fl::awake();
         }
     };
 }

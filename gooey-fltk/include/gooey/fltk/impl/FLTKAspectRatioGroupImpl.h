@@ -10,14 +10,15 @@
 
 namespace gooey::fltk::impl {
 
-    class FLTKAspectRatioGroup : public Fl_Group {
+    class FLTKAspectRatioGroupImpl : public Fl_Group {
         double aspect_ratio;
 
     public:
-        FLTKAspectRatioGroup(int X, int Y, int W, int H, const char* L = 0)
+        FLTKAspectRatioGroupImpl(int X, int Y, int W, int H, const char* L = 0)
             : Fl_Group(X, Y, W, H, L), aspect_ratio(static_cast<double>(W) / H) {}
 
         void resize(int X, int Y, int W, int H) override {
+            Fl::lock();
             double new_aspect_ratio = static_cast<double>(W) / H;
             if (abs(new_aspect_ratio - aspect_ratio) > 0.01) {
                 if (H * aspect_ratio <= W) {
@@ -28,6 +29,8 @@ namespace gooey::fltk::impl {
             } else {
                 Fl_Group::resize(X, Y, W, H);
             }
+            Fl::unlock();
+            Fl::awake();
         }
     };
 }
