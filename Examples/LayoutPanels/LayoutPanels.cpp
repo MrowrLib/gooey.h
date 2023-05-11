@@ -5,25 +5,31 @@ using namespace gooey;
 int main() {
     UIApplication* app    = create_gooey_application();
     UIWindow*      window = app->add_window();
-    window->set_title("Form Elements");
+    window->set_title("Layout Panels");
     window->show();
     // window->set_background_color({0, 0, 0});
     window->add_background_image(ExampleImagePaths::Monster1.string().c_str());
 
-    auto* label1 = window->add_label("Label 1");
-    // label1->set_background_color({255, 0, 0});
+    auto* leftBox = window->add_label("TOP");
+    leftBox->set_background_color({255, 0, 255});
 
-    auto* textInput1 = window->add_text_input();
-    textInput1->set_background_color({0, 0, 255});
+    auto* horizontal = window->add_horizontal_panel(true, false);
+    horizontal->set_background_color({255, 150, 50});
 
-    auto* label2 = window->add_label("Label 2");
-    // label2->set_background_color({0, 255, 0});
+    auto* l1 = horizontal->add_label("LEFT");
+    l1->set_background_color({255, 0, 0});
 
-    // auto* mainVertical = window->add_horizontal_panel(false);
-    // mainVertical->set_background_color({255, 150, 50});
+    auto* mainVertical = horizontal->add_vertical_panel(false, false);
+    mainVertical->set_background_color({0, 255, 255});
 
-    // auto* leftBox = mainVertical->add_label("LEFT");
-    // leftBox->set_background_color({255, 0, 255});
+    auto* l3 = mainVertical->add_label("MIDDLE 1");
+    l3->set_background_color({255, 0, 100});
+
+    auto* l4 = mainVertical->add_label("MIDDLE 2");
+    l4->set_background_color({255, 0, 100});
+
+    auto* l2 = horizontal->add_label("RIGHT");
+    l2->set_background_color({0, 255, 0});
 
     // auto middleGroup = mainVertical->add_vertical_panel(false);
     // middleGroup->set_background_color({0, 255, 200});
@@ -43,8 +49,8 @@ int main() {
     // auto* l2 = middleGroup->add_label("MIDDLE 2");
     // l2->set_background_color({10, 255, 50});
 
-    // auto* rightBox = mainVertical->add_label("RIGHT");
-    // rightBox->set_background_color({0, 255, 255});
+    auto* rightBox = window->add_label("BOTTOM");
+    rightBox->set_background_color({0, 255, 255});
 
     // auto* horizontal_panel = mainVertical->add_horizontal_panel(false);
     // horizontal_panel->set_background_color({0, 0, 0});
