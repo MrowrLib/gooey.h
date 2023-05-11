@@ -15,7 +15,7 @@ namespace gooey::fltk::impl {
 
     public:
         FLTKAutoProportionalGroupImpl(
-            int X, int Y, int W, int H, bool manage_width = true, bool manage_height = false,
+            int X, int Y, int W, int H, bool manage_width = false, bool manage_height = false,
             bool scale_all_content = false, const char* L = 0
         )
             : Fl_Group(X, Y, W, H, L),
@@ -28,6 +28,7 @@ namespace gooey::fltk::impl {
             Fl_Group::resize(X, Y, W, H);
             int num_children = children();
 
+            int max_width    = 0;
             int max_height   = 0;
             int total_width  = 0;
             int total_height = 0;
@@ -35,6 +36,9 @@ namespace gooey::fltk::impl {
                 Fl_Widget* child_widget = child(i);
                 total_width += child_widget->w();
                 total_height += child_widget->h();
+                if (child_widget->w() > max_width) {
+                    max_width = child_widget->w();
+                }
                 if (child_widget->h() > max_height) {
                     max_height = child_widget->h();
                 }
@@ -57,13 +61,22 @@ namespace gooey::fltk::impl {
                     child_height = static_cast<int>(
                         H * (static_cast<double>(child_widget->h()) / total_height)
                     );
+                    // if (scale_all_content) child_height = H / num_children;
                 }
 
+                // if (scale_all_content) child_height = parent()->h() / num_children;
+                // if (scale_all_content) child_height = parent()->h() / num_children;
+                // if (scale_all_content && manage_width)
+                //     client_he
+
                 if (scale_all_content) {
-                    if (manage_height) child_widget->resize(X, cur_y, parent()->w(), child_height);
+                    if (manage_height)
+                        child_widget->resize(
+                            X, cur_y, parent()->w() / parent()->children(), child_height
+                        );
                     else
                         child_widget->resize(
-                            cur_x, Y, child_width, max_height
+                            cur_x, Y, child_width, H
                         );  // replace with true proportions
                 } else {
                     child_widget->resize(cur_x, cur_y, child_width, child_height);
