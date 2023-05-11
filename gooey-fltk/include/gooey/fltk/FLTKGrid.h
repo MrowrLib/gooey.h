@@ -11,7 +11,9 @@ namespace gooey::fltk {
         impl::FLTKGridImpl* _impl_grid;
 
     public:
-        FLTKGrid() { _impl_grid = new impl::FLTKGridImpl(); }
+        FLTKGrid(unsigned int columnCount, unsigned int rowCount, unsigned int cellSize, unsigned int padding) {
+            _impl_grid = new impl::FLTKGridImpl(columnCount, rowCount, cellSize, padding);
+        }
 
         // IFLTKGrid
         impl::FLTKGridImpl* get_impl() override { return _impl_grid; }

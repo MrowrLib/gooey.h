@@ -99,7 +99,7 @@ namespace gooey::fltk {
             unsigned int columnCount, unsigned int rowCount, unsigned int cellSize,
             unsigned int padding
         ) override {
-            auto* grid = new FLTKGrid();
+            auto* grid = new FLTKGrid(columnCount, rowCount, cellSize, padding);
             _impl_window->add(grid->get_impl());
             return grid;
         }
