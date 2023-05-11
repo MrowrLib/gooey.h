@@ -54,6 +54,8 @@ int main() {
 
     // Then absolute!
 
+    // Then hide/show toggle visibility
+
     // And images in all of them
 
     app->run_blocking();

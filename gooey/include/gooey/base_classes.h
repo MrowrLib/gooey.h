@@ -9,6 +9,25 @@
 
 namespace gooey {
 
+    struct UIGridCellBase : public UIGridCell {
+        virtual ~UIGridCellBase() = default;
+
+        // UIGridCell
+        bool     set_text(cstring text) override { return false; }
+        UILabel* get_text() override { return nullptr; }
+    };
+
+    struct UIGridBase : public UIGrid {
+        virtual ~UIGridBase() = default;
+
+        // UIGrid
+        UIGridCell* add_cell(
+            uint x, uint y, uint columnCount = 1, uint rowCount = 1, bool visible = true
+        ) override {
+            return nullptr;
+        }
+    };
+
     struct UILabelBase : public UILabel {
         virtual ~UILabelBase() = default;
 
@@ -51,6 +70,10 @@ namespace gooey {
         UITextInput* add_text_input() override { return nullptr; }
         UIPanel*     add_vertical_panel(bool absolute) override { return nullptr; }
         UIPanel*     add_horizontal_panel(bool absolute) override { return nullptr; }
+        UIGrid*      add_grid(uint columnCount, uint rowCount, uint cellSize = 0, uint padding = 0)
+            override {
+            return nullptr;
+        }
 
         // UI Component
         bool set_background_color(UIColor color) override { return false; }
@@ -86,6 +109,10 @@ namespace gooey {
         UITextInput* add_text_input() override { return nullptr; }
         UIPanel*     add_vertical_panel(bool absolute) override { return nullptr; }
         UIPanel*     add_horizontal_panel(bool absolute) override { return nullptr; }
+        UIGrid*      add_grid(uint columnCount, uint rowCount, uint cellSize = 0, uint padding = 0)
+            override {
+            return nullptr;
+        }
     };
 
     class UIApplicationBase : public UIApplication {

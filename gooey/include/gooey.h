@@ -7,6 +7,8 @@ namespace gooey {
 
     extern "C" {
 
+        enum class UIGridCellStyle { Button, Flat };
+
         struct UIColor {
             uint red   = 0;
             uint green = 0;
@@ -14,13 +16,14 @@ namespace gooey {
         };
 
         struct UIDefaults {
-            uint    window_width     = 640;
-            uint    window_height    = 480;
-            uint    window_x         = 0;
-            uint    window_y         = 0;
-            bool    window_visible   = true;
-            UIColor background_color = {255, 255, 255};
-            UIColor foreground_color = {0, 0, 0};
+            uint            window_width     = 640;
+            uint            window_height    = 480;
+            uint            window_x         = 0;
+            uint            window_y         = 0;
+            bool            window_visible   = true;
+            UIColor         background_color = {255, 255, 255};
+            UIColor         foreground_color = {0, 0, 0};
+            UIGridCellStyle grid_cell_style  = UIGridCellStyle::Button;
         };
 
         // struct UIObject {};
@@ -51,6 +54,20 @@ namespace gooey {
             virtual cstring* get_text()                        = 0;
         };
 
+        struct UIGridCell {
+            virtual ~UIGridCell()                             = default;
+            virtual bool     set_text(cstring text)           = 0;
+            virtual UILabel* get_text()                       = 0;
+            virtual bool     set_style(UIGridCellStyle style) = 0;
+        };
+
+        struct UIGrid {
+            virtual ~UIGrid() = default;
+            virtual UIGridCell* add_cell(
+                uint x, uint y, uint columnCount = 1, uint rowCount = 1, bool visible = true
+            ) = 0;
+        };
+
         // struct Panel <-- todo next
 
         struct UIPanel;
@@ -65,6 +82,11 @@ namespace gooey {
             //
             virtual UIPanel* add_vertical_panel(bool absolute = false)   = 0;
             virtual UIPanel* add_horizontal_panel(bool absolute = false) = 0;
+
+            //
+            virtual UIGrid* add_grid(
+                uint columnCount, uint rowCount, uint cellSize = 0, uint padding = 0
+            ) = 0;
         };
 
         struct UIPanel : public UIWidgetContainer, public UIComponent {

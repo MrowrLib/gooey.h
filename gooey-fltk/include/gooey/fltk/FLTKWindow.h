@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 
+#include "FLTKGrid.h"
 #include "FLTKLabel.h"
 #include "FLTKPanel.h"
 #include "FLTKTextInput.h"
@@ -70,6 +71,8 @@ namespace gooey::fltk {
             return true;
         }
 
+        // TODO: track the pointers of our own structures (widgets collection of unique_ptr)
+
         // UIWidgetContainer
         UILabel* add_label(const char* text) override {
             auto* label = new FLTKLabel(this);
@@ -91,6 +94,14 @@ namespace gooey::fltk {
             auto* panel = new FLTKPanel(this, false);
             _impl_window->add(panel->get_impl());
             return panel;
+        }
+        UIGrid* add_grid(
+            unsigned int columnCount, unsigned int rowCount, unsigned int cellSize,
+            unsigned int padding
+        ) override {
+            auto* grid = new FLTKGrid();
+            _impl_window->add(grid->get_impl());
+            return grid;
         }
     };
 }

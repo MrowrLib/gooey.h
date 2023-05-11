@@ -22,5 +22,6 @@ int main() {
     label3->set_background_color({0, 0, 255});
     auto* text_input3 = window->add_text_input();
 
-    return app->run_blocking();
+    app->run_blocking();
+    return 0;
 }

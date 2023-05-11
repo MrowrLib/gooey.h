@@ -9,5 +9,6 @@ int main() {
     window->set_size(640, 480);
     window->set_position(100, 100);
     window->show();
-    return app->run_blocking();
+    app->run_blocking();
+    return 0;
 }

@@ -9,10 +9,15 @@
 
 #include "impl/FLTKAutoProportionalGroupImpl.h"
 #include "impl/FLTKBoxImpl.h"
+#include "impl/FLTKGridImpl.h"
 #include "impl/FLTKInputImpl.h"
 #include "impl/FLTKWindowImpl.h"
 
 namespace gooey::fltk {
+
+    struct IFLTKGrid : public virtual UIGridBase {
+        virtual impl::FLTKGridImpl* get_impl() = 0;
+    };
 
     struct IFLTKLabel : public virtual UILabelBase {
         virtual impl::FLTKBoxImpl* get_impl() = 0;
