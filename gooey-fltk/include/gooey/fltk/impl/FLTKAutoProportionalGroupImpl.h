@@ -9,14 +9,14 @@
 namespace gooey::fltk::impl {
 
     class FLTKAutoProportionalGroupImpl : public Fl_Group {
-        bool scale_all_content = false;
+        bool scale_all_content = true;
         bool manage_width;
         bool manage_height;
 
     public:
         FLTKAutoProportionalGroupImpl(
             int X, int Y, int W, int H, bool manage_width = false, bool manage_height = false,
-            bool scale_all_content = false, const char* L = 0
+            bool scale_all_content = true, const char* L = 0
         )
             : Fl_Group(X, Y, W, H, L),
               manage_width(manage_width),

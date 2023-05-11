@@ -19,10 +19,9 @@ namespace gooey::fltk {
         IFLTKWindow*                                         _parentWindow;
 
     public:
-        FLTKPanel(IFLTKWindow* parentWindow, bool horizontal, bool scaleAllContent = false)
-            : _parentWindow(parentWindow) {
+        FLTKPanel(IFLTKWindow* parentWindow, bool horizontal) : _parentWindow(parentWindow) {
             _impl_group = std::make_unique<impl::FLTKAutoProportionalGroupImpl>(
-                0, 0, 50, 50, horizontal, !horizontal, scaleAllContent
+                0, 0, 50, 50, horizontal, !horizontal
             );
         }
 
@@ -41,14 +40,14 @@ namespace gooey::fltk {
             _impl_group->add(textInput->get_impl());
             return textInput;
         }
-        UIPanel* add_horizontal_panel(bool scaleAll, bool absolute) override {
-            auto* panel = new FLTKPanel(_parentWindow, true, scaleAll);
+        UIPanel* add_horizontal_panel(bool absolute) override {
+            auto* panel = new FLTKPanel(_parentWindow, true);
             _impl_group->add(panel->get_impl());
             _impl_group->resizable(panel->get_impl());  // Do we need this?
             return panel;
         }
-        UIPanel* add_vertical_panel(bool scaleAll, bool absolute) override {
-            auto* panel = new FLTKPanel(_parentWindow, false, scaleAll);
+        UIPanel* add_vertical_panel(bool absolute) override {
+            auto* panel = new FLTKPanel(_parentWindow, false);
             _impl_group->add(panel->get_impl());
             _impl_group->resizable(panel->get_impl());  // Do we need this?
             return panel;

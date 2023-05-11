@@ -63,8 +63,8 @@ namespace gooey {
             virtual UITextInput* add_text_input()        = 0;
 
             //
-            virtual UIPanel* add_vertical_panel(bool scaleAll, bool absolute)   = 0;
-            virtual UIPanel* add_horizontal_panel(bool scaleAll, bool absolute) = 0;
+            virtual UIPanel* add_vertical_panel(bool absolute = false)   = 0;
+            virtual UIPanel* add_horizontal_panel(bool absolute = false) = 0;
         };
 
         struct UIPanel : public UIWidgetContainer, public UIComponent {
