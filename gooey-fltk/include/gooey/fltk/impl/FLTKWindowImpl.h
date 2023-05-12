@@ -3,7 +3,7 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Window.H>
-#include <gooey/base_classes.h>
+#include <gooey/base.h>
 
 #include "FLTKAspectRatioGroupImpl.h"
 #include "FLTKAutoProportionalGroupImpl.h"

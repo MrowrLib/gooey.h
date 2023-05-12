@@ -1,5 +1,7 @@
-#ifdef GOOEY_USE_FLTK
+#if defined(GOOEY_USE_FLTK)
     #include <gooey/fltk.h>
+#elif defined(GOOEY_USE_QT)
+    #include <gooey/qt.h>
 #else
     #error "GOOEY_USE_<library> not defined"
 #endif

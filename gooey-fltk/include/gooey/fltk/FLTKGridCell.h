@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gooey/base_classes.h>
+#include <gooey/base.h>
 
 namespace gooey::fltk {
 

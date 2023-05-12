@@ -5,7 +5,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
-#include <gooey/base_classes.h>
+#include <gooey/base.h>
 
 #include "impl/FLTKAutoProportionalGroupImpl.h"
 #include "impl/FLTKBoxImpl.h"

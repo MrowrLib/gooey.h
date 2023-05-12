@@ -1,8 +1,8 @@
 #pragma once
 
-#include <memory>
+#include <gooey.h>
 
-#include "../gooey.h"
+#include <memory>
 
 #define uint unsigned int
 #define cstring const char*

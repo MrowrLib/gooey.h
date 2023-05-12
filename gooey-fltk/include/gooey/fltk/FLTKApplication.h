@@ -2,7 +2,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_ask.H>
-#include <gooey/base_classes.h>
+#include <gooey/base.h>
 
 #include <memory>
 #include <vector>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gooey/base_classes.h>
+#include <gooey/base.h>
 
 #include "Interfaces.h"
 #include "impl/FLTKGridImpl.h"

@@ -26,41 +26,41 @@
 //     return 0;
 // }
 
-#include <FL/Fl.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Tabs.H>
-#include <FL/Fl_Window.H>
+// #include <FL/Fl.H>
+// #include <FL/Fl_Box.H>
+// #include <FL/Fl_Group.H>
+// #include <FL/Fl_Tabs.H>
+// #include <FL/Fl_Window.H>
 
 int main() {
-    Fl_Window window(300, 200, "FLTK Tabs Example");
+    // Fl_Window window(300, 200, "FLTK Tabs Example");
 
-    Fl_Tabs tabs(0, 0, 300, 200);
-    tabs.color(FL_RED, FL_BLUE);
+    // Fl_Tabs tabs(0, 0, 300, 200);
+    // tabs.color(FL_RED, FL_BLUE);
 
-    // Tab 1
-    Fl_Group group1(0, 30, 300, 170, "Tab 1");
-    Fl_Box   box1(100, 100, 100, 50, "Hi from tab 1");
-    group1.end();
+    // // Tab 1
+    // Fl_Group group1(0, 30, 300, 170, "Tab 1");
+    // Fl_Box   box1(100, 100, 100, 50, "Hi from tab 1");
+    // group1.end();
 
-    // Tab 2
-    Fl_Group group2(0, 30, 300, 170, "Tab 2");
-    Fl_Box   box2(100, 100, 100, 50, "Hi from tab 2");
-    group2.end();
+    // // Tab 2
+    // Fl_Group group2(0, 30, 300, 170, "Tab 2");
+    // Fl_Box   box2(100, 100, 100, 50, "Hi from tab 2");
+    // group2.end();
 
-    tabs.end();
-    window.end();
+    // tabs.end();
+    // window.end();
 
-    group1.copy_label("CHANGED");
-    group1.labelcolor(FL_MAGENTA);
+    // group1.copy_label("CHANGED");
+    // group1.labelcolor(FL_MAGENTA);
 
-    Fl_Group* thirdTab = new Fl_Group(0, 30, 300, 170, "Tab 3");
-    Fl_Box*   box3     = new Fl_Box(100, 100, 100, 50, "Hi from tab 3");
-    thirdTab->end();
-    tabs.add(thirdTab);
+    // Fl_Group* thirdTab = new Fl_Group(0, 30, 300, 170, "Tab 3");
+    // Fl_Box*   box3     = new Fl_Box(100, 100, 100, 50, "Hi from tab 3");
+    // thirdTab->end();
+    // tabs.add(thirdTab);
 
-    tabs.remove(&group2);
+    // tabs.remove(&group2);
 
-    window.show();
-    return Fl::run();
+    // window.show();
+    // return Fl::run();
 }
