@@ -1,10 +1,10 @@
 #pragma once
 
-// #include "...Application.h"
-
 #include <gooey.h>
+
+#include "GooeyQtApplication.h"
 
 namespace gooey {
 
-    UIApplication* create_gooey_application() { return nullptr; }
+    UIApplication* create_gooey_application() { return new Qt::GooeyQtApplication; }
 }

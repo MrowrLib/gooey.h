@@ -7,10 +7,13 @@
 #include <FL/Fl_Group.H>
 #include <FL/Fl_draw.H>
 
+#include "FLTKBackgroundImageCollection.h"
+
 namespace gooey::fltk::impl {
 
     class FLTKAutoProportionalGroupImpl : public Fl_Group {
-        Fl_Color* _backgroundColor;
+        Fl_Color*                     _backgroundColor;
+        FLTKBackgroundImageCollection _backgroundImagesCollection;
 
         bool _absolute         = false;
         bool scale_all_content = true;
@@ -32,6 +35,13 @@ namespace gooey::fltk::impl {
 
         void set_background_color(Fl_Color color) { _backgroundColor = new Fl_Color(color); }
 
+        void add_background_image(const char* filename) {
+            _backgroundImagesCollection.AddImage(filename);
+        }
+        void remove_background_image(const char* filename) {
+            _backgroundImagesCollection.RemoveImage(filename);
+        }
+
         void set_visible(bool visible) { visible ? Fl_Group::show() : Fl_Group::hide(); }
 
         void draw() override {
@@ -39,6 +49,17 @@ namespace gooey::fltk::impl {
                 fl_color(*_backgroundColor);
                 fl_rectf(x(), y(), w(), h());
             }
+
+            // red background color
+            // fl_color(FL_RED);
+            // fl_rectf(x(), y(), w(), h());
+
+            // Draw 1px green border
+            fl_color(FL_GREEN);
+            fl_rect(x(), y(), w(), h());
+
+            // Draw the background images.
+            _backgroundImagesCollection.DrawAll(x(), y(), w(), h());
 
             // Fl_Group::draw();
 

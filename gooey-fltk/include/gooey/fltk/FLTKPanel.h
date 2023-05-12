@@ -81,6 +81,15 @@ namespace gooey::fltk {
             return true;
         }
 
+        bool add_background_image(const char* imagePath) override {
+            _impl_group->add_background_image(imagePath);
+            return true;
+        }
+
+        bool remove_background_image(const char* imagePath) override {
+            _impl_group->remove_background_image(imagePath);
+            return true;
+        }
         // bool add_background_image(const char* imagePath) override {
         //     _impl_group->AddBackgroundImage(imagePath);
         //     return true;

@@ -65,7 +65,9 @@ namespace gooey::fltk::impl {
                     currentImageSize->second.second != height) {
                     if (!ResizeImage(imagePath, width, height)) return false;
                 }
+                fl_push_clip(x, y, width, height);
                 _currentImages[imagePath]->draw(0, 0, width, height, 0, 0);  // 2 extra on 1.3.8 ...
+                fl_pop_clip();
             }
             return false;
         }

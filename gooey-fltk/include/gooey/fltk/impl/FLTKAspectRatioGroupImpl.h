@@ -5,6 +5,7 @@
 
 #include <FL/Fl.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_draw.H>
 
 #include <cmath>
 
@@ -32,5 +33,17 @@ namespace gooey::fltk::impl {
             Fl::unlock();
             Fl::awake();
         }
+
+        // void draw() override {
+        //     // draw blue outline
+        //     // fl_color(FL_BLUE);
+        //     // fl_rect(x(), y(), w(), h());
+
+        //     // background color blue
+        //     fl_color(FL_BLUE);
+        //     fl_rectf(x(), y(), w(), h());
+
+        //     Fl_Group::draw();
+        // }
     };
 }

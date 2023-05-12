@@ -7,6 +7,8 @@
 #define uint unsigned int
 #define cstring const char*
 
+// TODO change the namespace to gooey::base please! too much noise in real apps
+
 namespace gooey {
 
     struct UIGridCellBase : public UIGridCell {
