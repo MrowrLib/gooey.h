@@ -8,14 +8,13 @@ int main() {
     app              = create_gooey_application();
     UIWindow* window = app->add_window();
     window->set_title("Button Grid");
+    window->set_size(1400, 1000);
     window->show();
-    // window->add_label("Button 1");
-    // auto* row2   = window->add_horizontal_panel();
-    // auto* label1 = row2->add_label("x");
-    // auto* grid = row2->add_grid(8, 4, 50);
-    //
+    window->add_label("<top>");
+    auto* row2   = window->add_horizontal_panel();
+    auto* label1 = row2->add_label("<left>");
 
-    auto* grid = window->add_grid(8, 4, 50);
+    auto* grid = row2->add_grid(8, 4, 50);
 
     grid->on_click([](uint x, uint y) {
         // std::cout << "clicked: " << x << ", " << y << std::endl;
@@ -32,9 +31,8 @@ int main() {
 
     // add something to multiple cells
 
-    //
-    // auto* label2 = row2->add_label("y");
-    // window->add_label("Button 3");
+    auto* label2 = row2->add_label("<right>");
+    window->add_label("<bottom>");
     app->run_blocking();
     return 0;
 }

@@ -70,7 +70,7 @@ int main() {
     absoluteHorizontal->add_label("<left Right>");
     absolutePanel->add_label("<bottom spacer>");
 
-    // absolutePanel->set_visible(false);
+    absolutePanel->set_visible(false);
 
     // Then hide/show toggle visibility
 

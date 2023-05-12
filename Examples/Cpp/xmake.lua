@@ -1,16 +1,11 @@
 install_ui_library_global_dependency()
 
-function example_target(target_name)
-    target("Example - " .. target_name)
+for _, file_path in ipairs(os.files(os.scriptdir() .. "/*.cpp")) do
+    local cpp = path.filename(file_path)
+    local target_name = path.basename(cpp, ".cpp")
+    target(target_name)
         set_kind("binary")
-        add_files("*.cpp")
+        add_files(cpp)
         setup_target_for_ui_library()
-        add_includedirs("..")
-
-        -- Windows stuff:
-        -- add_files("*.cpp", "../icon.rc")
-        -- add_ldflags("/subsystem:windows")
-        -- add_ldflags("/entry:WinMainCRTStartup", { force = true })
+        add_includedirs(".")
 end
-
-includes("*/xmake.lua")

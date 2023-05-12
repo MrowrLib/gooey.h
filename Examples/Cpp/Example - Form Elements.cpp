@@ -1,3 +1,31 @@
+#include "example_setup.h"
+
+using namespace gooey;
+
+int main() {
+    UIApplication* app    = create_gooey_application();
+    UIWindow*      window = app->add_window();
+    window->set_title("Form Elements");
+    window->show();
+
+    // app->get_defaults()->
+
+    auto* label1 = window->add_label("ONE");
+    label1->set_background_color({255, 0, 0});
+    auto* text_input1 = window->add_text_input();
+
+    auto* label2      = window->add_label("TWO");
+    auto* text_input2 = window->add_text_input();
+    text_input2->set_background_color({0, 255, 0});
+
+    auto* label3 = window->add_label("THREE");
+    label3->set_background_color({0, 0, 255});
+    auto* text_input3 = window->add_text_input();
+
+    app->run_blocking();
+    return 0;
+}
+
 // #include "example_setup.h"
 
 // using namespace gooey;
@@ -327,232 +355,233 @@
 //     return Fl::run();
 // }
 
-#include <FL/Fl.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Group.H>
-#include <FL/Fl_Pack.H>
-#include <FL/Fl_Window.H>
+// #include <FL/Fl.H>
+// #include <FL/Fl_Box.H>
+// #include <FL/Fl_Group.H>
+// #include <FL/Fl_Pack.H>
+// #include <FL/Fl_Window.H>
 
-#include <vector>
+// #include <vector>
 
-class AspectRatioGroup : public Fl_Group {
-    double aspect_ratio;
+// class AspectRatioGroup : public Fl_Group {
+//     double aspect_ratio;
 
-public:
-    AspectRatioGroup(int X, int Y, int W, int H, const char* L = 0)
-        : Fl_Group(X, Y, W, H, L), aspect_ratio(static_cast<double>(W) / H) {}
+// public:
+//     AspectRatioGroup(int X, int Y, int W, int H, const char* L = 0)
+//         : Fl_Group(X, Y, W, H, L), aspect_ratio(static_cast<double>(W) / H) {}
 
-    void resize(int X, int Y, int W, int H) override {
-        double new_aspect_ratio = static_cast<double>(W) / H;
-        if (abs(new_aspect_ratio - aspect_ratio) > 0.01) {
-            if (H * aspect_ratio <= W) {
-                Fl_Group::resize(X, Y, static_cast<int>(H * aspect_ratio), H);
-            } else {
-                Fl_Group::resize(X, Y, W, static_cast<int>(W / aspect_ratio));
-            }
-        } else {
-            Fl_Group::resize(X, Y, W, H);
-        }
-    }
-};
+//     void resize(int X, int Y, int W, int H) override {
+//         double new_aspect_ratio = static_cast<double>(W) / H;
+//         if (abs(new_aspect_ratio - aspect_ratio) > 0.01) {
+//             if (H * aspect_ratio <= W) {
+//                 Fl_Group::resize(X, Y, static_cast<int>(H * aspect_ratio), H);
+//             } else {
+//                 Fl_Group::resize(X, Y, W, static_cast<int>(W / aspect_ratio));
+//             }
+//         } else {
+//             Fl_Group::resize(X, Y, W, H);
+//         }
+//     }
+// };
 
-class ProportionalGroup : public Fl_Group {
-    std::vector<double> proportions;
+// class ProportionalGroup : public Fl_Group {
+//     std::vector<double> proportions;
 
-public:
-    ProportionalGroup(
-        int X, int Y, int W, int H, const std::vector<double>& proportions, const char* L = 0
-    )
-        : Fl_Group(X, Y, W, H, L), proportions(proportions) {}
+// public:
+//     ProportionalGroup(
+//         int X, int Y, int W, int H, const std::vector<double>& proportions, const char* L = 0
+//     )
+//         : Fl_Group(X, Y, W, H, L), proportions(proportions) {}
 
-    void resize(int X, int Y, int W, int H) override {
-        Fl_Group::resize(X, Y, W, H);
-        int num_children = children();
+//     void resize(int X, int Y, int W, int H) override {
+//         Fl_Group::resize(X, Y, W, H);
+//         int num_children = children();
 
-        int cur_x = X;
-        int cur_y = Y;
-        for (int i = 0; i < num_children; ++i) {
-            Fl_Widget* child_widget = child(i);
-            int        child_width  = static_cast<int>(W * proportions[i]);
+//         int cur_x = X;
+//         int cur_y = Y;
+//         for (int i = 0; i < num_children; ++i) {
+//             Fl_Widget* child_widget = child(i);
+//             int        child_width  = static_cast<int>(W * proportions[i]);
 
-            child_widget->resize(cur_x, cur_y, child_width, H);
+//             child_widget->resize(cur_x, cur_y, child_width, H);
 
-            cur_x += child_width;
-        }
-    }
-};
+//             cur_x += child_width;
+//         }
+//     }
+// };
 
-class AutoProportionalGroup : public Fl_Group {
-    bool manage_width;
-    bool manage_height;
+// class AutoProportionalGroup : public Fl_Group {
+//     bool manage_width;
+//     bool manage_height;
 
-public:
-    AutoProportionalGroup(
-        int X, int Y, int W, int H, bool manage_width = true, bool manage_height = false,
-        const char* L = 0
-    )
-        : Fl_Group(X, Y, W, H, L), manage_width(manage_width), manage_height(manage_height) {}
+// public:
+//     AutoProportionalGroup(
+//         int X, int Y, int W, int H, bool manage_width = true, bool manage_height = false,
+//         const char* L = 0
+//     )
+//         : Fl_Group(X, Y, W, H, L), manage_width(manage_width), manage_height(manage_height) {}
 
-    void resize(int X, int Y, int W, int H) override {
-        Fl_Group::resize(X, Y, W, H);
-        int num_children = children();
+//     void resize(int X, int Y, int W, int H) override {
+//         Fl_Group::resize(X, Y, W, H);
+//         int num_children = children();
 
-        int total_width  = 0;
-        int total_height = 0;
-        for (int i = 0; i < num_children; ++i) {
-            Fl_Widget* child_widget = child(i);
-            total_width += child_widget->w();
-            total_height += child_widget->h();
-        }
+//         int total_width  = 0;
+//         int total_height = 0;
+//         for (int i = 0; i < num_children; ++i) {
+//             Fl_Widget* child_widget = child(i);
+//             total_width += child_widget->w();
+//             total_height += child_widget->h();
+//         }
 
-        int cur_x = X;
-        int cur_y = Y;
-        for (int i = 0; i < num_children; ++i) {
-            Fl_Widget* child_widget = child(i);
-            int        child_width  = child_widget->w();
-            int        child_height = child_widget->h();
+//         int cur_x = X;
+//         int cur_y = Y;
+//         for (int i = 0; i < num_children; ++i) {
+//             Fl_Widget* child_widget = child(i);
+//             int        child_width  = child_widget->w();
+//             int        child_height = child_widget->h();
 
-            if (manage_width) {
-                child_width =
-                    static_cast<int>(W * (static_cast<double>(child_widget->w()) / total_width));
-            }
+//             if (manage_width) {
+//                 child_width =
+//                     static_cast<int>(W * (static_cast<double>(child_widget->w()) / total_width));
+//             }
 
-            if (manage_height) {
-                child_height =
-                    static_cast<int>(H * (static_cast<double>(child_widget->h()) / total_height));
-            }
+//             if (manage_height) {
+//                 child_height =
+//                     static_cast<int>(H * (static_cast<double>(child_widget->h()) /
+//                     total_height));
+//             }
 
-            child_widget->resize(cur_x, cur_y, child_width, child_height);
+//             child_widget->resize(cur_x, cur_y, child_width, child_height);
 
-            if (manage_width) {
-                cur_x += child_width;
-            }
-            if (manage_height) {
-                cur_y += child_height;
-            }
-        }
-    }
-};
+//             if (manage_width) {
+//                 cur_x += child_width;
+//             }
+//             if (manage_height) {
+//                 cur_y += child_height;
+//             }
+//         }
+//     }
+// };
 
-int main__x(int argc, char** argv) {
-    Fl_Window* window = new Fl_Window(800, 600, "FLTK Proportional Group Example");
-    window->color(FL_GREEN);
+// int main__x(int argc, char** argv) {
+//     Fl_Window* window = new Fl_Window(800, 600, "FLTK Proportional Group Example");
+//     window->color(FL_GREEN);
 
-    AspectRatioGroup* ar_group = new AspectRatioGroup(0, 0, window->w(), window->h());
-    // Create vertical layout
-    Fl_Pack* v_pack = new Fl_Pack(0, 0, window->w(), window->h());
-    v_pack->type(Fl_Pack::VERTICAL);
-    //
-    ar_group->add(v_pack);
-    ar_group->resizable(v_pack);
-    ar_group->end();
+//     AspectRatioGroup* ar_group = new AspectRatioGroup(0, 0, window->w(), window->h());
+//     // Create vertical layout
+//     Fl_Pack* v_pack = new Fl_Pack(0, 0, window->w(), window->h());
+//     v_pack->type(Fl_Pack::VERTICAL);
+//     //
+//     ar_group->add(v_pack);
+//     ar_group->resizable(v_pack);
+//     ar_group->end();
 
-    // First row
-    Fl_Box* row_a = new Fl_Box(0, 0, v_pack->w(), 100, "A");
-    row_a->box(FL_FLAT_BOX);
-    row_a->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-    row_a->color(FL_YELLOW);
+//     // First row
+//     Fl_Box* row_a = new Fl_Box(0, 0, v_pack->w(), 100, "A");
+//     row_a->box(FL_FLAT_BOX);
+//     row_a->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+//     row_a->color(FL_YELLOW);
 
-    // Second row
-    std::vector<double> proportions = {0.4, 0.6};
-    ProportionalGroup*  row_b_and_c = new ProportionalGroup(0, 0, v_pack->w(), 400, proportions);
-    Fl_Box*             row_b       = new Fl_Box(
-        0, 0, static_cast<int>(row_b_and_c->w() * proportions[0]), row_b_and_c->h(), "B"
-    );
-    row_b->box(FL_FLAT_BOX);
-    row_b->color(FL_BLUE);
-    row_b_and_c->add(row_b);
+//     // Second row
+//     std::vector<double> proportions = {0.4, 0.6};
+//     ProportionalGroup*  row_b_and_c = new ProportionalGroup(0, 0, v_pack->w(), 400, proportions);
+//     Fl_Box*             row_b       = new Fl_Box(
+//         0, 0, static_cast<int>(row_b_and_c->w() * proportions[0]), row_b_and_c->h(), "B"
+//     );
+//     row_b->box(FL_FLAT_BOX);
+//     row_b->color(FL_BLUE);
+//     row_b_and_c->add(row_b);
 
-    std::vector<double> nested_proportions = {0.3, 0.7};
-    ProportionalGroup*  nested_group       = new ProportionalGroup(
-        0, 0, row_b_and_c->w() - row_b->w(), row_b_and_c->h(), nested_proportions
-    );
-    {
-        Fl_Box* row_c = new Fl_Box(
-            0, 0, static_cast<int>(nested_group->w() * nested_proportions[0]), nested_group->h(),
-            "C"
-        );
-        row_c->box(FL_FLAT_BOX);
-        row_c->color(FL_RED);
-        nested_group->add(row_c);
+//     std::vector<double> nested_proportions = {0.3, 0.7};
+//     ProportionalGroup*  nested_group       = new ProportionalGroup(
+//         0, 0, row_b_and_c->w() - row_b->w(), row_b_and_c->h(), nested_proportions
+//     );
+//     {
+//         Fl_Box* row_c = new Fl_Box(
+//             0, 0, static_cast<int>(nested_group->w() * nested_proportions[0]), nested_group->h(),
+//             "C"
+//         );
+//         row_c->box(FL_FLAT_BOX);
+//         row_c->color(FL_RED);
+//         nested_group->add(row_c);
 
-        Fl_Box* row_d = new Fl_Box(
-            0, 0, static_cast<int>(nested_group->w() * nested_proportions[1]), nested_group->h(),
-            "D"
-        );
-        row_d->box(FL_FLAT_BOX);
-        row_d->color(FL_CYAN);
-        nested_group->add(row_d);
-    }
-    row_b_and_c->add(nested_group);
+//         Fl_Box* row_d = new Fl_Box(
+//             0, 0, static_cast<int>(nested_group->w() * nested_proportions[1]), nested_group->h(),
+//             "D"
+//         );
+//         row_d->box(FL_FLAT_BOX);
+//         row_d->color(FL_CYAN);
+//         nested_group->add(row_d);
+//     }
+//     row_b_and_c->add(nested_group);
 
-    // Third row
-    Fl_Box* row_e = new Fl_Box(0, 0, v_pack->w(), 100, "E");
-    row_e->box(FL_FLAT_BOX);
-    row_e->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
-    row_e->color(FL_MAGENTA);
+//     // Third row
+//     Fl_Box* row_e = new Fl_Box(0, 0, v_pack->w(), 100, "E");
+//     row_e->box(FL_FLAT_BOX);
+//     row_e->align(FL_ALIGN_INSIDE | FL_ALIGN_LEFT);
+//     row_e->color(FL_MAGENTA);
 
-    // Add rows to vertical layout
-    v_pack->add(row_a);
-    v_pack->add(row_b_and_c);
-    v_pack->add(row_e);
+//     // Add rows to vertical layout
+//     v_pack->add(row_a);
+//     v_pack->add(row_b_and_c);
+//     v_pack->add(row_e);
 
-    // Set resizable elements
-    v_pack->resizable(row_b_and_c);
-    row_b_and_c->resizable(nested_group);
+//     // Set resizable elements
+//     v_pack->resizable(row_b_and_c);
+//     row_b_and_c->resizable(nested_group);
 
-    // Finish and show the window
-    v_pack->end();
-    // window->resizable(v_pack);
-    window->resizable(ar_group);
-    window->end();
-    window->show(argc, argv);
+//     // Finish and show the window
+//     v_pack->end();
+//     // window->resizable(v_pack);
+//     window->resizable(ar_group);
+//     window->end();
+//     window->show(argc, argv);
 
-    return Fl::run();
-}
+//     return Fl::run();
+// }
 
-int main(int argc, char** argv) {
-    Fl_Window* window = new Fl_Window(800, 600, "FLTK AutoProportionalGroup Example");
-    window->color(FL_GRAY);
+// int main(int argc, char** argv) {
+//     Fl_Window* window = new Fl_Window(800, 600, "FLTK AutoProportionalGroup Example");
+//     window->color(FL_GRAY);
 
-    Fl_Pack* v_pack = new Fl_Pack(0, 0, window->w(), window->h());
-    v_pack->type(Fl_Pack::VERTICAL);
+//     Fl_Pack* v_pack = new Fl_Pack(0, 0, window->w(), window->h());
+//     v_pack->type(Fl_Pack::VERTICAL);
 
-    // First row
-    AutoProportionalGroup* row1 = new AutoProportionalGroup(0, 0, v_pack->w(), 200, true, false);
+//     // First row
+//     AutoProportionalGroup* row1 = new AutoProportionalGroup(0, 0, v_pack->w(), 200, true, false);
 
-    Fl_Box* blue_box = new Fl_Box(0, 0, 100, row1->h(), "");
-    blue_box->box(FL_FLAT_BOX);
-    blue_box->color(FL_BLUE);
-    row1->add(blue_box);
+//     Fl_Box* blue_box = new Fl_Box(0, 0, 100, row1->h(), "");
+//     blue_box->box(FL_FLAT_BOX);
+//     blue_box->color(FL_BLUE);
+//     row1->add(blue_box);
 
-    AutoProportionalGroup* nested_v_group =
-        new AutoProportionalGroup(0, 0, 200, row1->h(), false, true);
-    Fl_Box* red_box = new Fl_Box(0, 0, nested_v_group->w(), 50, "");
-    red_box->box(FL_FLAT_BOX);
-    red_box->color(FL_RED);
-    nested_v_group->add(red_box);
+//     AutoProportionalGroup* nested_v_group =
+//         new AutoProportionalGroup(0, 0, 200, row1->h(), false, true);
+//     Fl_Box* red_box = new Fl_Box(0, 0, nested_v_group->w(), 50, "");
+//     red_box->box(FL_FLAT_BOX);
+//     red_box->color(FL_RED);
+//     nested_v_group->add(red_box);
 
-    Fl_Box* green_box = new Fl_Box(0, 0, nested_v_group->w(), 150, "");
-    green_box->box(FL_FLAT_BOX);
-    green_box->color(FL_GREEN);
-    nested_v_group->add(green_box);
+//     Fl_Box* green_box = new Fl_Box(0, 0, nested_v_group->w(), 150, "");
+//     green_box->box(FL_FLAT_BOX);
+//     green_box->color(FL_GREEN);
+//     nested_v_group->add(green_box);
 
-    row1->add(nested_v_group);
+//     row1->add(nested_v_group);
 
-    Fl_Box* magenta_box = new Fl_Box(0, 0, 100, row1->h(), "");
-    magenta_box->box(FL_FLAT_BOX);
-    magenta_box->color(FL_MAGENTA);
-    row1->add(magenta_box);
+//     Fl_Box* magenta_box = new Fl_Box(0, 0, 100, row1->h(), "");
+//     magenta_box->box(FL_FLAT_BOX);
+//     magenta_box->color(FL_MAGENTA);
+//     row1->add(magenta_box);
 
-    // Add row1 to vertical layout
-    v_pack->add(row1);
-    v_pack->resizable(row1);
+//     // Add row1 to vertical layout
+//     v_pack->add(row1);
+//     v_pack->resizable(row1);
 
-    v_pack->end();
-    window->resizable(v_pack);
-    window->end();
-    window->show(argc, argv);
+//     v_pack->end();
+//     window->resizable(v_pack);
+//     window->end();
+//     window->show(argc, argv);
 
-    return Fl::run();
-}
+//     return Fl::run();
+// }
