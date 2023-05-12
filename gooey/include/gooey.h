@@ -66,6 +66,10 @@ namespace gooey {
             virtual UIGridCell* add_cell(
                 uint x, uint y, uint columnCount = 1, uint rowCount = 1, bool visible = true
             ) = 0;
+
+            virtual bool on_click(void (*callback)(uint x, uint y)) = 0;
+            // virtual bool on_hover(void (*callback)(uint x, uint y)) = 0;
+            // virtual bool on_leave(void (*callback)(uint x, uint y)) = 0;
         };
 
         // struct Panel <-- todo next
@@ -106,12 +110,13 @@ namespace gooey {
         };
 
         struct UIApplication {
-            virtual ~UIApplication()           = default;
-            virtual UIDefaults* get_defaults() = 0;
-            virtual UIWindow*   add_window()   = 0;
-            virtual bool        render()       = 0;
-            virtual bool        run_blocking() = 0;
-            virtual bool        destroy()      = 0;
+            virtual ~UIApplication()                                        = default;
+            virtual UIDefaults* get_defaults()                              = 0;
+            virtual UIWindow*   add_window()                                = 0;
+            virtual bool        render()                                    = 0;
+            virtual bool        run_blocking()                              = 0;
+            virtual bool        destroy()                                   = 0;
+            virtual bool        message_box(cstring title, cstring message) = 0;
         };
     }
 }

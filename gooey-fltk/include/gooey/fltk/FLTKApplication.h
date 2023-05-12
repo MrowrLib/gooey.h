@@ -1,6 +1,7 @@
 #pragma once
 
 #include <FL/Fl.H>
+#include <FL/Fl_ask.H>
 #include <gooey/base_classes.h>
 
 #include <memory>
@@ -30,5 +31,11 @@ namespace gooey::fltk {
             return true;
         }
         // bool      destroy() override; // just close all windows :)
+
+        bool message_box(const char* title, const char* message) override {
+            fl_message_title(title);
+            fl_message("%s", message);
+            return true;
+        }
     };
 }

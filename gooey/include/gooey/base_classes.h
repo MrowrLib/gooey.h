@@ -26,6 +26,10 @@ namespace gooey {
         ) override {
             return nullptr;
         }
+
+        // events
+        // void on_mouse_move(void (*callback)(uint x, uint y)) override {}
+        bool on_click(void (*callback)(uint x, uint y)) override { return false; }
     };
 
     struct UILabelBase : public UILabel {
@@ -125,6 +129,7 @@ namespace gooey {
         bool        render() override { return false; }
         bool        run_blocking() override { return false; }
         bool        destroy() override { return false; }
+        bool        message_box(cstring title, cstring message) override { return false; }
     };
 }
 

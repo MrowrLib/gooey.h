@@ -10,6 +10,7 @@
 #include <FL/fl_draw.H>
 
 #include <memory>
+#include <vector>
 
 #include "FLTKAspectRatioGroupImpl.h"
 #include "FLTKGridCellImpl.h"
@@ -23,6 +24,9 @@ namespace gooey::fltk::impl {
         // grid lines
         bool     _gridLines_enabled = true;
         Fl_Color _gridLines_color   = FL_RED;  // FL_BACKGROUND_COLOR;
+
+        // event handlers
+        std::vector<void (*)(unsigned int x, unsigned int y)> _clickHandlers;
 
     public:
         FLTKGridImpl(
@@ -43,6 +47,46 @@ namespace gooey::fltk::impl {
             //
 
             end();
+        }
+
+        // events
+        void on_click(void (*callback)(unsigned int x, unsigned int y)) {
+            _clickHandlers.push_back(callback);
+        }
+
+        int handle(int event) override {
+            if (event == FL_MOVE) {
+                // auto x = Fl::event_x();
+                // auto y = Fl::event_y();
+
+                // double calculatedCellWidth =
+                //     static_cast<double>(w()) / _columnCount;  // TODO take padding into account
+                // double calculatedCellHeight = static_cast<double>(h()) / _rowCount;
+
+                // int column = static_cast<int>(x / calculatedCellWidth);
+                // int row    = static_cast<int>(y / calculatedCellHeight);
+
+                // for (auto& handler : _clickHandlers) {
+                //     handler(column, row);
+            } else if (event == FL_PUSH) {
+                auto x = Fl::event_x();
+                auto y = Fl::event_y();
+
+                double calculatedCellWidth =
+                    static_cast<double>(w()) / _columnCount;  // TODO take padding into account
+                double calculatedCellHeight = static_cast<double>(h()) / _rowCount;
+
+                auto relativeX = x - this->x();
+                auto relativeY = y - this->y();
+
+                int column = static_cast<int>(relativeX / calculatedCellWidth);
+                int row    = static_cast<int>(relativeY / calculatedCellHeight);
+
+                for (auto& handler : _clickHandlers) {
+                    handler(column, row);
+                }
+            }
+            return Fl_Group::handle(event);
         }
 
         // Make it render ANYTHING.
