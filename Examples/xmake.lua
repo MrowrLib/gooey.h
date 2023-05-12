@@ -11,18 +11,5 @@ else
     includes("../xmake/fltk.lua")
 end
 
-install_ui_library_global_dependency()
-
-function example_target(target_name)
-    target("Example - " .. target_name)
-        set_kind("binary")
-        add_files("*.cpp")
-        -- add_files("*.cpp", "../icon.rc")
-        setup_target_for_ui_library()
-        add_includedirs("..")
-        add_headerfiles("../gooey_loader.h")
-        -- add_ldflags("/subsystem:windows")
-        -- add_ldflags("/entry:WinMainCRTStartup", { force = true })
-end
-
-includes("*/xmake.lua")
+includes("Cpp/xmake.lua")
+includes("Rust/CppRustLibraryLoader/xmake.lua")

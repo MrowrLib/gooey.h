@@ -7,7 +7,9 @@
 #include <filesystem>
 
 namespace ExampleImagePaths {
-    std::filesystem::path Folder{"../../../../Examples/Resources/Images"};
+    // ../../.. mac
+    // ../../../.. windows
+    std::filesystem::path Folder{"../../../Examples/Resources/Images"};
     std::filesystem::path Castle{Folder / "castle.png"};
     std::filesystem::path GrassBackground{Folder / "grass_background.png"};
     std::filesystem::path Knight{Folder / "knight.png"};
