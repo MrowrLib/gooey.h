@@ -86,12 +86,12 @@ namespace gooey::fltk {
             return textInput;
         }
         UIPanel* add_horizontal_panel(bool absolute) override {
-            auto* panel = new FLTKPanel(this, true);
+            auto* panel = new FLTKPanel(this, true, absolute);
             _impl_window->add(panel->get_impl());
             return panel;
         }
         UIPanel* add_vertical_panel(bool absolute) override {
-            auto* panel = new FLTKPanel(this, false);
+            auto* panel = new FLTKPanel(this, false, absolute);
             _impl_window->add(panel->get_impl());
             return panel;
         }

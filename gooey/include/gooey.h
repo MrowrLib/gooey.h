@@ -30,6 +30,7 @@ namespace gooey {
 
         struct UIComponent {
             virtual ~UIComponent()                                  = default;
+            virtual bool set_visible(bool)                          = 0;
             virtual bool set_background_color(UIColor color)        = 0;
             virtual bool unset_background_color()                   = 0;
             virtual bool add_background_image(cstring imagePath)    = 0;
@@ -78,6 +79,7 @@ namespace gooey {
 
         struct UIWidgetContainer {
             virtual ~UIWidgetContainer() = default;
+
             // add children() (and make sure UIWidget has parent() - which will always be a
             // WidgetContainer))
             virtual UILabel*     add_label(cstring text) = 0;

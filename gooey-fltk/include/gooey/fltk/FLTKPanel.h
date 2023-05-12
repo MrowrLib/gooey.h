@@ -20,14 +20,22 @@ namespace gooey::fltk {
         IFLTKWindow*                                         _parentWindow;
 
     public:
-        FLTKPanel(IFLTKWindow* parentWindow, bool horizontal) : _parentWindow(parentWindow) {
+        FLTKPanel(IFLTKWindow* parentWindow, bool horizontal, bool absolute)
+            : _parentWindow(parentWindow) {
             _impl_group = std::make_unique<impl::FLTKAutoProportionalGroupImpl>(
-                0, 0, 50, 50, horizontal, !horizontal
+                absolute, 0, 0, 50, 50, horizontal, !horizontal
             );
+            if (absolute)
+                _impl_group->size(_parentWindow->get_impl()->w(), _parentWindow->get_impl()->h());
         }
 
         // IFLTKLabel
         impl::FLTKAutoProportionalGroupImpl* get_impl() override { return _impl_group.get(); }
+
+        bool set_visible(bool visible) override {
+            _impl_group->set_visible(visible);
+            return true;
+        }
 
         // UIWidgetContainer
         UILabel* add_label(const char* text) override {
@@ -42,13 +50,13 @@ namespace gooey::fltk {
             return textInput;
         }
         UIPanel* add_horizontal_panel(bool absolute) override {
-            auto* panel = new FLTKPanel(_parentWindow, true);
+            auto* panel = new FLTKPanel(_parentWindow, true, absolute);
             _impl_group->add(panel->get_impl());
             _impl_group->resizable(panel->get_impl());  // Do we need this?
             return panel;
         }
         UIPanel* add_vertical_panel(bool absolute) override {
-            auto* panel = new FLTKPanel(_parentWindow, false);
+            auto* panel = new FLTKPanel(_parentWindow, false, absolute);
             _impl_group->add(panel->get_impl());
             _impl_group->resizable(panel->get_impl());  // Do we need this?
             return panel;
@@ -64,7 +72,7 @@ namespace gooey::fltk {
 
         // ...
         bool set_background_color(UIColor color) override {
-            _impl_group->color(fl_rgb_color(color.red, color.green, color.blue));
+            _impl_group->set_background_color(fl_rgb_color(color.red, color.green, color.blue));
             return true;
         }
 

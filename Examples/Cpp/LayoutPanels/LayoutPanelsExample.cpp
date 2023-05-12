@@ -11,6 +11,7 @@ int main() {
     window->add_background_image(ExampleImagePaths::Monster1.string().c_str());
 
     auto* leftBox = window->add_label("TOP");
+    // auto* x       = window->add_label("x");
     leftBox->set_background_color({255, 0, 255});
 
     auto* horizontal = window->add_horizontal_panel();
@@ -53,6 +54,23 @@ int main() {
     rightBox->set_background_color({0, 255, 255});
 
     // Then absolute!
+
+    auto* absolutePanel = window->add_vertical_panel(true);
+    absolutePanel->set_background_color({30, 30, 30});
+
+    absolutePanel->add_label("<top spacer>");
+    auto* absoluteHorizontal = absolutePanel->add_horizontal_panel();
+    absoluteHorizontal->add_label("<left spacer>");
+
+    // CONTENT HERE
+    auto* absoluteLabel = absoluteHorizontal->add_label("Absolute");
+    // auto* absoluteLabel = absolutePanel->add_label("Absolute");
+    absoluteLabel->set_background_color({255, 0, 200});
+
+    absoluteHorizontal->add_label("<left Right>");
+    absolutePanel->add_label("<bottom spacer>");
+
+    // absolutePanel->set_visible(false);
 
     // Then hide/show toggle visibility
 

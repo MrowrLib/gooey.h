@@ -12,6 +12,9 @@ namespace gooey {
     struct UIGridCellBase : public UIGridCell {
         virtual ~UIGridCellBase() = default;
 
+        // UIComponent
+        // bool set_visible(bool) override { return false; }
+
         // UIGridCell
         bool     set_text(cstring text) override { return false; }
         UILabel* get_text() override { return nullptr; }
@@ -34,6 +37,8 @@ namespace gooey {
 
     struct UILabelBase : public UILabel {
         virtual ~UILabelBase() = default;
+        // UIComponent
+        bool set_visible(bool) override { return false; }
 
         // UITextInput
         bool     set_text(cstring text) override { return false; }
@@ -52,6 +57,8 @@ namespace gooey {
 
     struct UITextInputBase : public UITextInput {
         virtual ~UITextInputBase() = default;
+        // UIComponent
+        bool set_visible(bool) override { return false; }
 
         // UITextInput
         bool     set_text(cstring text) override { return false; }
@@ -69,6 +76,9 @@ namespace gooey {
     };
 
     struct UIPanelBase : public UIPanel {
+        // UIComponent
+        bool set_visible(bool) override { return false; }
+
         // UIWidgetContainer
         UILabel*     add_label(cstring text) override { return nullptr; }
         UITextInput* add_text_input() override { return nullptr; }
@@ -103,6 +113,7 @@ namespace gooey {
         bool set_position(uint x, uint y) override { return false; }
 
         // UI Component
+        bool set_visible(bool) override { return false; }
         bool set_background_color(UIColor color) override { return false; }
         bool unset_background_color() override { return false; }
         bool add_background_image(cstring imagePath) override { return false; }

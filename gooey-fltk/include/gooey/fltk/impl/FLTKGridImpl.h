@@ -23,7 +23,7 @@ namespace gooey::fltk::impl {
 
         // grid lines
         bool     _gridLines_enabled = true;
-        Fl_Color _gridLines_color   = FL_RED;  // FL_BACKGROUND_COLOR;
+        Fl_Color _gridLines_color   = fl_rgb_color(118, 0, 161);  // FL_BACKGROUND_COLOR;
 
         // event handlers
         std::vector<void (*)(unsigned int x, unsigned int y)> _clickHandlers;
@@ -125,7 +125,7 @@ namespace gooey::fltk::impl {
 
         void draw() override {
             // Draw the background
-            fl_color(FL_BLUE);
+            fl_color(FL_WHITE);
             fl_rectf(x(), y(), w(), h());
 
             // Draw the border
