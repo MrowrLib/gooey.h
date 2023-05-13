@@ -50,8 +50,8 @@ class GameView : public QGraphicsView {
 public:
     GameView() {
         setRenderHint(QPainter::Antialiasing);
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         setAttribute(Qt::WA_AcceptTouchEvents);
         _recentTouchTimer = new QTimer(this);
         connect(_recentTouchTimer, &QTimer::timeout, [this]() {
