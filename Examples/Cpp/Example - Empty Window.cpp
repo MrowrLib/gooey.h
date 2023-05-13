@@ -14,6 +14,60 @@
 //     return 0;
 // }
 
+//////////////////////
+//////////////////////
+//////////////////////
+//////////////////////
+//////////////////////
+
+// #include <QApplication>
+// #include <QGraphicsOpacityEffect>
+// #include <QLabel>
+// #include <QPushButton>
+// #include <QStackedLayout>
+// #include <QVBoxLayout>
+
+// int main(int argc, char** argv) {
+//     QApplication app(argc, argv);
+
+//     QWidget         window;
+//     QStackedLayout* stackLayout = new QStackedLayout(&window);
+
+//     // This is your main content
+//     QPushButton* mainContent = new QPushButton("Main Content");
+//     mainContent->setStyleSheet("background-color: rgba(255, 0, 255);");  // opaque white
+//     // mainContent->setAlignment(Qt::AlignCenter);
+//     stackLayout->addWidget(mainContent);
+
+//     // This is your "modal"
+//     QWidget* modalOverlay = new QWidget();
+//     modalOverlay->setStyleSheet("background-color: rgba(0, 0, 0, 50); width: 50%;"
+//     );  // semi-transparent black
+//     QVBoxLayout* modalLayout      = new QVBoxLayout(modalOverlay);
+//     QLabel*      modalLabel       = new QLabel("Modal Content");
+//     QPushButton* closeModalButton = new QPushButton("Close");
+//     modalLabel->setAlignment(Qt::AlignCenter);
+//     modalLayout->addWidget(modalLabel);
+//     modalLayout->addWidget(closeModalButton);
+//     stackLayout->addWidget(modalOverlay);
+
+//     // Switch to the modal when the main content is clicked
+//     // QObject::connect(mainContent, &QLabel::linkActivated, [&]() {
+//     //     stackLayout->setCurrentWidget(modalOverlay);
+//     // });
+//     QObject::connect(mainContent, &QPushButton::clicked, [&]() {
+//         stackLayout->setCurrentWidget(modalOverlay);
+//     });
+
+//     // Switch back to the main content when the close button is clicked
+//     QObject::connect(closeModalButton, &QPushButton::clicked, [&]() {
+//         stackLayout->setCurrentWidget(mainContent);
+//     });
+
+//     window.show();
+//     return app.exec();
+// }
+
 // #include <QtWidgets>
 
 // int main(int argc, char** argv) {
@@ -271,54 +325,275 @@
 //     return a.exec();
 // }
 
+// #include <QApplication>
+// #include <QBrush>
+// // #include <QDesktopWidget>
+// #include <QMainWindow>
+// #include <QPalette>
+// #include <QPixmap>
+// #include <QPushButton>
+// #include <QStyle>
+// #include <QVBoxLayout>
+
+// int main(int argc, char* argv[]) {
+//     QApplication app(argc, argv);
+
+//     QMainWindow window;
+
+//     // QScreen *screen = QGuiApplication::primaryScreen();
+//     // QRect  screenGeometry = screen->geometry();
+//     // int height = screenGeometry.height();
+//     // int width = screenGeometry.width();
+//     // window.setFixedSize(QApplication::desktop()->size());  // Full screen
+//     window.setFixedSize(1920, 1080);
+
+//     // Set background image
+//     QPalette palette;
+//     palette.setBrush(QPalette::Window,
+//     QBrush(QPixmap(":/Resources/Images/grass_background.png"))); window.setPalette(palette);
+
+//     // Create buttons
+//     QPushButton* newGameButton  = new QPushButton("New Game");
+//     QPushButton* exitGameButton = new QPushButton("Exit Game");
+
+//     // Create layout
+//     QVBoxLayout* layout = new QVBoxLayout();
+//     layout->addWidget(newGameButton, 0, Qt::AlignCenter);
+//     layout->addWidget(exitGameButton, 0, Qt::AlignCenter);
+
+//     // Create a central widget to hold the layout
+//     QWidget* centralWidget = new QWidget();
+//     centralWidget->setLayout(layout);
+//     window.setCentralWidget(centralWidget);
+
+//     // Connect button signals to slots
+//     QObject::connect(newGameButton, &QPushButton::clicked, &app, [&]() {
+//         // Code to start new game goes here
+//     });
+//     QObject::connect(exitGameButton, &QPushButton::clicked, &app, &QApplication::quit);
+
+//     window.show();
+
+//     return app.exec();
+// }
+
 #include <QApplication>
-#include <QBrush>
-// #include <QDesktopWidget>
-#include <QMainWindow>
-#include <QPalette>
-#include <QPixmap>
+#include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QPushButton>
-#include <QStyle>
+#include <QScrollBar>
 #include <QVBoxLayout>
+#include <QWheelEvent>
+
+// class GameView : public QGraphicsView {
+// public:
+//     GameView() {
+//         setRenderHint(QPainter::Antialiasing);
+//         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//         setAttribute(Qt::WA_AcceptTouchEvents);
+//     }
+
+// protected:
+//     void wheelEvent(QWheelEvent* event) override {
+//         setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+//         double scaleFactor = 1.15;
+//         if (event->angleDelta().y() > 0) {
+//             // Zoom in
+//             scale(scaleFactor, scaleFactor);
+//         } else {
+//             // Zooming out
+//             scale(1 / scaleFactor, 1 / scaleFactor);
+//         }
+//     }
+// };
+
+// class GameView : public QGraphicsView {
+// public:
+//     GameView() {
+//         setRenderHint(QPainter::Antialiasing);
+//         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//         setAttribute(Qt::WA_AcceptTouchEvents);
+//     }
+
+// protected:
+//     void wheelEvent(QWheelEvent* event) override {
+//         setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+//         double scaleFactor = 1.15;
+//         if (event->angleDelta().y() > 0) {
+//             // Zoom in
+//             scale(scaleFactor, scaleFactor);
+//         } else {
+//             // Zooming out
+//             scale(1 / scaleFactor, 1 / scaleFactor);
+//         }
+//     }
+
+//     bool viewportEvent(QEvent* event) override {
+//         switch (event->type()) {
+//             case QEvent::TouchBegin:
+//             case QEvent::TouchUpdate:
+//             case QEvent::TouchEnd: {
+//                 QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
+
+//                 QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
+//                 if (touchPoints.count() == 2) {
+//                     // Determine scale factor
+//                     const QTouchEvent::TouchPoint& touchPoint0 = touchPoints.first();
+//                     const QTouchEvent::TouchPoint& touchPoint1 = touchPoints.last();
+
+//                     qreal currentScaleFactor =
+//                         QLineF(touchPoint0.position(), touchPoint1.position()).length() /
+//                         QLineF(touchPoint0.pressPosition(),
+//                         touchPoint1.pressPosition()).length();
+//                     if (touchEvent->touchPointStates() & Qt::TouchPointReleased) {
+//                         // If one of the fingers is released, remember the last scale factor so
+//                         that
+//                         // adding another finger later will continue zooming by adding new scale
+//                         // factor to the existing remembered value.
+//                         _lastScaleFactor = _totalScaleFactor;
+//                         _totalScaleFactor *= currentScaleFactor;
+//                     } else {
+//                         setTransformationAnchor(QGraphicsView::NoAnchor);
+//                         setTransform(QTransform::fromScale(
+//                             _totalScaleFactor * currentScaleFactor,
+//                             _totalScaleFactor * currentScaleFactor
+//                         ));
+//                     }
+//                 }
+//                 return true;
+//             }
+//             default:
+//                 return QGraphicsView::viewportEvent(event);
+//         }
+//     }
+
+// private:
+//     qreal _totalScaleFactor = 1;
+//     qreal _lastScaleFactor  = 1;
+// };
+
+class GameView : public QGraphicsView {
+    qreal _totalScaleFactor = 1;
+    qreal _lastScaleFactor  = 1;
+
+public:
+    GameView() {
+        setRenderHint(QPainter::Antialiasing);
+        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        setAttribute(Qt::WA_AcceptTouchEvents);
+    }
+
+protected:
+    void wheelEvent(QWheelEvent* event) override {
+        setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+        double scaleFactor = 1.15;
+        if (event->angleDelta().y() > 0) {
+            // Zoom in
+            scale(scaleFactor, scaleFactor);
+        } else {
+            // Zooming out
+            scale(1 / scaleFactor, 1 / scaleFactor);
+        }
+    }
+
+    bool viewportEvent(QEvent* event) override {
+        switch (event->type()) {
+            case QEvent::TouchBegin:
+            case QEvent::TouchUpdate:
+            case QEvent::TouchEnd: {
+                QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
+
+                QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
+                if (touchPoints.count() == 2) {
+                    // Determine scale factor
+                    const QTouchEvent::TouchPoint& touchPoint0 = touchPoints.first();
+                    const QTouchEvent::TouchPoint& touchPoint1 = touchPoints.last();
+
+                    qreal currentScaleFactor =
+                        QLineF(touchPoint0.position(), touchPoint1.position()).length() /
+                        QLineF(touchPoint0.pressPosition(), touchPoint1.pressPosition()).length();
+                    if (touchEvent->touchPointStates() & Qt::TouchPointReleased) {
+                        // If one of the fingers is released, remember the last scale factor so that
+                        // adding another finger later will continue zooming by adding new scale
+                        // factor to the existing remembered value.
+                        _lastScaleFactor = _totalScaleFactor;
+                        _totalScaleFactor *= currentScaleFactor;
+                    } else {
+                        setTransformationAnchor(QGraphicsView::NoAnchor);
+                        setTransform(QTransform::fromScale(
+                            _totalScaleFactor * currentScaleFactor,
+                            _totalScaleFactor * currentScaleFactor
+                        ));
+                    }
+                } else if (touchPoints.count() == 1) {
+                    // Pan
+                    if (touchEvent->touchPointStates() & Qt::TouchPointMoved) {
+                        QScrollBar* hBar = horizontalScrollBar();
+                        QScrollBar* vBar = verticalScrollBar();
+                        QPointF     delta =
+                            touchPoints.first().position() - touchPoints.first().pressPosition();
+
+                        qreal scaleFactor = transform().m11();
+
+                        // Change this value to adjust the panning speed
+                        qreal speedAdjustment = 0.1;
+
+                        hBar->setValue(
+                            hBar->value() + speedAdjustment * (delta.x() > 0 ? -1 : 1) *
+                                                qAbs(delta.x()) / scaleFactor
+                        );
+                        vBar->setValue(
+                            vBar->value() + speedAdjustment * (delta.y() > 0 ? -1 : 1) *
+                                                qAbs(delta.y()) / scaleFactor
+                        );
+                    }
+                }
+                return true;
+            }
+            default:
+                return QGraphicsView::viewportEvent(event);
+        }
+    }
+};
 
 int main(int argc, char* argv[]) {
-    QApplication app(argc, argv);
+    QApplication a(argc, argv);
 
-    QMainWindow window;
+    QWidget      window;
+    QVBoxLayout* layout = new QVBoxLayout(&window);
 
-    // QScreen *screen = QGuiApplication::primaryScreen();
-    // QRect  screenGeometry = screen->geometry();
-    // int height = screenGeometry.height();
-    // int width = screenGeometry.width();
-    // window.setFixedSize(QApplication::desktop()->size());  // Full screen
-    window.setFixedSize(1920, 1080);
+    QGraphicsScene scene;
+    for (int i = 0; i < 100; i++) {
+        for (int j = 0; j < 100; j++) {
+            QGraphicsRectItem* rect = scene.addRect(i * 10, j * 10, 9, 9);
 
-    // Set background image
-    QPalette palette;
-    palette.setBrush(QPalette::Window, QBrush(QPixmap(":/Resources/Images/grass_background.png")));
-    window.setPalette(palette);
+            // calculate hue based on position in the grid
+            int hue = (i + j) % 360;
 
-    // Create buttons
-    QPushButton* newGameButton  = new QPushButton("New Game");
-    QPushButton* exitGameButton = new QPushButton("Exit Game");
+            // create color from HSV
+            QColor color = QColor::fromHsv(hue, 255, 255);
+            rect->setBrush(color);
+        }
+    }
 
-    // Create layout
-    QVBoxLayout* layout = new QVBoxLayout();
-    layout->addWidget(newGameButton, 0, Qt::AlignCenter);
-    layout->addWidget(exitGameButton, 0, Qt::AlignCenter);
+    GameView* view = new GameView();
+    view->setScene(&scene);
+    layout->addWidget(view, 9);
 
-    // Create a central widget to hold the layout
-    QWidget* centralWidget = new QWidget();
-    centralWidget->setLayout(layout);
-    window.setCentralWidget(centralWidget);
-
-    // Connect button signals to slots
-    QObject::connect(newGameButton, &QPushButton::clicked, &app, [&]() {
-        // Code to start new game goes here
-    });
-    QObject::connect(exitGameButton, &QPushButton::clicked, &app, &QApplication::quit);
+    QHBoxLayout* panelLayout = new QHBoxLayout();
+    for (int i = 0; i < 4; i++) {
+        QPushButton* button = new QPushButton(QString("Button %1").arg(i + 1));
+        panelLayout->addWidget(button);
+    }
+    QWidget* panel = new QWidget();
+    panel->setLayout(panelLayout);
+    layout->addWidget(panel, 1);
 
     window.show();
 
-    return app.exec();
+    return a.exec();
 }
