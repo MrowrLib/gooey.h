@@ -76,39 +76,39 @@
 //     return app.exec();
 // }
 
-// #include <QtWidgets>
+#include <QtWidgets>
 
-// int main(int argc, char** argv) {
-//     QApplication app(argc, argv);
+int main(int argc, char** argv) {
+    QApplication app(argc, argv);
 
-//     // Main window and layout
-//     QWidget      window;
-//     QVBoxLayout* vLayout = new QVBoxLayout();  // Vertical Box Layout
+    // Main window and layout
+    QWidget      window;
+    QVBoxLayout* vLayout = new QVBoxLayout();  // Vertical Box Layout
 
-//     QPushButton* button1 = new QPushButton("Open Modal");
-//     vLayout->addWidget(button1);
-//     window.setLayout(vLayout);
+    QPushButton* button1 = new QPushButton("Open Modal");
+    vLayout->addWidget(button1);
+    window.setLayout(vLayout);
 
-//     // Create a modal dialog
-//     QDialog*     dialog       = new QDialog(&window);
-//     QVBoxLayout* dialogLayout = new QVBoxLayout();  // Dialog layout
+    // Create a modal dialog
+    QDialog*     dialog       = new QDialog(&window);
+    QVBoxLayout* dialogLayout = new QVBoxLayout();  // Dialog layout
 
-//     QPushButton* button2 = new QPushButton("Close Modal");
-//     dialogLayout->addWidget(button2);
-//     dialog->setLayout(dialogLayout);
+    QPushButton* button2 = new QPushButton("Close Modal");
+    dialogLayout->addWidget(button2);
+    dialog->setLayout(dialogLayout);
 
-//     // Connect the button click signal to show the modal dialog
-//     QObject::connect(button1, &QPushButton::clicked, [&]() {
-//         dialog->exec();  // This will block input to the main window until the dialog is closed
-//     });
+    // Connect the button click signal to show the modal dialog
+    QObject::connect(button1, &QPushButton::clicked, [&]() {
+        dialog->exec();  // This will block input to the main window until the dialog is closed
+    });
 
-//     // Connect the button click signal to close the modal dialog
-//     QObject::connect(button2, &QPushButton::clicked, [&]() { dialog->close(); });
+    // Connect the button click signal to close the modal dialog
+    QObject::connect(button2, &QPushButton::clicked, [&]() { dialog->close(); });
 
-//     window.show();
+    window.show();
 
-//     return app.exec();
-// }
+    return app.exec();
+}
 
 // #include <QtWidgets>
 
@@ -248,25 +248,25 @@
 //     return app.exec();
 // }
 
-#include <QApplication>
-#include <QPropertyAnimation>
-#include <QPushButton>
-#include <QWidget>
+// #include <QApplication>
+// #include <QPropertyAnimation>
+// #include <QPushButton>
+// #include <QWidget>
 
-int main(int argc, char* argv[]) {
-    QApplication a(argc, argv);
+// int main(int argc, char* argv[]) {
+//     QApplication a(argc, argv);
 
-    QWidget widget;
-    widget.setFixedSize(1920, 1080);
-    QPushButton button("Moving Button", &widget);
+//     QWidget widget;
+//     widget.setFixedSize(1920, 1080);
+//     QPushButton button("Moving Button", &widget);
 
-    QPropertyAnimation animation(&button, "geometry");
-    animation.setDuration(1000);  // 1 second
-    animation.setStartValue(QRect(0, 0, 100, 30));
-    animation.setEndValue(QRect(1000, 1000, 600, 400));
+//     QPropertyAnimation animation(&button, "geometry");
+//     animation.setDuration(1000);  // 1 second
+//     animation.setStartValue(QRect(0, 0, 100, 30));
+//     animation.setEndValue(QRect(1000, 1000, 600, 400));
 
-    widget.show();
-    animation.start();
+//     widget.show();
+//     animation.start();
 
-    return a.exec();
-}
+//     return a.exec();
+// }

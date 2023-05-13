@@ -1,19 +1,33 @@
-# Just add one...
+# NOTE: To create your own key: keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-alias
 
 find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 
-add_library(HelloWorld SHARED "Example - Empty Window.cpp")
-target_link_libraries(HelloWorld PRIVATE gooey gooey-base gooey-qt Qt6::Core Qt6::Widgets)
-target_include_directories(HelloWorld PRIVATE .)
-target_compile_definitions(HelloWorld PRIVATE GOOEY_USE_QT)
+# Get the names of all of the examples
+file(GLOB EXAMPLES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
-set(SO_PATH "${CMAKE_BINARY_DIR}/Examples/Cpp/libHelloWorld.so")
+# Create a target for each example
+foreach(EXAMPLE_CPP ${EXAMPLES_CPP})
+    get_filename_component(EXAMPLE_FILENAME ${EXAMPLE_CPP} NAME_WE)
+    string(REPLACE "Example - " "" EXAMPLE_NAME "${EXAMPLE_FILENAME}")
+    string(REPLACE " " "" EXAMPLE_NAME "${EXAMPLE_NAME}")
 
-# After build, copy the .so to the android-build/libs/arm64-v8a folder
-add_custom_command(
-    TARGET "HelloWorld"
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${SO_PATH}" "${CMAKE_SOURCE_DIR}/android-build/libs/arm64-v8a/libHelloWorld_arm64-v8a.so"
-    COMMENT "Copying .so to android-build/libs/arm64-v8a"
-    VERBATIM
-)
+    add_library("${EXAMPLE_NAME}" SHARED ${EXAMPLE_CPP})
+    target_link_libraries("${EXAMPLE_NAME}" PRIVATE gooey gooey-base gooey-qt Qt6::Core Qt6::Widgets)
+    target_include_directories("${EXAMPLE_NAME}" PRIVATE .)
+    target_compile_definitions("${EXAMPLE_NAME}" PRIVATE GOOEY_USE_QT)
+
+    add_custom_command(
+        TARGET ${EXAMPLE_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -DJSON_FILE=${CMAKE_SOURCE_DIR}/android_deployment_settings.json
+                             -DNEW_VALUE=${EXAMPLE_NAME}
+                             -P "${CMAKE_SOURCE_DIR}/cmake/rewrite_json.cmake"
+        COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_SOURCE_DIR}/android-build"
+        COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${EXAMPLE_NAME}>" "${CMAKE_SOURCE_DIR}/android-build/libs/arm64-v8a/lib${EXAMPLE_NAME}_arm64-v8a.so"
+        COMMAND androiddeployqt.exe --output "${CMAKE_SOURCE_DIR}/android-build" --verbose --input "${CMAKE_SOURCE_DIR}/android_deployment_settings.json" --gradle --release
+        COMMAND apksigner sign --ks "${CMAKE_SOURCE_DIR}/android-testing-key.jks" --ks-pass pass:testing --key-pass pass:testing --out signed-apk.apk "${CMAKE_SOURCE_DIR}/android-build/build/outputs/apk/release/android-build-release-unsigned.apk"
+        COMMAND adb install "${CMAKE_SOURCE_DIR}/build/Android/Examples/Cpp/signed-apk.apk"
+        COMMAND adb shell am start -n org.qtproject.example.${EXAMPLE_NAME}/org.qtproject.qt.android.bindings.QtActivity
+        VERBATIM
+    )
+endforeach()
