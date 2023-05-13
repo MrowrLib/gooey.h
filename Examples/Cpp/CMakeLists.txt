@@ -11,7 +11,10 @@ foreach(EXAMPLE_CPP ${EXAMPLES_CPP})
     string(REPLACE "Example - " "" EXAMPLE_NAME "${EXAMPLE_FILENAME}")
     string(REPLACE " " "" EXAMPLE_NAME "${EXAMPLE_NAME}")
 
-    add_library("${EXAMPLE_NAME}" SHARED ${EXAMPLE_CPP})
+    set(SOURCES ${EXAMPLE_CPP})
+    qt6_add_resources(SOURCES ../resources.qrc)
+
+    add_library("${EXAMPLE_NAME}" SHARED ${SOURCES})
     target_link_libraries("${EXAMPLE_NAME}" PRIVATE gooey gooey-base gooey-qt Qt6::Core Qt6::Widgets)
     target_include_directories("${EXAMPLE_NAME}" PRIVATE .)
     target_compile_definitions("${EXAMPLE_NAME}" PRIVATE GOOEY_USE_QT)

@@ -5,6 +5,8 @@ end
 function setup_target_for_ui_library()
     add_deps("gooey-qt")
     add_defines("GOOEY_USE_QT")
+    add_rules("qt.qrc")
+    add_files("../*.qrc")
 
     if is_host("windows") then
         add_cxflags("/Zc:__cplusplus")

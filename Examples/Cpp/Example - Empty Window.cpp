@@ -76,39 +76,39 @@
 //     return app.exec();
 // }
 
-#include <QtWidgets>
+// #include <QtWidgets>
 
-int main(int argc, char** argv) {
-    QApplication app(argc, argv);
+// int main(int argc, char** argv) {
+//     QApplication app(argc, argv);
 
-    // Main window and layout
-    QWidget      window;
-    QVBoxLayout* vLayout = new QVBoxLayout();  // Vertical Box Layout
+//     // Main window and layout
+//     QWidget      window;
+//     QVBoxLayout* vLayout = new QVBoxLayout();  // Vertical Box Layout
 
-    QPushButton* button1 = new QPushButton("xxxx HELLO xxxx");
-    vLayout->addWidget(button1);
-    window.setLayout(vLayout);
+//     QPushButton* button1 = new QPushButton("xxxx HELLO xxxx");
+//     vLayout->addWidget(button1);
+//     window.setLayout(vLayout);
 
-    // Create a modal dialog
-    QDialog*     dialog       = new QDialog(&window);
-    QVBoxLayout* dialogLayout = new QVBoxLayout();  // Dialog layout
+//     // Create a modal dialog
+//     QDialog*     dialog       = new QDialog(&window);
+//     QVBoxLayout* dialogLayout = new QVBoxLayout();  // Dialog layout
 
-    QPushButton* button2 = new QPushButton("Close Modal");
-    dialogLayout->addWidget(button2);
-    dialog->setLayout(dialogLayout);
+//     QPushButton* button2 = new QPushButton("Close Modal");
+//     dialogLayout->addWidget(button2);
+//     dialog->setLayout(dialogLayout);
 
-    // Connect the button click signal to show the modal dialog
-    QObject::connect(button1, &QPushButton::clicked, [&]() {
-        dialog->exec();  // This will block input to the main window until the dialog is closed
-    });
+//     // Connect the button click signal to show the modal dialog
+//     QObject::connect(button1, &QPushButton::clicked, [&]() {
+//         dialog->exec();  // This will block input to the main window until the dialog is closed
+//     });
 
-    // Connect the button click signal to close the modal dialog
-    QObject::connect(button2, &QPushButton::clicked, [&]() { dialog->close(); });
+//     // Connect the button click signal to close the modal dialog
+//     QObject::connect(button2, &QPushButton::clicked, [&]() { dialog->close(); });
 
-    window.show();
+//     window.show();
 
-    return app.exec();
-}
+//     return app.exec();
+// }
 
 // #include <QtWidgets>
 
@@ -270,3 +270,55 @@ int main(int argc, char** argv) {
 
 //     return a.exec();
 // }
+
+#include <QApplication>
+#include <QBrush>
+// #include <QDesktopWidget>
+#include <QMainWindow>
+#include <QPalette>
+#include <QPixmap>
+#include <QPushButton>
+#include <QStyle>
+#include <QVBoxLayout>
+
+int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+
+    QMainWindow window;
+
+    // QScreen *screen = QGuiApplication::primaryScreen();
+    // QRect  screenGeometry = screen->geometry();
+    // int height = screenGeometry.height();
+    // int width = screenGeometry.width();
+    // window.setFixedSize(QApplication::desktop()->size());  // Full screen
+    window.setFixedSize(1920, 1080);
+
+    // Set background image
+    QPalette palette;
+    palette.setBrush(QPalette::Window, QBrush(QPixmap(":/Resources/Images/grass_background.png")));
+    window.setPalette(palette);
+
+    // Create buttons
+    QPushButton* newGameButton  = new QPushButton("New Game");
+    QPushButton* exitGameButton = new QPushButton("Exit Game");
+
+    // Create layout
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->addWidget(newGameButton, 0, Qt::AlignCenter);
+    layout->addWidget(exitGameButton, 0, Qt::AlignCenter);
+
+    // Create a central widget to hold the layout
+    QWidget* centralWidget = new QWidget();
+    centralWidget->setLayout(layout);
+    window.setCentralWidget(centralWidget);
+
+    // Connect button signals to slots
+    QObject::connect(newGameButton, &QPushButton::clicked, &app, [&]() {
+        // Code to start new game goes here
+    });
+    QObject::connect(exitGameButton, &QPushButton::clicked, &app, &QApplication::quit);
+
+    window.show();
+
+    return app.exec();
+}
