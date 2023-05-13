@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QElapsedTimer>
 #include <QGraphicsRectItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -14,19 +15,21 @@ public:
     CustomRectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent = nullptr)
         : QGraphicsRectItem(x, y, w, h, parent) {}
 
+    void updateHighlight() {
+        this->scene()->removeItem(this->scene()->property("highlight").value<QGraphicsRectItem*>());
+        delete this->scene()->property("highlight").value<QGraphicsRectItem*>();
+
+        QGraphicsRectItem* highlight =
+            this->scene()->addRect(this->rect(), QPen(Qt::blue, 1), Qt::NoBrush);
+        highlight->setPos(this->pos());
+        highlight->setZValue(1);  // Ensure highlight is always on top
+        this->scene()->setProperty("highlight", QVariant::fromValue(highlight));
+    }
+
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override {
         if (event->button() == Qt::LeftButton) {
-            this->scene()->removeItem(
-                this->scene()->property("highlight").value<QGraphicsRectItem*>()
-            );
-            delete this->scene()->property("highlight").value<QGraphicsRectItem*>();
-
-            QGraphicsRectItem* highlight =
-                this->scene()->addRect(this->rect(), QPen(Qt::blue, 1), Qt::NoBrush);
-            highlight->setPos(this->pos());
-            highlight->setZValue(1);  // Ensure highlight is always on top
-            this->scene()->setProperty("highlight", QVariant::fromValue(highlight));
+            updateHighlight();
         }
         QGraphicsRectItem::mousePressEvent(event);
     }
@@ -85,11 +88,26 @@ protected:
         }
     }
 
+    QElapsedTimer _touchTimer;
+
     bool viewportEvent(QEvent* event) override {
         switch (event->type()) {
             case QEvent::TouchBegin:
-            case QEvent::TouchUpdate:
+                _touchTimer.restart();
             case QEvent::TouchEnd: {
+                QTouchEvent*                   touchEvent  = static_cast<QTouchEvent*>(event);
+                QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
+                if (touchPoints.count() == 1) {
+                    if (_touchTimer.elapsed() > 1 && _touchTimer.elapsed() < 250) {
+                        QPointF        pos  = touchEvent->points().first().position();
+                        QGraphicsItem* item = this->itemAt(pos.toPoint());
+                        if (CustomRectItem* rectItem = qgraphicsitem_cast<CustomRectItem*>(item)) {
+                            rectItem->updateHighlight();
+                        }
+                    }
+                }
+            }
+            case QEvent::TouchUpdate: {
                 QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
 
                 QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
