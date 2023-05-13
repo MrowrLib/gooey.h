@@ -476,8 +476,10 @@
 // };
 
 class GameView : public QGraphicsView {
-    qreal _totalScaleFactor = 1;
-    qreal _lastScaleFactor  = 1;
+    qreal   _totalScaleFactor = 1;
+    qreal   _lastScaleFactor  = 1;
+    bool    _mousePressed     = false;
+    QPointF _lastMousePos;
 
 public:
     GameView() {
@@ -497,6 +499,30 @@ protected:
         } else {
             // Zooming out
             scale(1 / scaleFactor, 1 / scaleFactor);
+        }
+    }
+
+    void mousePressEvent(QMouseEvent* event) override {
+        if (event->button() == Qt::RightButton) {
+            _mousePressed = true;
+            _lastMousePos = event->globalPosition();
+        }
+    }
+
+    void mouseMoveEvent(QMouseEvent* event) override {
+        if (_mousePressed) {
+            QPointF delta    = event->globalPosition() - _lastMousePos;
+            _lastMousePos    = event->globalPosition();
+            QScrollBar* hBar = horizontalScrollBar();
+            QScrollBar* vBar = verticalScrollBar();
+            hBar->setValue(hBar->value() - delta.x());
+            vBar->setValue(vBar->value() - delta.y());
+        }
+    }
+
+    void mouseReleaseEvent(QMouseEvent* event) override {
+        if (event->button() == Qt::RightButton) {
+            _mousePressed = false;
         }
     }
 
