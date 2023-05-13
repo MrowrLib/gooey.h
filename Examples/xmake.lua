@@ -9,7 +9,7 @@
 --     -- wx or qt or ...
 -- else
     -- includes("../xmake/fltk.lua")
-includes("../xmake/fltk.lua")
+includes("../xmake/qt.lua")
 -- end
 
 includes("Cpp/xmake.lua")

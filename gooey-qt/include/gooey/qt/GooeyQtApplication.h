@@ -8,7 +8,11 @@
 namespace gooey::Qt {
 
     class GooeyQtApplication : public UIApplicationBase {
+        int x = 69;
+
     public:
+        GooeyQtApplication() = default;
+
         bool run_blocking() override {
             int          argc = 0;
             char**       argv = nullptr;

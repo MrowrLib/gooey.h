@@ -3,6 +3,7 @@
 using namespace gooey;
 
 int main() {
+    int            x   = 69;
     UIApplication* app = create_gooey_application();
     // UIWindow*      window = app->add_window();
     // window->set_title("Empty Window");
