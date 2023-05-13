@@ -1,198 +1,220 @@
-#include <QApplication>
-#include <QGraphicsRectItem>
-#include <QGraphicsScene>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsView>
-#include <QMessageBox>
-#include <QPushButton>
-#include <QScrollBar>
-#include <QVBoxLayout>
-#include <QWheelEvent>
+// #include <QApplication>
+// #include <QGraphicsRectItem>
+// #include <QGraphicsScene>
+// #include <QGraphicsSceneMouseEvent>
+// #include <QGraphicsView>
+// #include <QMessageBox>
+// #include <QPushButton>
+// #include <QScrollBar>
+// #include <QVBoxLayout>
+// #include <QWheelEvent>
 
-class CustomRectItemObject : public QObject {
-    Q_OBJECT
-public:
-    CustomRectItemObject(QObject* parent = nullptr) : QObject(parent) {}
+// class CustomRectItem : public QGraphicsObject {
+//     Q_OBJECT
+//     QGraphicsRectItem* rectItem;
 
-signals:
-    void leftClicked();
-};
+// public:
+//     CustomRectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent = nullptr)
+//         : QGraphicsObject(parent), rectItem(new QGraphicsRectItem(x, y, w, h, this)) {}
 
-//
+//     ~CustomRectItem() { delete rectItem; }
 
-class CustomRectItem : public QGraphicsObject {
-    Q_OBJECT
-    QGraphicsRectItem*    rectItem;
-    CustomRectItemObject* object;  // Store pointer to the emitting object
+//     QGraphicsRectItem* getRect() { return rectItem; }
 
-public:
-    // CustomRectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent = nullptr)
-    //     : QGraphicsObject(parent), rectItem(new QGraphicsRectItem(x, y, w, h, this)) {}
+//     QRectF boundingRect() const override { return rectItem->boundingRect(); }
 
-    CustomRectItem(
-        qreal x, qreal y, qreal w, qreal h, CustomRectItemObject* obj,
-        QGraphicsItem* parent = nullptr
-    )
-        : QGraphicsObject(parent), rectItem(new QGraphicsRectItem(x, y, w, h, this)), object(obj) {
-        connect(this, &CustomRectItem::leftClicked, object, &CustomRectItemObject::leftClicked);
-    }
+//     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+//         override {
+//         rectItem->paint(painter, option, widget);
+//     }
 
-    ~CustomRectItem() { delete rectItem; }
+//     void setBrush(const QBrush& brush) { rectItem->setBrush(brush); }
 
-    QGraphicsRectItem* getRect() { return rectItem; }
+// signals:
+//     void leftClicked();
 
-    QRectF boundingRect() const override { return rectItem->boundingRect(); }
+// protected:
+//     void mousePressEvent(QGraphicsSceneMouseEvent* event) override {
+//         if (event->button() == Qt::LeftButton) {
+//             emit leftClicked();
+//         }
+//     }
 
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
-        override {
-        rectItem->paint(painter, option, widget);
-    }
+//     // void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override {
+//     //     // do nothing
+//     // }
+// };
 
-    void setBrush(const QBrush& brush) { rectItem->setBrush(brush); }
+// class CustomScene : public QGraphicsScene {
+//     Q_OBJECT
+//     QGraphicsRectItem* highlight = nullptr;
 
-signals:
-    void leftClicked();
+// public:
+//     CustomScene(QObject* parent = nullptr) : QGraphicsScene(parent) {}
 
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) override {
-        if (event->button() == Qt::LeftButton) {
-            emit leftClicked();
-        }
-    }
-};
+//     Q_INVOKABLE void updateHighlight() {
+//         // popup message
+//         QMessageBox msgBox;
+//         msgBox.setText("Hello World");
+//         msgBox.exec();
 
-class CustomScene : public QGraphicsScene {
-    Q_OBJECT
-    QGraphicsRectItem* highlight = nullptr;
+//         if (highlight != nullptr) {
+//             highlight->hide();
+//             this->removeItem(highlight);
+//             delete highlight;
+//             highlight = nullptr;  // Set to nullptr after deleting
+//         }
 
-public:
-    CustomScene(QObject* parent = nullptr) : QGraphicsScene(parent) {}
+//         CustomRectItem* senderItem = qobject_cast<CustomRectItem*>(sender());
+//         if (senderItem != nullptr) {
+//             // highlight =
+//             //     this->addRect(senderItem->getRect()->rect(), QPen(Qt::blue, 1), Qt::NoBrush);
+//             // highlight->setZValue(1);  // Ensure highlight is always on top
+//             // this->update(senderItem->getRect()->rect());
+//             highlight = new QGraphicsRectItem(senderItem->getRect()->rect(), senderItem);
+//             highlight->setPen(QPen(Qt::blue, 1));
+//             highlight->setBrush(Qt::NoBrush);
+//             highlight->setZValue(1);  // Ensure highlight is always on top
+//             this->addItem(highlight);
+//             this->update();
+//         }
+//     }
+// };
 
-    Q_INVOKABLE void updateHighlight() {
-        // QMessageBox::information(nullptr, "Information", "This is an informational message.");
+// class GameView : public QGraphicsView {
+//     qreal   _totalScaleFactor = 1;
+//     qreal   _lastScaleFactor  = 1;
+//     bool    _mousePressed     = false;
+//     QPointF _lastMousePos;
 
-        if (highlight != nullptr) {
-            this->removeItem(highlight);
-            delete highlight;
-            highlight = nullptr;
-        }
+// public:
+//     GameView() {
+//         setRenderHint(QPainter::Antialiasing);
+//         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+//         setAttribute(Qt::WA_AcceptTouchEvents);
+//     }
 
-        CustomRectItem* senderItem = qobject_cast<CustomRectItem*>(sender());
-        if (senderItem != nullptr) {
-            highlight =
-                this->addRect(senderItem->getRect()->rect(), QPen(Qt::blue, 1), Qt::NoBrush);
-            highlight->setZValue(1);  // Ensure highlight is always on top
-        }
-    }
-};
+// protected:
+//     void wheelEvent(QWheelEvent* event) override {
+//         setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+//         double scaleFactor = 1.15;
+//         if (event->angleDelta().y() > 0) {
+//             // Zoom in
+//             scale(scaleFactor, scaleFactor);
+//         } else {
+//             // Zooming out
+//             scale(1 / scaleFactor, 1 / scaleFactor);
+//         }
+//     }
 
-class GameView : public QGraphicsView {
-    qreal   _totalScaleFactor = 1;
-    qreal   _lastScaleFactor  = 1;
-    bool    _mousePressed     = false;
-    QPointF _lastMousePos;
+//     void mousePressEvent(QMouseEvent* event) override {
+//         if (event->button() == Qt::RightButton) {
+//             _mousePressed = true;
+//             _lastMousePos = event->globalPosition();
+//         }
+//     }
 
-public:
-    GameView() {
-        setRenderHint(QPainter::Antialiasing);
-        setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        setAttribute(Qt::WA_AcceptTouchEvents);
-    }
+//     void mouseMoveEvent(QMouseEvent* event) override {
+//         if (_mousePressed) {
+//             QPointF delta    = event->globalPosition() - _lastMousePos;
+//             _lastMousePos    = event->globalPosition();
+//             QScrollBar* hBar = horizontalScrollBar();
+//             QScrollBar* vBar = verticalScrollBar();
+//             hBar->setValue(hBar->value() - delta.x());
+//             vBar->setValue(vBar->value() - delta.y());
+//         }
+//     }
 
-protected:
-    void wheelEvent(QWheelEvent* event) override {
-        setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-        double scaleFactor = 1.15;
-        if (event->angleDelta().y() > 0) {
-            // Zoom in
-            scale(scaleFactor, scaleFactor);
-        } else {
-            // Zooming out
-            scale(1 / scaleFactor, 1 / scaleFactor);
-        }
-    }
+//     void mouseReleaseEvent(QMouseEvent* event) override {
+//         if (event->button() == Qt::RightButton) {
+//             _mousePressed = false;
+//         }
+//     }
 
-    void mousePressEvent(QMouseEvent* event) override {
-        if (event->button() == Qt::RightButton) {
-            _mousePressed = true;
-            _lastMousePos = event->globalPosition();
-        }
-    }
+//     bool viewportEvent(QEvent* event) override {
+//         switch (event->type()) {
+//             case QEvent::TouchBegin:
+//             case QEvent::TouchUpdate:
+//             case QEvent::TouchEnd: {
+//                 QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
 
-    void mouseMoveEvent(QMouseEvent* event) override {
-        if (_mousePressed) {
-            QPointF delta    = event->globalPosition() - _lastMousePos;
-            _lastMousePos    = event->globalPosition();
-            QScrollBar* hBar = horizontalScrollBar();
-            QScrollBar* vBar = verticalScrollBar();
-            hBar->setValue(hBar->value() - delta.x());
-            vBar->setValue(vBar->value() - delta.y());
-        }
-    }
+//                 QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
+//                 if (touchPoints.count() == 2) {
+//                     // Determine scale factor
+//                     const QTouchEvent::TouchPoint& touchPoint0 = touchPoints.first();
+//                     const QTouchEvent::TouchPoint& touchPoint1 = touchPoints.last();
 
-    void mouseReleaseEvent(QMouseEvent* event) override {
-        if (event->button() == Qt::RightButton) {
-            _mousePressed = false;
-        }
-    }
+//                     qreal currentScaleFactor =
+//                         QLineF(touchPoint0.position(), touchPoint1.position()).length() /
+//                         QLineF(touchPoint0.pressPosition(),
+//                         touchPoint1.pressPosition()).length();
+//                     if (touchEvent->touchPointStates() & Qt::TouchPointReleased) {
+//                         // If one of the fingers is released, remember the last scale factor so
+//                         that
+//                         // adding another finger later will continue zooming by adding new scale
+//                         // factor to the existing remembered value.
+//                         _lastScaleFactor = _totalScaleFactor;
+//                         _totalScaleFactor *= currentScaleFactor;
+//                     } else {
+//                         setTransformationAnchor(QGraphicsView::NoAnchor);
+//                         setTransform(QTransform::fromScale(
+//                             _totalScaleFactor * currentScaleFactor,
+//                             _totalScaleFactor * currentScaleFactor
+//                         ));
+//                     }
+//                 } else if (touchPoints.count() == 1) {
+//                     // Pan
+//                     if (touchEvent->touchPointStates() & Qt::TouchPointMoved) {
+//                         QScrollBar* hBar = horizontalScrollBar();
+//                         QScrollBar* vBar = verticalScrollBar();
+//                         QPointF     delta =
+//                             touchPoints.first().position() - touchPoints.first().pressPosition();
 
-    bool viewportEvent(QEvent* event) override {
-        switch (event->type()) {
-            case QEvent::TouchBegin:
-            case QEvent::TouchUpdate:
-            case QEvent::TouchEnd: {
-                QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
+//                         qreal scaleFactor = transform().m11();
 
-                QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
-                if (touchPoints.count() == 2) {
-                    // Determine scale factor
-                    const QTouchEvent::TouchPoint& touchPoint0 = touchPoints.first();
-                    const QTouchEvent::TouchPoint& touchPoint1 = touchPoints.last();
+//                         // Change this value to adjust the panning speed
+//                         qreal speedAdjustment = 0.1;
 
-                    qreal currentScaleFactor =
-                        QLineF(touchPoint0.position(), touchPoint1.position()).length() /
-                        QLineF(touchPoint0.pressPosition(), touchPoint1.pressPosition()).length();
-                    if (touchEvent->touchPointStates() & Qt::TouchPointReleased) {
-                        // If one of the fingers is released, remember the last scale factor so that
-                        // adding another finger later will continue zooming by adding new scale
-                        // factor to the existing remembered value.
-                        _lastScaleFactor = _totalScaleFactor;
-                        _totalScaleFactor *= currentScaleFactor;
-                    } else {
-                        setTransformationAnchor(QGraphicsView::NoAnchor);
-                        setTransform(QTransform::fromScale(
-                            _totalScaleFactor * currentScaleFactor,
-                            _totalScaleFactor * currentScaleFactor
-                        ));
-                    }
-                } else if (touchPoints.count() == 1) {
-                    // Pan
-                    if (touchEvent->touchPointStates() & Qt::TouchPointMoved) {
-                        QScrollBar* hBar = horizontalScrollBar();
-                        QScrollBar* vBar = verticalScrollBar();
-                        QPointF     delta =
-                            touchPoints.first().position() - touchPoints.first().pressPosition();
+//                         hBar->setValue(
+//                             hBar->value() + speedAdjustment * (delta.x() > 0 ? -1 : 1) *
+//                                                 qAbs(delta.x()) / scaleFactor
+//                         );
+//                         vBar->setValue(
+//                             vBar->value() + speedAdjustment * (delta.y() > 0 ? -1 : 1) *
+//                                                 qAbs(delta.y()) / scaleFactor
+//                         );
+//                     }
+//                 }
+//                 return true;
+//             }
+//             default:
+//                 return QGraphicsView::viewportEvent(event);
+//         }
+//     }
+// };
 
-                        qreal scaleFactor = transform().m11();
+// #include <QApplication>
+// #include <QGraphicsRectItem>
+// #include <QGraphicsScene>
+// #include <QGraphicsSceneMouseEvent>
+// #include <QGraphicsView>
+// #include <QPen>
 
-                        // Change this value to adjust the panning speed
-                        qreal speedAdjustment = 0.1;
+// class CustomRectItem : public QGraphicsRectItem {
+// public:
+//     CustomRectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent = nullptr)
+//         : QGraphicsRectItem(x, y, w, h, parent) {}
 
-                        hBar->setValue(
-                            hBar->value() + speedAdjustment * (delta.x() > 0 ? -1 : 1) *
-                                                qAbs(delta.x()) / scaleFactor
-                        );
-                        vBar->setValue(
-                            vBar->value() + speedAdjustment * (delta.y() > 0 ? -1 : 1) *
-                                                qAbs(delta.y()) / scaleFactor
-                        );
-                    }
-                }
-                return true;
-            }
-            default:
-                return QGraphicsView::viewportEvent(event);
-        }
-    }
-};
+// protected:
+//     void mousePressEvent(QGraphicsSceneMouseEvent* event) override {
+//         if (event->button() == Qt::LeftButton) {
+//             this->setPen(QPen(Qt::blue, 1));
+//         }
+//         QGraphicsRectItem::mousePressEvent(event);
+//     }
+
+//     // void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override {
+//     //     // do nothing
+//     // }
+// };

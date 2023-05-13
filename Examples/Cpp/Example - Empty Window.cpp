@@ -1,46 +1,101 @@
-#include "Example - Empty Window.h"
+// #include "Example - Empty Window.h"
 
-int main(int argc, char* argv[]) {
-    QApplication a(argc, argv);
+// int main(int argc, char* argv[]) {
+//     QApplication a(argc, argv);
 
-    QWidget      window;
-    QVBoxLayout* layout = new QVBoxLayout(&window);
+//     QWidget      window;
+//     QVBoxLayout* layout = new QVBoxLayout(&window);
 
-    CustomScene scene;
-    for (int i = 0; i < 100; i++) {
-        for (int j = 0; j < 100; j++) {
-            CustomRectItemObject* rectObject = new CustomRectItemObject();
-            CustomRectItem*       rect       = new CustomRectItem(i * 10, j * 10, 9, 9, rectObject);
+//     CustomScene scene;
+//     for (int i = 0; i < 100; i++) {
+//         for (int j = 0; j < 100; j++) {
+//             CustomRectItem* rect = new CustomRectItem(i * 10, j * 10, 9, 9);
 
-            int    hue   = (i + j) % 360;
-            QColor color = QColor::fromHsv(hue, 255, 255);
-            rect->setBrush(color);
+//             int    hue   = (i + j) % 360;
+//             QColor color = QColor::fromHsv(hue, 255, 255);
+//             rect->setBrush(color);
 
-            QObject::connect(
-                rect, &CustomRectItem::leftClicked, &scene, &CustomScene::updateHighlight
+//             QObject::connect(
+//                 rect, &CustomRectItem::leftClicked, &scene, &CustomScene::updateHighlight
+//             );
+
+//             scene.addItem(rect);
+//         }
+//     }
+
+//     GameView* view = new GameView();
+//     view->setScene(&scene);
+//     layout->addWidget(view, 9);
+
+//     QHBoxLayout* panelLayout = new QHBoxLayout();
+//     for (int i = 0; i < 4; i++) {
+//         QPushButton* button = new QPushButton(QString("Button %1").arg(i + 1));
+//         panelLayout->addWidget(button);
+//     }
+//     QWidget* panel = new QWidget();
+//     panel->setLayout(panelLayout);
+//     layout->addWidget(panel, 1);
+
+//     window.show();
+
+//     return a.exec();
+// }
+
+///////////////////////////////////////
+
+#include <QApplication>
+#include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsView>
+#include <QPen>
+
+
+class CustomRectItem : public QGraphicsRectItem {
+public:
+    CustomRectItem(qreal x, qreal y, qreal w, qreal h, QGraphicsItem* parent = nullptr)
+        : QGraphicsRectItem(x, y, w, h, parent) {}
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override {
+        if (event->button() == Qt::LeftButton) {
+            this->scene()->removeItem(
+                this->scene()->property("highlight").value<QGraphicsRectItem*>()
             );
+            delete this->scene()->property("highlight").value<QGraphicsRectItem*>();
 
+            QGraphicsRectItem* highlight =
+                this->scene()->addRect(this->rect(), QPen(Qt::blue, 5), Qt::NoBrush);
+            highlight->setPos(this->pos());
+            highlight->setZValue(1);  // Ensure highlight is always on top
+            this->scene()->setProperty("highlight", QVariant::fromValue(highlight));
+        }
+        QGraphicsRectItem::mousePressEvent(event);
+    }
+
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) override {
+        // do nothing
+    }
+};
+
+int main(int argc, char** argv) {
+    QApplication app(argc, argv);
+
+    QGraphicsScene scene;
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            CustomRectItem* rect = new CustomRectItem(i * 20, j * 20, 19, 19);
             scene.addItem(rect);
         }
     }
 
-    GameView* view = new GameView();
-    view->setScene(&scene);
-    layout->addWidget(view, 9);
+    QGraphicsView view(&scene);
+    view.show();
 
-    QHBoxLayout* panelLayout = new QHBoxLayout();
-    for (int i = 0; i < 4; i++) {
-        QPushButton* button = new QPushButton(QString("Button %1").arg(i + 1));
-        panelLayout->addWidget(button);
-    }
-    QWidget* panel = new QWidget();
-    panel->setLayout(panelLayout);
-    layout->addWidget(panel, 1);
-
-    window.show();
-
-    return a.exec();
+    return app.exec();
 }
+
+////////////////////////////////////////
 
 // // #include "example_setup.h"
 
