@@ -2,6 +2,10 @@
 
 find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
 # Get the names of all of the examples
 file(GLOB EXAMPLES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 

@@ -7,6 +7,7 @@ for _, file_path in ipairs(os.files(os.scriptdir() .. "/*.cpp")) do
     target(target_name)
         set_kind("binary")
         add_files(cpp)
+        add_files("*.h")
         setup_target_for_ui_library()
         add_includedirs(".")
 
