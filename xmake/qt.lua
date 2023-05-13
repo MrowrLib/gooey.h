@@ -26,8 +26,6 @@ function setup_target_for_ui_library()
     add_linkdirs(path.join(qt_lib_dir, "QtGui.framework"))
     add_linkdirs(path.join(qt_lib_dir, "QtWidgets.framework"))
 
-    -- add_rules("qt.shared")
-    -- add_rules("qt.quickapp")
     add_rules("qt.application")
     add_ldflags("-F" .. qt_lib_dir)
     add_frameworks("QtCore", "QtGui", "QtWidgets")
