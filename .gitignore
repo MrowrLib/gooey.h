@@ -5,3 +5,6 @@ build
 *.dll
 *.exe
 android-build
+*.jks
+*.apk
+*.apk.idsig
