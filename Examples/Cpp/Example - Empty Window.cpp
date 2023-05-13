@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
     QWidget      window;
     QVBoxLayout* vLayout = new QVBoxLayout();  // Vertical Box Layout
 
-    QPushButton* button1 = new QPushButton("Open Modal");
+    QPushButton* button1 = new QPushButton("xxxx HELLO xxxx");
     vLayout->addWidget(button1);
     window.setLayout(vLayout);
 
