@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QScrollBar>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QWheelEvent>
 
@@ -41,12 +42,22 @@ class GameView : public QGraphicsView {
     bool    _mousePressed     = false;
     QPointF _lastMousePos;
 
+    constexpr static auto _recentTouchInterval = 1000;
+    QTimer*               _recentTouchTimer    = nullptr;
+    QPointF               _recentTouchPos;
+    QPointF               _currentTouchPos;
+
 public:
     GameView() {
         setRenderHint(QPainter::Antialiasing);
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         setAttribute(Qt::WA_AcceptTouchEvents);
+        _recentTouchTimer = new QTimer(this);
+        connect(_recentTouchTimer, &QTimer::timeout, [this]() {
+            this->_recentTouchPos = this->_currentTouchPos;
+        });
+        _recentTouchTimer->start(_recentTouchInterval);
     }
 
 protected:
@@ -92,8 +103,12 @@ protected:
 
     bool viewportEvent(QEvent* event) override {
         switch (event->type()) {
-            case QEvent::TouchBegin:
+            case QEvent::TouchBegin: {
+                QTouchEvent*                   touchEvent  = static_cast<QTouchEvent*>(event);
+                QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
                 _touchTimer.restart();
+                _recentTouchPos = _currentTouchPos = touchPoints.first().pressPosition();
+            }
             case QEvent::TouchEnd: {
                 QTouchEvent*                   touchEvent  = static_cast<QTouchEvent*>(event);
                 QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
@@ -108,9 +123,10 @@ protected:
                 }
             }
             case QEvent::TouchUpdate: {
-                QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
-
+                QTouchEvent*                   touchEvent  = static_cast<QTouchEvent*>(event);
                 QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->points();
+                _currentTouchPos                           = touchPoints.first().position();
+
                 if (touchPoints.count() == 2) {
                     // Determine scale factor
                     const QTouchEvent::TouchPoint& touchPoint0 = touchPoints.first();
@@ -135,10 +151,11 @@ protected:
                 } else if (touchPoints.count() == 1) {
                     // Pan
                     if (touchEvent->touchPointStates() & Qt::TouchPointMoved) {
-                        QScrollBar* hBar = horizontalScrollBar();
-                        QScrollBar* vBar = verticalScrollBar();
-                        QPointF     delta =
-                            touchPoints.first().position() - touchPoints.first().pressPosition();
+                        QScrollBar* hBar  = horizontalScrollBar();
+                        QScrollBar* vBar  = verticalScrollBar();
+                        QPointF     delta = touchPoints.first().position() - _recentTouchPos;
+                        // QPointF     delta =
+                        //     touchPoints.first().position() - touchPoints.first().pressPosition();
 
                         qreal scaleFactor = transform().m11();
 
